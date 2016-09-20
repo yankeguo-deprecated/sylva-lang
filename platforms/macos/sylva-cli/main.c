@@ -11,10 +11,9 @@
 #include "sylva-lexer.h"
 
 int main(int argc, const char * argv[]) {
-  sylva_lexer lexer;
-  sylva_lexer_init(&lexer);
+  sylva_lexer_ref lexer = sylva_lexer_create(1000);
   
   // insert code here...
-  printf("Hello, World!%p\n", &lexer);
+  printf("Hello, World!%p\n", lexer);
   return 0;
 }

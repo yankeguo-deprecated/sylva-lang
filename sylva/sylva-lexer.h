@@ -12,8 +12,9 @@
 #include <stdio.h>
 
 typedef enum {
-  sylva_lexer_error_ok      = 0,
-  sylva_lexer_error_common  = 1,
+  sylva_lexer_error_ok = 0,
+  sylva_lexer_error_common,
+	sylva_lexer_error_no_capacity,
 } sylva_lexer_error;
 
 typedef enum sylva_token_type {
@@ -166,7 +167,7 @@ typedef enum sylva_token_type {
   /**
    syntax `%`
    */
-  sylva_token_percent,
+  sylva_token_mod,
   
   /**
    syntax `=`
@@ -324,9 +325,14 @@ typedef struct sylva_token {
 } sylva_token;
 
 typedef struct sylva_lexer {
+	int tokens_capacity;
+	int tokens_count;
+	sylva_token *tokens;
 } sylva_lexer;
 
-void sylva_lexer_init(sylva_lexer *lexer);
+typedef sylva_lexer *sylva_lexer_ref;
+
+sylva_lexer_ref sylva_lexer_create(int tokens_len);
 
 /**
  Scan source string and append tokens
@@ -338,20 +344,20 @@ void sylva_lexer_init(sylva_lexer *lexer);
  
  @return error code
  */
-sylva_lexer_error sylva_lexer_scan(sylva_lexer *lexer, char *source, int source_len, int *err_pos);
+sylva_lexer_error sylva_lexer_scan(sylva_lexer_ref lexer, char *source, int source_len, int *err_pos);
 
 /**
  Clear stored tokens
  
  @param lexer the lexer in use
  */
-void sylva_lexer_clear(sylva_lexer *lexer);
+void sylva_lexer_clear(sylva_lexer_ref lexer);
 
 /**
  Deinit the lexer, cannot be used any more
  
  @param lexer the lexer in use
  */
-void sylva_lexer_deinit(sylva_lexer *lexer);
+void sylva_lexer_destroy(sylva_lexer_ref lexer);
 
 #endif /* sylva_lexer_h */

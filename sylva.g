@@ -1,20 +1,31 @@
 grammar sylva;
 
-ID  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
+//	Comment
+
+COMMENT
+    :	'#' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
     ;
 
-INT :	'0'..'9'+
-    ;
+// Import
+
+fragment
+IMPORT
+	:	'import';
+	
+fragment
+INTERNAL
+	:	'internal';
+	    
+// Variables
+
+ID  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*;
+
+INTEGER :	'0'..'9'+;
 
 FLOAT
     :   ('0'..'9')+ '.' ('0'..'9')* EXPONENT?
     |   '.' ('0'..'9')+ EXPONENT?
     |   ('0'..'9')+ EXPONENT
-    ;
-
-COMMENT
-    :   '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
-    |   '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;}
     ;
 
 STRING
@@ -45,3 +56,13 @@ fragment
 UNICODE_ESC
     :   '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
     ;
+
+fragment
+SUPER
+	:	'super'
+	;
+	
+fragment
+SELF
+	: 'self'
+	;

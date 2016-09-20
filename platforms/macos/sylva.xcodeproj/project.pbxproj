@@ -1,0 +1,435 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6934942D1D9155AF00085136 /* sylva-lexer.c in Sources */ = {isa = PBXBuildFile; fileRef = 69437A291D91118B00A6C4FD /* sylva-lexer.c */; };
+		69437A0D1D910BC100A6C4FD /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 69437A0C1D910BC100A6C4FD /* main.c */; };
+		69437A271D9110A000A6C4FD /* libsylva.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69437A151D910C0500A6C4FD /* libsylva.a */; };
+		69437A2B1D91118B00A6C4FD /* sylva-lexer.c in Sources */ = {isa = PBXBuildFile; fileRef = 69437A291D91118B00A6C4FD /* sylva-lexer.c */; };
+		69437A2C1D91118B00A6C4FD /* sylva-lexer.h in Headers */ = {isa = PBXBuildFile; fileRef = 69437A2A1D91118B00A6C4FD /* sylva-lexer.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		69437A081D910BC100A6C4FD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		69437A0A1D910BC100A6C4FD /* sylva */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sylva; sourceTree = BUILT_PRODUCTS_DIR; };
+		69437A0C1D910BC100A6C4FD /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		69437A151D910C0500A6C4FD /* libsylva.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsylva.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		69437A1D1D910C2900A6C4FD /* libsylva.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsylva.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		69437A241D910DEF00A6C4FD /* sylva.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sylva.h; sourceTree = "<group>"; };
+		69437A261D910FEE00A6C4FD /* sylva-platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "sylva-platform.h"; sourceTree = "<group>"; };
+		69437A291D91118B00A6C4FD /* sylva-lexer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "sylva-lexer.c"; sourceTree = "<group>"; };
+		69437A2A1D91118B00A6C4FD /* sylva-lexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "sylva-lexer.h"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		69437A071D910BC100A6C4FD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				69437A271D9110A000A6C4FD /* libsylva.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		69437A121D910C0500A6C4FD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		69437A1A1D910C2900A6C4FD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		694379F31D910B2200A6C4FD = {
+			isa = PBXGroup;
+			children = (
+				69437A221D910C8D00A6C4FD /* sylva */,
+				69437A0B1D910BC100A6C4FD /* sylva-cli */,
+				694379FD1D910B2200A6C4FD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		694379FD1D910B2200A6C4FD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				69437A0A1D910BC100A6C4FD /* sylva */,
+				69437A151D910C0500A6C4FD /* libsylva.a */,
+				69437A1D1D910C2900A6C4FD /* libsylva.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		69437A0B1D910BC100A6C4FD /* sylva-cli */ = {
+			isa = PBXGroup;
+			children = (
+				69437A0C1D910BC100A6C4FD /* main.c */,
+			);
+			path = "sylva-cli";
+			sourceTree = "<group>";
+		};
+		69437A221D910C8D00A6C4FD /* sylva */ = {
+			isa = PBXGroup;
+			children = (
+				69437A241D910DEF00A6C4FD /* sylva.h */,
+				69437A261D910FEE00A6C4FD /* sylva-platform.h */,
+				69437A291D91118B00A6C4FD /* sylva-lexer.c */,
+				69437A2A1D91118B00A6C4FD /* sylva-lexer.h */,
+			);
+			name = sylva;
+			path = ../../sylva;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		69437A131D910C0500A6C4FD /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				69437A2C1D91118B00A6C4FD /* sylva-lexer.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		69437A1B1D910C2900A6C4FD /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		69437A091D910BC100A6C4FD /* sylva-cli */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 69437A0E1D910BC100A6C4FD /* Build configuration list for PBXNativeTarget "sylva-cli" */;
+			buildPhases = (
+				69437A061D910BC100A6C4FD /* Sources */,
+				69437A071D910BC100A6C4FD /* Frameworks */,
+				69437A081D910BC100A6C4FD /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "sylva-cli";
+			productName = "sylva-cli";
+			productReference = 69437A0A1D910BC100A6C4FD /* sylva */;
+			productType = "com.apple.product-type.tool";
+		};
+		69437A141D910C0500A6C4FD /* sylva-static */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 69437A161D910C0500A6C4FD /* Build configuration list for PBXNativeTarget "sylva-static" */;
+			buildPhases = (
+				69437A111D910C0500A6C4FD /* Sources */,
+				69437A121D910C0500A6C4FD /* Frameworks */,
+				69437A131D910C0500A6C4FD /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "sylva-static";
+			productName = "sylva-static";
+			productReference = 69437A151D910C0500A6C4FD /* libsylva.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		69437A1C1D910C2900A6C4FD /* sylva-dynamic */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 69437A1E1D910C2900A6C4FD /* Build configuration list for PBXNativeTarget "sylva-dynamic" */;
+			buildPhases = (
+				69437A191D910C2900A6C4FD /* Sources */,
+				69437A1A1D910C2900A6C4FD /* Frameworks */,
+				69437A1B1D910C2900A6C4FD /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "sylva-dynamic";
+			productName = "sylva-dynamic";
+			productReference = 69437A1D1D910C2900A6C4FD /* libsylva.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		694379F41D910B2200A6C4FD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0800;
+				ORGANIZATIONNAME = IslandZERO;
+				TargetAttributes = {
+					69437A091D910BC100A6C4FD = {
+						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = 328MP925VE;
+						ProvisioningStyle = Automatic;
+					};
+					69437A141D910C0500A6C4FD = {
+						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = 328MP925VE;
+						ProvisioningStyle = Automatic;
+					};
+					69437A1C1D910C2900A6C4FD = {
+						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = 328MP925VE;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 694379F71D910B2200A6C4FD /* Build configuration list for PBXProject "sylva" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 694379F31D910B2200A6C4FD;
+			productRefGroup = 694379FD1D910B2200A6C4FD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				69437A091D910BC100A6C4FD /* sylva-cli */,
+				69437A141D910C0500A6C4FD /* sylva-static */,
+				69437A1C1D910C2900A6C4FD /* sylva-dynamic */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		69437A061D910BC100A6C4FD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				69437A0D1D910BC100A6C4FD /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		69437A111D910C0500A6C4FD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				69437A2B1D91118B00A6C4FD /* sylva-lexer.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		69437A191D910C2900A6C4FD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6934942D1D9155AF00085136 /* sylva-lexer.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		69437A011D910B2200A6C4FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		69437A021D910B2200A6C4FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		69437A0F1D910BC100A6C4FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = 328MP925VE;
+				PRODUCT_NAME = sylva;
+			};
+			name = Debug;
+		};
+		69437A101D910BC100A6C4FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = 328MP925VE;
+				PRODUCT_NAME = sylva;
+			};
+			name = Release;
+		};
+		69437A171D910C0500A6C4FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = 328MP925VE;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = sylva;
+			};
+			name = Debug;
+		};
+		69437A181D910C0500A6C4FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = 328MP925VE;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = sylva;
+			};
+			name = Release;
+		};
+		69437A1F1D910C2900A6C4FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = 328MP925VE;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = sylva;
+			};
+			name = Debug;
+		};
+		69437A201D910C2900A6C4FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = 328MP925VE;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = sylva;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		694379F71D910B2200A6C4FD /* Build configuration list for PBXProject "sylva" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				69437A011D910B2200A6C4FD /* Debug */,
+				69437A021D910B2200A6C4FD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		69437A0E1D910BC100A6C4FD /* Build configuration list for PBXNativeTarget "sylva-cli" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				69437A0F1D910BC100A6C4FD /* Debug */,
+				69437A101D910BC100A6C4FD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		69437A161D910C0500A6C4FD /* Build configuration list for PBXNativeTarget "sylva-static" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				69437A171D910C0500A6C4FD /* Debug */,
+				69437A181D910C0500A6C4FD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		69437A1E1D910C2900A6C4FD /* Build configuration list for PBXNativeTarget "sylva-dynamic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				69437A1F1D910C2900A6C4FD /* Debug */,
+				69437A201D910C2900A6C4FD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 694379F41D910B2200A6C4FD /* Project object */;
+}

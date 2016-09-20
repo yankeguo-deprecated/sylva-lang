@@ -71,3 +71,11 @@ class Deer : Animal
 end
 
 ```
+
+Sylva - C native binding
+---
+
+```
+native class NativeClass
+end
+```

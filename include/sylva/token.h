@@ -313,28 +313,28 @@ typedef union {
   SLexInteger integerValue;
   SLexFloat floatValue;
   SLexString stringValue;
-} SSemanValue;
+} SSemaValue;
 
 typedef enum {
-  SSemanNone,
-  SSemanInteger,
-  SSemanFloat,
-  SSemanString
-} SSemanType;
+  SSemaNone,
+  SSemaInteger,
+  SSemaFloat,
+  SSemaString
+} SSemaType;
 
 /**
- Get SSemanType from STokenType
+ Get SSemaType from STokenType
  
  @param tokenType STokenType
- @return SSemanType 
+ @return SSemaType
  */
-SYLVA_EXPORT SSemanType STokenTypeGetSemanType(STokenType tokenType);
+SYLVA_EXPORT SSemaType STokenTypeGetSemaType(STokenType tokenType);
 
 SYLVA_EXPORT char *const STokenTypeGetName(STokenType tokenType);
 
 typedef struct {
-  SSemanValue value;
-  SSemanType semanType;
+  SSemaValue value;
+  SSemaType semaType;
   STokenType type;
 } SToken;
 
@@ -343,22 +343,22 @@ typedef SToken *STokenRef;
 SYLVA_EXPORT void STokenPrint(STokenRef token);
 
 /**
- Create a STokenRef with None seman
+ Create a STokenRef with None sema
  */
 SYLVA_EXPORT STokenRef STokenCreate(STokenType type);
 
 /**
- Create a STokenRef with Integer seman
+ Create a STokenRef with Integer sema
  */
 SYLVA_EXPORT STokenRef STokenCreateInteger(STokenType type, SLexInteger integer);
 
 /**
- Create a STokenRef with Float seman
+ Create a STokenRef with Float sema
  */
 SYLVA_EXPORT STokenRef STokenCreateFloat(STokenType type, SLexFloat f);
 
 /**
- Create a STokenRef with SString seman
+ Create a STokenRef with SString sema
  */
 SYLVA_EXPORT STokenRef STokenCreateString(STokenType type, char *string);
 

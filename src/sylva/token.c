@@ -13,19 +13,19 @@
 #include <assert.h>
 #include <stdio.h>
 
-SSemanType STokenTypeGetSemanType(STokenType tokenType) {
+SSemaType STokenTypeGetSemaType(STokenType tokenType) {
   if (tokenType == STokenComment ||
       tokenType == STokenId ||
       tokenType == STokenString) {
-    return SSemanString;
+    return SSemaString;
   }
   if (tokenType == STokenInteger) {
-    return SSemanInteger;
+    return SSemaInteger;
   }
   if (tokenType == STokenFloat) {
-    return SSemanFloat;
+    return SSemaFloat;
   }
-  return SSemanNone;
+  return SSemaNone;
 }
 
 SYLVA_EXPORT char *const  STokenTypeGetName(STokenType tokenType) {
@@ -154,15 +154,15 @@ SYLVA_EXPORT char *const  STokenTypeGetName(STokenType tokenType) {
 }
 
 SYLVA_EXPORT void STokenPrint(STokenRef token) {
-  switch (token->semanType) {
-    case SSemanNone:
+  switch (token->semaType) {
+    case SSemaNone:
       printf("<%s>", STokenTypeGetName(token->type));
       break;
-    case SSemanInteger:
+    case SSemaInteger:
       printf("<%s,%ld>", STokenTypeGetName(token->type), token->value.integerValue);
-    case SSemanFloat:
+    case SSemaFloat:
       printf("<%s,%lf>", STokenTypeGetName(token->type), token->value.floatValue);
-    case SSemanString:
+    case SSemaString:
       printf("<%s,%s>", STokenTypeGetName(token->type), token->value.stringValue->string);
     default:
       break;
@@ -170,58 +170,58 @@ SYLVA_EXPORT void STokenPrint(STokenRef token) {
 }
 
 STokenRef STokenCreate(STokenType type) {
-  assert(STokenTypeGetSemanType(type) == SSemanNone);
+  assert(STokenTypeGetSemaType(type) == SSemaNone);
   
   STokenRef token = malloc(sizeof(SToken));
   token->type = type;
-  token->semanType = SSemanNone;
+  token->semaType = SSemaNone;
   token->value.integerValue = 0;
   return token;
 }
 
 STokenRef STokenCreateInteger(STokenType type, SLexInteger integer) {
-  assert(STokenTypeGetSemanType(type) == SSemanInteger);
+  assert(STokenTypeGetSemaType(type) == SSemaInteger);
   
   STokenRef token = malloc(sizeof(SToken));
   token->type = type;
-  token->semanType = SSemanInteger;
+  token->semaType = SSemaInteger;
   token->value.integerValue = integer;
   return token;
 }
 
 STokenRef STokenCreateFloat(STokenType type, SLexFloat f) {
-    assert(STokenTypeGetSemanType(type) == SSemanFloat);
+    assert(STokenTypeGetSemaType(type) == SSemaFloat);
   
   STokenRef token = malloc(sizeof(SToken));
   token->type = type;
-  token->semanType = SSemanFloat;
+  token->semaType = SSemaFloat;
   token->value.floatValue = f;
   return token;
 }
 
 STokenRef STokenCreateString(STokenType type, char *string) {
-  assert(STokenTypeGetSemanType(type) == SSemanString);
+  assert(STokenTypeGetSemaType(type) == SSemaString);
   
   STokenRef token = malloc(sizeof(SToken));
   token->type = type;
-  token->semanType = SSemanString;
+  token->semaType = SSemaString;
   token->value.stringValue = SStringCreate(string);
   return token;
 }
 
 
 STokenRef STokenCreateStringWithLength(STokenType type, char *string, int length) {
-  assert(STokenTypeGetSemanType(type) == SSemanString);
+  assert(STokenTypeGetSemaType(type) == SSemaString);
   
   STokenRef token = malloc(sizeof(SToken));
   token->type = type;
-  token->semanType = SSemanString;
+  token->semaType = SSemaString;
   token->value.stringValue = SStringCreateWithLength(string, length);
   return token;
 }
 
 void STokenDestroy(STokenRef token) {
-  if (token->semanType == SSemanString) {
+  if (token->semaType == SSemaString) {
     SStringDestroy(token->value.stringValue);
   }
   free(token);

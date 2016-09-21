@@ -6,13 +6,24 @@
 //  Created by Yanke Guo on 2016/9/22.
 //
 
-#include "sylva/lexer.h"
-
 #include <stdio.h>
 
+#include <sylva/token.h>
+#include <sylva/lexer.h>
+
 int main(int argc, char **argv) {
-  SLexerRef lexer = SLexerCreate(SStringCreate("class SomeClass"));
-  printf("Hello %s ! %p", "world", lexer);
+  SLexerRef lexer = SLexerCreate(SStringCreate("    \t#aaa bbb ccc ddd"));
+  for (;;) {
+    SLexerError err = SLexerErrorOK;
+    SIndex errIndex = 0;
+    STokenRef token = SLexerGetNextToken(lexer, &err, &errIndex);
+    int end = token == NULL || token->type == STokenEOF;
+    STokenPrint(token);
+    STokenDestroy(token);
+    if (end) {
+      break;
+    }
+  }
   SLexerDestroy(lexer);
   return 0;
 }

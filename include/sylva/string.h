@@ -13,18 +13,20 @@
 
 __CPP_DECL_START
 
-typedef unsigned long SStringIndex;
-
 typedef struct {
   char *string;
-  SStringIndex length;
+  SIndex length;
 } SString;
 
-typedef SString* SStringRef;
+typedef SString *SStringRef;
 
 SYLVA_EXPORT SStringRef SStringCreate(char *string);
 
-SYLVA_EXPORT SStringRef SStringCreateWithLength(char *string, int length);
+SYLVA_EXPORT SStringRef SStringCreateIL(char *string, SIndex index, SIndex length);
+
+SYLVA_EXPORT SStringRef SStringCreateL(char *string, SIndex length);
+
+SYLVA_EXPORT SIndex SStringSeekNoBlank(SStringRef string, SIndex start);
 
 SYLVA_EXPORT void SStringDestroy(SStringRef string);
 

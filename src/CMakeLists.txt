@@ -9,7 +9,7 @@ set(SYLVA_LIB_SRCS
 
     sylva/lexer.c
     sylva/token.c
-    sylva/string.c)
+    sylva/string.c sylva/parser.c)
 
 set(SYLVA_RT_SRCS
 

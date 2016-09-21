@@ -13,6 +13,8 @@
 
 #include <ctype.h>
 #include <stdlib.h>
+#include <sylva/lexer.h>
+#include <sylva/string.h>
 
 SLexerRef SLexerCreate(SStringRef source) {
   SLexerRef lexer = malloc(sizeof(SLexer));
@@ -21,40 +23,37 @@ SLexerRef SLexerCreate(SStringRef source) {
   return lexer;
 };
 
-STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SStringIndex *errIndex) {
-  //  Assign local variables
-  SStringIndex idx  = lexer->index;
-  char*        src  = lexer->source->string;
-  SStringIndex max  = lexer->source->length;
-  
+STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex) {
+  SIndex idx = lexer->index;
+
   //  Check EOF
-  if (idx >= max) return STokenCreate(STokenEOF);
-  
-  //  Result
-  STokenRef token;
-  
-  //  The Grand Loop
-  for (;;) {
-    //  Skipping Leading Blanks
-    if (isblank(src[idx])) {
-      goto end;
-    } else {
-    }
-    
-  end:
-    //  try move idx to next
-    if (idx + 1 >= max) {
-      token = STokenCreate(STokenEOF);
-      break;
-    } else {
-      idx ++;
-    }
+  if (idx >= lexer->source->length) {
+    return STokenCreate(STokenEOF);
   }
-  
-  //  Update index and return
-  lexer->index = idx;
-  
-  return token;
+
+  //  Seek first non blank
+  idx = SStringSeekNoBlank(lexer->source, lexer->index);
+  if (idx == SIndexNotFound) {
+    if (err) {
+      *err = SLexerErrorOK;
+    }
+    lexer->index = lexer->source->length;
+    return STokenCreate(STokenEOF);
+  }
+
+  //  Get first letter
+  char first = lexer->source->string[idx];
+
+  //  Check comment
+  if (first == '#') {
+    if (err) {
+      *err = SLexerErrorOK;
+    }
+    lexer->index = lexer->source->length;
+    return STokenCreateStringIL(STokenComment, lexer->source->string, idx + 1, lexer->source->length - idx - 1);
+  }
+
+  return STokenCreate(STokenEOF);
 }
 
 void SLexerReset(SLexerRef lexer) {

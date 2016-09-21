@@ -18,11 +18,12 @@ typedef enum {
   SLexerErrorOK,
   SLexerErrorInvalidSequence,
   SLexerErrorInvalidId,
+  SLexerErrorFoundNewLine, // new line (\r or \n) should be handled by SParser not SLexer
 } SLexerError;
 
 typedef struct {
   SStringRef source;
-  SStringIndex index;
+  SIndex index;
 } SLexer;
 
 typedef SLexer *SLexerRef;
@@ -40,7 +41,7 @@ SYLVA_EXPORT SLexerRef SLexerCreate(SStringRef source);
  @param lexer the lexer in use
  @return token next token
  */
-SYLVA_EXPORT STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SStringIndex *errIndex);
+SYLVA_EXPORT STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex);
 
 /**
  Reset the SLexer to initial state

@@ -9,6 +9,7 @@
 #ifndef _SYLVA_TOKEN_H_
 #define _SYLVA_TOKEN_H_
 
+#include "sylva/platform.h"
 #include "sylva/string.h"
 
 __CPP_DECL_START
@@ -19,7 +20,7 @@ typedef enum {
 
   //////////////// Common ///////////////
 
-  /*
+  /**
    sharp started comment
    */
       STokenComment,
@@ -310,9 +311,9 @@ typedef enum {
 } STokenType;
 
 typedef union {
-  SLexInteger integerValue;
-  SLexFloat floatValue;
-  SLexString stringValue;
+  SInteger integerValue;
+  SFloat floatValue;
+  SStringRef stringValue;
 } SSemaValue;
 
 typedef enum {
@@ -356,19 +357,21 @@ SYLVA_EXPORT STokenRef STokenCreate(STokenType type);
 /**
  Create a STokenRef with Integer sema
  */
-SYLVA_EXPORT STokenRef STokenCreateInteger(STokenType type, SLexInteger integer);
+SYLVA_EXPORT STokenRef STokenCreateInteger(STokenType type, SInteger integer);
 
 /**
  Create a STokenRef with Float sema
  */
-SYLVA_EXPORT STokenRef STokenCreateFloat(STokenType type, SLexFloat f);
+SYLVA_EXPORT STokenRef STokenCreateFloat(STokenType type, SFloat f);
 
 /**
  Create a STokenRef with SString sema
  */
 SYLVA_EXPORT STokenRef STokenCreateString(STokenType type, char *string);
 
-SYLVA_EXPORT STokenRef STokenCreateStringWithLength(STokenType type, char *string, int length);
+SYLVA_EXPORT STokenRef STokenCreateStringL(STokenType type, char *string, SIndex length);
+
+SYLVA_EXPORT STokenRef STokenCreateStringIL(STokenType type, char *string, SIndex start, SIndex length);
 
 /**
  Destroy a STokenRef, free SString if existed

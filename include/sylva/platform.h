@@ -9,6 +9,8 @@
 #ifndef _SYLVA_PLATFORM_H_
 #define _SYLVA_PLATFORM_H_
 
+#import <limits.h>
+
 /////////////    OS    ///////////////////////////
 
 #ifdef __APPLE__
@@ -39,11 +41,10 @@
 
 //////////// Numeric Types //////////////////////
 
-#define SInteger long
-#define SFloat double
-
-#define SLexInteger SInteger
-#define SLexFloat   SFloat
-#define SLexString  SStringRef
+typedef long SInteger;
+typedef double SFloat;
+typedef unsigned long SIndex;
+#define SIndexMax ULONG_MAX
+#define SIndexNotFound SIndexMax
 
 #endif // _SYLVA_PLATFORM_H_

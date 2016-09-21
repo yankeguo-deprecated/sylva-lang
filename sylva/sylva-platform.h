@@ -17,12 +17,21 @@
   #endif
 #endif
 
+////////////   EXPORT      //////////////////////
+
+#ifdef __SYLVA_SOURCE__
+  #define SYLVA_EXPORT
+#else
+  #define SYLVA_EXPORT extern
+#endif
+
 //////////// Numeric Types //////////////////////
 
-#define sylva_lex_integer   long
+#define SInteger long
+#define SFloat double
 
-#define sylva_lex_float		double
-
-#define sylva_lex_string	char*
+#define SLexInteger SInteger
+#define SLexFloat   SFloat
+#define SLexString  SStringRef
 
 #endif /* sylva_platform_h */

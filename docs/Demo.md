@@ -2,12 +2,6 @@ Demo of Sylva Language
 ---
 
 ```
-
-# Import symbols from another file
-
-import          "../folder/file"          # default import will expose imported symbols to file who import this file
-internal import "../folder/another_file"  # internal import will not expose imported symbols to file who import this file
-
 module PrintNameSupport                 # module is a bunch of functions, static or instance
 
   require static func name              # `require` keyword declares a function included classes must implemented

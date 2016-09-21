@@ -11,9 +11,14 @@
 #include "sylva-lexer.h"
 
 int main(int argc, const char * argv[]) {
-  sylva_lexer_ref lexer = sylva_lexer_create(1000);
-  
-  // insert code here...
-  printf("Hello, World!%p\n", lexer);
+  SStringRef source = SStringCreate("class SomeClass");
+  SLexerRef lexer   = SLexerCreate(source);
+  for (;;) {
+    STokenRef token = SLexerGetNextToken(lexer);
+    STokenPrint(token);
+    if (token->type == STokenEOF) {
+      break;
+    }
+  }
   return 0;
 }

@@ -6,30 +6,29 @@
 //  Copyright © 2016年 IslandZERO. All rights reserved.
 //
 
-#include "sylva.h"
+#define __SYLVA_SOURCE__
 #include "sylva-lexer.h"
 
 #include <stdlib.h>
-#include <string.h>
 
-sylva_lexer_ref sylva_lexer_create(int tokens_len) {
-	sylva_lexer_ref lexer = malloc(sizeof(sylva_lexer));
-	lexer->tokens_count = 0;
-	lexer->tokens_capacity = tokens_len;
-	lexer->tokens = malloc(sizeof(sylva_token) * tokens_len);
-	return lexer;
+SLexerRef SLexerCreate(SStringRef source) {
+  SLexerRef lexer = malloc(sizeof(SLexer));
+  lexer->source = source;
+  lexer->position = 0;
+  return lexer;
+};
+
+STokenRef SLexerGetNextToken(SLexerRef lexer) {
+  if (lexer->position >= lexer->source->length) {
+    return STokenCreate(STokenEOF);
+  }
+  return STokenCreate(STokenEOF);
 }
 
-sylva_lexer_error sylva_lexer_scan(sylva_lexer_ref lexer, char * source, int source_len, int * err_pos) {
-	return sylva_lexer_error_ok;
+void SLexerReset(SLexerRef lexer) {
+  lexer->position = 0;
 }
 
-void sylva_lexer_clear(sylva_lexer_ref lexer) {
-	memset(lexer->tokens, 0, sizeof(sylva_token) * lexer->tokens_count);
-	lexer->tokens_count = 0;
-}
-
-void sylva_lexer_destroy(sylva_lexer_ref lexer) {
-	free(lexer->tokens);
-	free(lexer);
+void SLexerDestroy(SLexerRef lexer) {
+  free(lexer);
 }

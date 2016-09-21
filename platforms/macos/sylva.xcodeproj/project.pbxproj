@@ -9,10 +9,26 @@
 /* Begin PBXBuildFile section */
 		6934942D1D9155AF00085136 /* sylva-lexer.c in Sources */ = {isa = PBXBuildFile; fileRef = 69437A291D91118B00A6C4FD /* sylva-lexer.c */; };
 		69437A0D1D910BC100A6C4FD /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 69437A0C1D910BC100A6C4FD /* main.c */; };
-		69437A271D9110A000A6C4FD /* libsylva.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69437A151D910C0500A6C4FD /* libsylva.a */; };
 		69437A2B1D91118B00A6C4FD /* sylva-lexer.c in Sources */ = {isa = PBXBuildFile; fileRef = 69437A291D91118B00A6C4FD /* sylva-lexer.c */; };
 		69437A2C1D91118B00A6C4FD /* sylva-lexer.h in Headers */ = {isa = PBXBuildFile; fileRef = 69437A2A1D91118B00A6C4FD /* sylva-lexer.h */; };
+		6991C0F21D925EAB00027ED9 /* libsylva.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 69437A1D1D910C2900A6C4FD /* libsylva.dylib */; };
+		69BEEBCA1D922F900083235F /* sylva-string.c in Sources */ = {isa = PBXBuildFile; fileRef = 69BEEBC81D922F900083235F /* sylva-string.c */; };
+		69BEEBCB1D922F900083235F /* sylva-string.h in Headers */ = {isa = PBXBuildFile; fileRef = 69BEEBC91D922F900083235F /* sylva-string.h */; };
+		69BEEBCE1D923CB10083235F /* sylva-token.c in Sources */ = {isa = PBXBuildFile; fileRef = 69BEEBCC1D923CB10083235F /* sylva-token.c */; };
+		69BEEBCF1D923CB10083235F /* sylva-token.h in Headers */ = {isa = PBXBuildFile; fileRef = 69BEEBCD1D923CB10083235F /* sylva-token.h */; };
+		69BEEBD01D923D210083235F /* sylva-string.c in Sources */ = {isa = PBXBuildFile; fileRef = 69BEEBC81D922F900083235F /* sylva-string.c */; };
+		69BEEBD11D923D240083235F /* sylva-token.c in Sources */ = {isa = PBXBuildFile; fileRef = 69BEEBCC1D923CB10083235F /* sylva-token.c */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6991C0F01D925EA300027ED9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 694379F41D910B2200A6C4FD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 69437A1C1D910C2900A6C4FD;
+			remoteInfo = "sylva-dynamic";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		69437A081D910BC100A6C4FD /* CopyFiles */ = {
@@ -35,6 +51,10 @@
 		69437A261D910FEE00A6C4FD /* sylva-platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "sylva-platform.h"; sourceTree = "<group>"; };
 		69437A291D91118B00A6C4FD /* sylva-lexer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "sylva-lexer.c"; sourceTree = "<group>"; };
 		69437A2A1D91118B00A6C4FD /* sylva-lexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "sylva-lexer.h"; sourceTree = "<group>"; };
+		69BEEBC81D922F900083235F /* sylva-string.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "sylva-string.c"; sourceTree = "<group>"; };
+		69BEEBC91D922F900083235F /* sylva-string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "sylva-string.h"; sourceTree = "<group>"; };
+		69BEEBCC1D923CB10083235F /* sylva-token.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "sylva-token.c"; sourceTree = "<group>"; };
+		69BEEBCD1D923CB10083235F /* sylva-token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "sylva-token.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,7 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				69437A271D9110A000A6C4FD /* libsylva.a in Frameworks */,
+				6991C0F21D925EAB00027ED9 /* libsylva.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,6 +117,10 @@
 				69437A261D910FEE00A6C4FD /* sylva-platform.h */,
 				69437A291D91118B00A6C4FD /* sylva-lexer.c */,
 				69437A2A1D91118B00A6C4FD /* sylva-lexer.h */,
+				69BEEBC81D922F900083235F /* sylva-string.c */,
+				69BEEBC91D922F900083235F /* sylva-string.h */,
+				69BEEBCC1D923CB10083235F /* sylva-token.c */,
+				69BEEBCD1D923CB10083235F /* sylva-token.h */,
 			);
 			name = sylva;
 			path = ../../sylva;
@@ -109,7 +133,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				69BEEBCF1D923CB10083235F /* sylva-token.h in Headers */,
 				69437A2C1D91118B00A6C4FD /* sylva-lexer.h in Headers */,
+				69BEEBCB1D922F900083235F /* sylva-string.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,6 +160,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6991C0F11D925EA300027ED9 /* PBXTargetDependency */,
 			);
 			name = "sylva-cli";
 			productName = "sylva-cli";
@@ -232,6 +259,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				69BEEBCE1D923CB10083235F /* sylva-token.c in Sources */,
+				69BEEBCA1D922F900083235F /* sylva-string.c in Sources */,
 				69437A2B1D91118B00A6C4FD /* sylva-lexer.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -240,11 +269,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				69BEEBD11D923D240083235F /* sylva-token.c in Sources */,
+				69BEEBD01D923D210083235F /* sylva-string.c in Sources */,
 				6934942D1D9155AF00085136 /* sylva-lexer.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6991C0F11D925EA300027ED9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 69437A1C1D910C2900A6C4FD /* sylva-dynamic */;
+			targetProxy = 6991C0F01D925EA300027ED9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		69437A011D910B2200A6C4FD /* Debug */ = {

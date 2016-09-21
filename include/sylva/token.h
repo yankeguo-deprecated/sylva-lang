@@ -330,6 +330,12 @@ typedef enum {
  */
 SYLVA_EXPORT SSemaType STokenTypeGetSemaType(STokenType tokenType);
 
+/**
+ * Get the name of a STokenType
+ *
+ * @param tokenType STokenType
+ * @return name
+ */
 SYLVA_EXPORT char *const STokenTypeGetName(STokenType tokenType);
 
 typedef struct {

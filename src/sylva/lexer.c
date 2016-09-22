@@ -13,8 +13,9 @@
 
 #include <ctype.h>
 #include <stdlib.h>
-#include <sylva/lexer.h>
+#include <string.h>
 #include <sylva/string.h>
+#include <sylva/lexer.h>
 
 SLexerRef SLexerCreate(SStringRef source) {
   SLexerRef lexer = malloc(sizeof(SLexer));
@@ -44,13 +45,78 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
   //  Get first letter
   char first = lexer->source->string[idx];
 
-  //  Check comment
+  //  Sharp started (comment)
   if (first == '#') {
     if (err) {
       *err = SLexerErrorOK;
     }
     lexer->index = lexer->source->length;
     return STokenCreateStringIL(STokenComment, lexer->source->string, idx + 1, lexer->source->length - idx - 1);
+  }
+
+  //  Alphabet started
+  if (isalpha(first) || first == '_') {
+    SIndex endIdx = SStringSeekNoAlphaNumberUnderscore(lexer->source, idx);
+    if (endIdx == SIndexNotFound) {
+      endIdx = lexer->source->length;
+    }
+    SStringRef sema = SStringCreateIL(lexer->source->string, idx, endIdx - idx);
+    //  Check keywords
+    STokenRef token = NULL;
+    if (strcmp(sema->string, "class") == 0) {
+      token = STokenCreate(STokenClass);
+    } else if (strcmp(sema->string, "var") == 0) {
+      token = STokenCreate(STokenVar);
+    } else if (strcmp(sema->string, "end") == 0) {
+      token = STokenCreate(STokenEnd);
+    } else if (strcmp(sema->string, "module") == 0) {
+      token = STokenCreate(STokenModule);
+    } else if (strcmp(sema->string, "native") == 0) {
+      token = STokenCreate(STokenNative);
+    } else if (strcmp(sema->string, "require") == 0) {
+      token = STokenCreate(STokenRequire);
+    } else if (strcmp(sema->string, "include") == 0) {
+      token = STokenCreate(STokenInclude);
+    } else if (strcmp(sema->string, "static") == 0) {
+      token = STokenCreate(STokenStatic);
+    } else if (strcmp(sema->string, "func") == 0) {
+      token = STokenCreate(STokenFunc);
+    } else if (strcmp(sema->string, "super") == 0) {
+      token = STokenCreate(STokenSuper);
+    } else if (strcmp(sema->string, "self") == 0) {
+      token = STokenCreate(STokenSelf);
+    } else if (strcmp(sema->string, "nil") == 0) {
+      token = STokenCreate(STokenNil);
+    } else if (strcmp(sema->string, "true") == 0) {
+      token = STokenCreate(STokenTrue);
+    } else if (strcmp(sema->string, "false") == 0) {
+      token = STokenCreate(STokenFalse);
+    } else if (strcmp(sema->string, "if") == 0) {
+      token = STokenCreate(STokenIf);
+    } else if (strcmp(sema->string, "else") == 0) {
+      token = STokenCreate(STokenElse);
+    } else if (strcmp(sema->string, "unless") == 0) {
+      token = STokenCreate(STokenUnless);
+    } else if (strcmp(sema->string, "while") == 0) {
+      token = STokenCreate(STokenWhile);
+    } else if (strcmp(sema->string, "break") == 0) {
+      token = STokenCreate(STokenBreak);
+    } else if (strcmp(sema->string, "for") == 0) {
+      token = STokenCreate(STokenFor);
+    } else if (strcmp(sema->string, "In") == 0) {
+      token = STokenCreate(STokenIn);
+    } else if (strcmp(sema->string, "return") == 0) {
+      token = STokenCreate(STokenReturn);
+    } else {
+      //  No keyword found, make it ID
+      token = STokenCreateString(STokenId, sema->string);
+    }
+    SStringDestroy(sema);
+    if (err) {
+      *err = SLexerErrorOK;
+    }
+    lexer->index = endIdx;
+    return token;
   }
 
   return STokenCreate(STokenEOF);

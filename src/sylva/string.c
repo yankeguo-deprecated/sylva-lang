@@ -13,6 +13,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
+#include <sylva/string.h>
 
 SStringRef SStringCreateIL(char *string, SIndex index, SIndex length) {
   assert(index >= 0);
@@ -36,6 +37,24 @@ SStringRef SStringCreate(char *string) {
 SIndex SStringSeekNoBlank(SStringRef string, SIndex start) {
   for (SIndex i = start; i < string->length; i++) {
     if (!isblank(string->string[i])) {
+      return i;
+    }
+  }
+  return SIndexNotFound;
+}
+
+SIndex SStringSeekBlank(SStringRef string, SIndex start) {
+  for (SIndex i = start; i < string->length; i++) {
+    if (isblank(string->string[i])) {
+      return i;
+    }
+  }
+  return SIndexNotFound;
+}
+
+SIndex SStringSeekNoAlphaNumberUnderscore(SStringRef string, SIndex start) {
+  for (SIndex i = start; i < string->length; i++) {
+    if (!isalnum(string->string[i]) && string->string[i] != '_') {
       return i;
     }
   }

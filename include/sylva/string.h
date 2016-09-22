@@ -28,6 +28,10 @@ SYLVA_EXPORT SStringRef SStringCreateL(char *string, SIndex length);
 
 SYLVA_EXPORT SIndex SStringSeekNoBlank(SStringRef string, SIndex start);
 
+SYLVA_EXPORT SIndex SStringSeekBlank(SStringRef string, SIndex start);
+
+SYLVA_EXPORT SIndex SStringSeekNoAlphaNumberUnderscore(SStringRef string, SIndex start);
+
 SYLVA_EXPORT void SStringDestroy(SStringRef string);
 
 __CPP_DECL_END

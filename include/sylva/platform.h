@@ -9,7 +9,7 @@
 #ifndef _SYLVA_PLATFORM_H_
 #define _SYLVA_PLATFORM_H_
 
-#import <limits.h>
+#include <limits.h>
 
 /////////////    OS    ///////////////////////////
 

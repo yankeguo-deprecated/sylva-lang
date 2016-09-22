@@ -13,7 +13,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
-#include <sylva/string.h>
 
 SStringRef SStringCreateIL(char *string, SIndex index, SIndex length) {
   assert(index >= 0);

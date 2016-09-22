@@ -77,17 +77,17 @@ typedef enum {
    */
       STokenRequire,
 
-  /*
+  /**
    keyword `include` for module integration
    */
       STokenInclude,
 
-  /*
+  /**
    keyword `static` for static variables / methods
    */
       STokenStatic,
 
-  /*
+  /**
    keyword `func` for method declaration
    */
       STokenFunc,
@@ -244,14 +244,12 @@ typedef enum {
   /**
    mark `()`
    */
-      STokenParenL,
-  STokenParenR,
+      STokenParenL, STokenParenR,
 
   /**
    mark `[]`
    */
-      STokenBracketL,
-  STokenBracketR,
+      STokenBracketL, STokenBracketR,
 
   /**
    mark `{}`

@@ -12,7 +12,7 @@
 #include <sylva/lexer.h>
 
 int main(int argc, char **argv) {
-  SLexerRef lexer = SLexerCreate(SStringCreate("class SomeClass var aa var bb static func aaaa # What the fuck is this"));
+  SLexerRef lexer = SLexerCreate(SStringCreate("someValue->someVariable.call(a + b << c)"));
   for (;;) {
     SLexerError err = SLexerErrorOK;
     SIndex errIndex = 0;

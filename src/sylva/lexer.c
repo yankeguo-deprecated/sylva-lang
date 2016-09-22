@@ -7,15 +7,12 @@
 //
 
 #define __SYLVA_SOURCE__
-
 #include "sylva/string.h"
 #include "sylva/lexer.h"
 
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sylva/string.h>
-#include <sylva/lexer.h>
 
 SLexerRef SLexerCreate(SStringRef source) {
   SLexerRef lexer = malloc(sizeof(SLexer));
@@ -103,7 +100,7 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
       token = STokenCreate(STokenBreak);
     } else if (strcmp(sema->string, "for") == 0) {
       token = STokenCreate(STokenFor);
-    } else if (strcmp(sema->string, "In") == 0) {
+    } else if (strcmp(sema->string, "in") == 0) {
       token = STokenCreate(STokenIn);
     } else if (strcmp(sema->string, "return") == 0) {
       token = STokenCreate(STokenReturn);
@@ -118,6 +115,175 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
     lexer->index = endIdx;
     return token;
   }
+
+  //  Marks and operators
+  {
+    SIndex nextIdx = 0, endIdx = idx;
+    STokenRef token = NULL;
+    switch (first) {
+    case ':': {
+      endIdx += 1;
+      token = STokenCreate(STokenColon);
+    }
+      break;
+    case ';': {
+      endIdx += 1;
+      token = STokenCreate(STokenSemicolon);
+    }
+      break;
+    case '+': {
+      endIdx += 1;
+      token = STokenCreate(STokenPlus);
+    }
+      break;
+    case '-': {
+      endIdx += 1;
+      nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
+      if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '>') {
+        endIdx = nextIdx + 1;
+        token = STokenCreate(STokenArrow);
+      } else {
+        token = STokenCreate(STokenMinus);
+      }
+    }
+      break;
+    case '*': {
+      endIdx += 1;
+      token = STokenCreate(STokenMultiply);
+    }
+      break;
+    case '/': {
+      endIdx += 1;
+      token = STokenCreate(STokenDivide);
+    }
+      break;
+    case '%': {
+      endIdx += 1;
+      token = STokenCreate(STokenMod);
+    }
+      break;
+    case '=': {
+      endIdx += 1;
+      nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
+      if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '=') {
+        endIdx = nextIdx + 1;
+        token = STokenCreate(STokenEqTo);
+      } else {
+        token = STokenCreate(STokenEq);
+      }
+    }
+      break;
+    case '<': {
+      endIdx += 1;
+      nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
+      if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '<') {
+        endIdx = nextIdx + 1;
+        token = STokenCreate(STokenBitShift);
+      } else if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '=') {
+        endIdx = nextIdx + 1;
+        token = STokenCreate(STokenLtEq);
+      } else {
+        token = STokenCreate(STokenLt);
+      }
+    }
+      break;
+    case '>': {
+      endIdx += 1;
+      nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
+      if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '>') {
+        endIdx = nextIdx + 1;
+        token = STokenCreate(STokenBitUnshift);
+      } else if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '=') {
+        endIdx = nextIdx + 1;
+        token = STokenCreate(STokenGtEq);
+      } else {
+        token = STokenCreate(STokenGt);
+      }
+    }
+      break;
+    case '!': {
+      endIdx += 1;
+      nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
+      if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '=') {
+        endIdx = nextIdx + 1;
+        token = STokenCreate(STokenNotEq);
+      } else {
+        token = STokenCreate(STokenNot);
+      }
+    }
+      break;
+    case '|': {
+      endIdx += 1;
+      nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
+      if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '|') {
+        endIdx = nextIdx + 1;
+        token = STokenCreate(STokenOr);
+      } else {
+        token = STokenCreate(STokenBitOr);
+      }
+    }
+      break;
+    case '&': {
+      endIdx += 1;
+      nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
+      if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '&') {
+        endIdx = nextIdx + 1;
+        token = STokenCreate(STokenAnd);
+      } else {
+        token = STokenCreate(STokenBitAnd);
+      }
+    }
+      break;
+    case '?': {
+      endIdx += 1;
+      token = STokenCreate(STokenQuestion);
+    }
+      break;
+    case '(': {
+      endIdx += 1;
+      token = STokenCreate(STokenParenL);
+    }
+      break;
+    case ')': {
+      endIdx += 1;
+      token = STokenCreate(STokenParenR);
+    }
+      break;
+    case '[': {
+      endIdx += 1;
+      token = STokenCreate(STokenBracketL);
+    }
+      break;
+    case ']': {
+      endIdx += 1;
+      token = STokenCreate(STokenBracketR);
+    }
+      break;
+    case '{': {
+      endIdx += 1;
+      token = STokenCreate(STokenBraceL);
+    }
+      break;
+    case '}': {
+      endIdx += 1;
+      token = STokenCreate(STokenBraceR);
+    }
+      break;
+    case '.': {
+      endIdx += 1;
+      token = STokenCreate(STokenDot);
+    }
+      break;
+    default:break;
+    }
+
+    if (token != NULL) {
+      lexer->index = endIdx;
+      return token;
+    }
+  }
+
+  //  Check operators
 
   return STokenCreate(STokenEOF);
 }

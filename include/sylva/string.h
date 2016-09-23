@@ -20,19 +20,19 @@ typedef struct {
 
 typedef SString *SStringRef;
 
-SYLVA_EXPORT SStringRef SStringCreate(char *string);
+SYLVA_EXTERN SStringRef SStringCreate(char *string);
 
-SYLVA_EXPORT SStringRef SStringCreateIL(char *string, SIndex index, SIndex length);
+SYLVA_EXTERN SStringRef SStringCreateIL(char *string, SIndex index, SIndex length);
 
-SYLVA_EXPORT SStringRef SStringCreateL(char *string, SIndex length);
+SYLVA_EXTERN SStringRef SStringCreateL(char *string, SIndex length);
 
-SYLVA_EXPORT SIndex SStringSeekNoBlank(SStringRef string, SIndex start);
+SYLVA_EXTERN SIndex SStringSeekNoBlank(SStringRef string, SIndex start);
 
-SYLVA_EXPORT SIndex SStringSeekBlank(SStringRef string, SIndex start);
+SYLVA_EXTERN SIndex SStringSeekBlank(SStringRef string, SIndex start);
 
-SYLVA_EXPORT SIndex SStringSeekNoAlphaNumberUnderscore(SStringRef string, SIndex start);
+SYLVA_EXTERN SIndex SStringSeekNoAlphaNumberUnderscore(SStringRef string, SIndex start);
 
-SYLVA_EXPORT void SStringDestroy(SStringRef string);
+SYLVA_EXTERN void SStringDestroy(SStringRef string);
 
 __CPP_DECL_END
 

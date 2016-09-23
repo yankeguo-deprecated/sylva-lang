@@ -34,9 +34,9 @@
 ////////////   EXPORT      //////////////////////
 
 #ifdef __SYLVA_SOURCE__
-  #define SYLVA_EXPORT
+  #define SYLVA_EXTERN
 #else
-  #define SYLVA_EXPORT extern
+  #define SYLVA_EXTERN extern
 #endif
 
 //////////// Numeric Types //////////////////////

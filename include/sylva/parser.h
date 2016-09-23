@@ -16,9 +16,9 @@ typedef struct {
 
 typedef SParser *SParserRef;
 
-SYLVA_EXPORT SParserRef SParserCreate(char *src);
+SYLVA_EXTERN SParserRef SParserCreate(char *src);
 
-SYLVA_EXPORT void SParserDestroy(SParserRef parser);
+SYLVA_EXTERN void SParserDestroy(SParserRef parser);
 
 __CPP_DECL_END
 

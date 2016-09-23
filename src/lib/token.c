@@ -29,7 +29,7 @@ SSemaType STokenTypeGetSemaType(STokenType tokenType) {
   return SSemaNone;
 }
 
-SYLVA_EXPORT char *const STokenTypeGetName(STokenType tokenType) {
+SYLVA_EXTERN char *const STokenTypeGetName(STokenType tokenType) {
   switch (tokenType) {
   case STokenComment:return "COMMENT";
   case STokenEOF:return "EOF";
@@ -95,13 +95,13 @@ SYLVA_EXPORT char *const STokenTypeGetName(STokenType tokenType) {
   }
 }
 
-SYLVA_EXPORT void STokenPrint(FILE *stream, STokenRef token) {
+SYLVA_EXTERN void STokenPrint(FILE *stream, STokenRef token) {
   switch (token->semaType) {
   case SSemaNone:fprintf(stream, "<%s>", STokenTypeGetName(token->type));
     break;
-  case SSemaInteger:fprintf(stream, "<%s,%ld>", STokenTypeGetName(token->type), token->value.integerValue);
-  case SSemaFloat:fprintf(stream, "<%s,%lf>", STokenTypeGetName(token->type), token->value.floatValue);
-  case SSemaString:fprintf(stream, "<%s,%s>", STokenTypeGetName(token->type), token->value.stringValue->string);
+  case SSemaInteger:fprintf(stream, "<%s,%ld>", STokenTypeGetName(token->type), token->integerValue);
+  case SSemaFloat:fprintf(stream, "<%s,%lf>", STokenTypeGetName(token->type), token->floatValue);
+  case SSemaString:fprintf(stream, "<%s,%s>", STokenTypeGetName(token->type), token->stringValue->string);
   default:break;
   }
 }
@@ -112,7 +112,7 @@ STokenRef STokenCreate(STokenType type) {
   STokenRef token = malloc(sizeof(SToken));
   token->type = type;
   token->semaType = SSemaNone;
-  token->value.integerValue = 0;
+  token->integerValue = 0;
   return token;
 }
 
@@ -122,7 +122,7 @@ STokenRef STokenCreateInteger(STokenType type, SInteger integer) {
   STokenRef token = malloc(sizeof(SToken));
   token->type = type;
   token->semaType = SSemaInteger;
-  token->value.integerValue = integer;
+  token->integerValue = integer;
   return token;
 }
 
@@ -132,7 +132,7 @@ STokenRef STokenCreateFloat(STokenType type, SFloat f) {
   STokenRef token = malloc(sizeof(SToken));
   token->type = type;
   token->semaType = SSemaFloat;
-  token->value.floatValue = f;
+  token->floatValue = f;
   return token;
 }
 
@@ -142,7 +142,7 @@ STokenRef STokenCreateStringIL(STokenType type, char *string, SIndex start, SInd
   STokenRef token = malloc(sizeof(SToken));
   token->type = type;
   token->semaType = SSemaString;
-  token->value.stringValue = SStringCreateIL(string, start, length);
+  token->stringValue = SStringCreateIL(string, start, length);
   return token;
 }
 
@@ -156,7 +156,7 @@ STokenRef STokenCreateString(STokenType type, char *string) {
 
 void STokenDestroy(STokenRef token) {
   if (token->semaType == SSemaString) {
-    SStringDestroy(token->value.stringValue);
+    SStringDestroy(token->stringValue);
   }
   free(token);
 }

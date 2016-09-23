@@ -261,8 +261,7 @@ typedef enum {
   /**
    mark `{}`
    */
-      STokenBraceL,
-  STokenBraceR,
+      STokenBraceL, STokenBraceR,
 
   //////////////// Flow  /////////////////
 
@@ -315,12 +314,6 @@ typedef enum {
 
 } STokenType;
 
-typedef union {
-  SInteger integerValue;
-  SFloat floatValue;
-  SStringRef stringValue;
-} SSemaValue;
-
 typedef enum {
   SSemaNone,
   SSemaInteger,
@@ -334,7 +327,7 @@ typedef enum {
  @param tokenType STokenType
  @return SSemaType
  */
-SYLVA_EXPORT SSemaType STokenTypeGetSemaType(STokenType tokenType);
+SYLVA_EXTERN SSemaType STokenTypeGetSemaType(STokenType tokenType);
 
 /**
  * Get the name of a STokenType
@@ -342,46 +335,50 @@ SYLVA_EXPORT SSemaType STokenTypeGetSemaType(STokenType tokenType);
  * @param tokenType STokenType
  * @return name
  */
-SYLVA_EXPORT char *const STokenTypeGetName(STokenType tokenType);
+SYLVA_EXTERN char *const STokenTypeGetName(STokenType tokenType);
 
 typedef struct {
-  SSemaValue value;
+  union {
+    SInteger integerValue;
+    SFloat floatValue;
+    SStringRef stringValue;
+  };
   SSemaType semaType;
   STokenType type;
 } SToken;
 
 typedef SToken *STokenRef;
 
-SYLVA_EXPORT void STokenPrint(FILE *stream, STokenRef token);
+SYLVA_EXTERN void STokenPrint(FILE *stream, STokenRef token);
 
 /**
  Create a STokenRef with None sema
  */
-SYLVA_EXPORT STokenRef STokenCreate(STokenType type);
+SYLVA_EXTERN STokenRef STokenCreate(STokenType type);
 
 /**
  Create a STokenRef with Integer sema
  */
-SYLVA_EXPORT STokenRef STokenCreateInteger(STokenType type, SInteger integer);
+SYLVA_EXTERN STokenRef STokenCreateInteger(STokenType type, SInteger integer);
 
 /**
  Create a STokenRef with Float sema
  */
-SYLVA_EXPORT STokenRef STokenCreateFloat(STokenType type, SFloat f);
+SYLVA_EXTERN STokenRef STokenCreateFloat(STokenType type, SFloat f);
 
 /**
  Create a STokenRef with SString sema
  */
-SYLVA_EXPORT STokenRef STokenCreateString(STokenType type, char *string);
+SYLVA_EXTERN STokenRef STokenCreateString(STokenType type, char *string);
 
-SYLVA_EXPORT STokenRef STokenCreateStringL(STokenType type, char *string, SIndex length);
+SYLVA_EXTERN STokenRef STokenCreateStringL(STokenType type, char *string, SIndex length);
 
-SYLVA_EXPORT STokenRef STokenCreateStringIL(STokenType type, char *string, SIndex start, SIndex length);
+SYLVA_EXTERN STokenRef STokenCreateStringIL(STokenType type, char *string, SIndex start, SIndex length);
 
 /**
  Destroy a STokenRef, free SString if existed
  */
-SYLVA_EXPORT void STokenDestroy(STokenRef token);
+SYLVA_EXTERN void STokenDestroy(STokenRef token);
 
 __CPP_DECL_END
 

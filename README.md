@@ -1,3 +1,4 @@
+[![travis-ci status](https://travis-ci.org/IslandZero/sylva-lang.svg?branch=master)](https://travis-ci.org/IslandZero/sylva-lang)
 # sylva-lang
 
 Sylva is a simple yet powerful object-oriented programming language.
@@ -37,3 +38,8 @@ bypass C code, use LLVM directly
 # Grammar
 
 See `docs` folder
+
+# License
+
+Sylva is licensed under `MIT License`, see [LICENSE](LICENSE) for more.
+

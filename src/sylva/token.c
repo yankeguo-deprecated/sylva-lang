@@ -94,13 +94,13 @@ SYLVA_EXPORT char *const STokenTypeGetName(STokenType tokenType) {
   }
 }
 
-SYLVA_EXPORT void STokenPrint(STokenRef token) {
+SYLVA_EXPORT void STokenPrint(FILE *stream, STokenRef token) {
   switch (token->semaType) {
-  case SSemaNone:printf("<%s>", STokenTypeGetName(token->type));
+  case SSemaNone:fprintf(stream, "<%s>", STokenTypeGetName(token->type));
     break;
-  case SSemaInteger:printf("<%s,%ld>", STokenTypeGetName(token->type), token->value.integerValue);
-  case SSemaFloat:printf("<%s,%lf>", STokenTypeGetName(token->type), token->value.floatValue);
-  case SSemaString:printf("<%s,%s>", STokenTypeGetName(token->type), token->value.stringValue->string);
+  case SSemaInteger:fprintf(stream, "<%s,%ld>", STokenTypeGetName(token->type), token->value.integerValue);
+  case SSemaFloat:fprintf(stream, "<%s,%lf>", STokenTypeGetName(token->type), token->value.floatValue);
+  case SSemaString:fprintf(stream, "<%s,%s>", STokenTypeGetName(token->type), token->value.stringValue->string);
   default:break;
   }
 }

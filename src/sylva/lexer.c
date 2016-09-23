@@ -13,6 +13,17 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sylva/lexer.h>
+#include <sylva/string.h>
+
+char *const SLexerErrorGetName(SLexerError error) {
+  switch (error) {
+  case SLexerErrorInvalidId:return "invalid identifier";
+  case SLexerErrorInvalidSequence: return "invalid sequence";
+  case SLexerErrorOK:
+  default:return "ok";
+  }
+}
 
 SLexerRef SLexerCreate(SStringRef source) {
   SLexerRef lexer = malloc(sizeof(SLexer));
@@ -41,6 +52,19 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
 
   //  Get first letter
   char first = lexer->source->string[idx];
+
+  //  Check New Line
+  if (first == '\n') {
+    lexer->index = idx + 1;
+    return STokenCreate(STokenNewLine);
+  }
+
+  if (first == '\r') {
+    if (lexer->source->length > idx + 1 && lexer->source->string[idx + 1] == '\n') {
+      lexer->index = idx + 2;
+      return STokenCreate(STokenNewLine);
+    }
+  }
 
   //  Sharp started (comment)
   if (first == '#') {
@@ -283,9 +307,12 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
     }
   }
 
-  //  Check operators
+  if (err)
+    *err = SLexerErrorInvalidSequence;
+  if (errIndex)
+    *errIndex = idx;
 
-  return STokenCreate(STokenEOF);
+  return NULL;
 }
 
 void SLexerReset(SLexerRef lexer) {

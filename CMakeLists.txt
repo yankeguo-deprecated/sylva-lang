@@ -1,8 +1,9 @@
-project(sylva)
-cmake_minimum_required(VERSION 3.6)
+PROJECT(sylva)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.6)
+ENABLE_TESTING()
 
-include_directories(
+INCLUDE_DIRECTORIES(
     ${PROJECT_SOURCE_DIR}/include
 )
 
-add_subdirectory(src)
+ADD_SUBDIRECTORY(src)

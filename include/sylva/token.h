@@ -12,6 +12,8 @@
 #include "sylva/platform.h"
 #include "sylva/string.h"
 
+#include <stdio.h>
+
 __CPP_DECL_START
 
 typedef enum {
@@ -345,7 +347,7 @@ typedef struct {
 
 typedef SToken *STokenRef;
 
-SYLVA_EXPORT void STokenPrint(STokenRef token);
+SYLVA_EXPORT void STokenPrint(FILE *stream, STokenRef token);
 
 /**
  Create a STokenRef with None sema

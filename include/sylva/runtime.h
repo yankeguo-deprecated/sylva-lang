@@ -5,11 +5,19 @@
 #ifndef _SYLVA_RUNTIME_H_
 #define _SYLVA_RUNTIME_H_
 
+#include "sylva/platform.h"
+
 ///////////////// Primary Types  //////////////////
 
-typedef unsigned long sylva_integer;
+typedef long sylva_integer;
+typedef unsigned long sylva_index;
 typedef double sylva_float;
 typedef int sylva_boolean;
+
+enum {
+  sylva_false = 0,
+  sylva_true = 1,
+};
 
 ///////////// Module/Class/Object ////////////////
 
@@ -60,8 +68,42 @@ typedef struct {
 
 //////////////// Func  /////////////////////////
 
-sylva_value (*sylva_func)(sylva_value, ...);
+typedef sylva_value (*sylva_func)(sylva_value, ...);
 
-typedef sylva_integer sylva_func_id;
+typedef sylva_index sylva_func_id;
+
+/**
+ * sylva_func_list stores a sylva_func_id to sylva_func map
+ *
+ * In an ideal situation, sylva_func_list should be initialized literally
+ */
+typedef struct {
+  sylva_index capacity;
+  sylva_func_id *func_ids;
+  sylva_func *funcs;
+} sylva_func_list;
+
+SYLVA_EXPORT sylva_func sylva_func_list_get(sylva_func_list list, sylva_func_id func_id);
+
+/**
+ * Check whether a sylva_func_id existed in a sylva_func_list, but the sylva_func mapped maybe NULL
+ *
+ * @param list sylva_func_list
+ * @param func_id sylva_func_id
+ * @return sylva_true or sylva_false
+ */
+SYLVA_EXPORT sylva_boolean sylva_func_list_check(sylva_func_list list, sylva_func_id func_id);
+
+/**
+ * Set a sylva_func to sylva_func_id, a NULL sylva_func will not remove sylva_func_id from sylva_func_list
+ *
+ * @param list sylva_func_list
+ * @param func_id sylva_func_id
+ * @param func sylva_func or NULL
+ * @return NULL if out of capacity, func if succeeded
+ */
+SYLVA_EXPORT sylva_func sylva_func_list_set(sylva_func_list list, sylva_func_id func_id, sylva_func func);
+
+///////////////////// FuncId Registry /////////////////
 
 #endif // _SYLVA_RUNTIME_H_

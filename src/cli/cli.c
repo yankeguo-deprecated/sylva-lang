@@ -7,6 +7,7 @@
 //
 
 #include <sylva/platform.h>
+#include <sylva/runtime.h>
 #include <sylva/token.h>
 #include <sylva/lexer.h>
 
@@ -19,11 +20,6 @@ typedef enum {
   SCLIExitBadCommand = 2,
   SCLIExitBadArguments = 3,
 } SCLIExitCode;
-
-typedef enum {
-  SCLIScan,
-  SCLICompile,
-} SCLICommand;
 
 static void SCLIPrintUsageAndExit(char *binName, SCLIExitCode code) {
   if (code == SCLIExitBadCommand) {
@@ -87,7 +83,6 @@ static void SCLIScanFile(char *fileName) {
 }
 
 int main(int argc, char **argv) {
-  SCLICommand mode;
   char *binName = argv[0];
 
   if (argc >= 2) {

@@ -92,7 +92,7 @@ SYLVA_EXPORT sylva_func sylva_func_list_get(sylva_func_list list, sylva_func_id 
  * @param func_id sylva_func_id
  * @return sylva_true or sylva_false
  */
-SYLVA_EXPORT sylva_boolean sylva_func_list_check(sylva_func_list list, sylva_func_id func_id);
+SYLVA_EXPORT sylva_boolean sylva_func_list_exists(sylva_func_list list, sylva_func_id func_id);
 
 /**
  * Set a sylva_func to sylva_func_id, a NULL sylva_func will not remove sylva_func_id from sylva_func_list

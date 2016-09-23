@@ -19,25 +19,38 @@ enum {
   sylva_true = 1,
 };
 
-///////////// Module/Class/Object ////////////////
+///////////// Module/Class/Object/Value ////////////////
 
-typedef struct {
-  int dummy;
-} sylva_module;
+typedef struct sylva_module_t sylva_module;
+typedef struct sylva_class_t sylva_class;
+typedef struct sylva_object_t sylva_object;
+typedef struct sylva_func_list_t sylva_func_list;
 
 typedef sylva_module *sylva_module_ref;
-
-typedef struct {
-  int dummy;
-} sylva_class;
-
 typedef sylva_class *sylva_class_ref;
-
-typedef struct {
-  int dummy;
-} sylva_object;
-
 typedef sylva_object *sylva_object_ref;
+typedef sylva_func_list *sylva_func_list_ref;
+
+struct sylva_module_t {
+  sylva_module_ref super; // pointer to super module
+
+  sylva_func_list_ref static_func_list;
+  sylva_func_list_ref instance_func_list;
+};
+
+struct sylva_class_t {
+  sylva_class_ref super; // pointer to super class
+
+  sylva_module_ref modules; // pointer to modules
+  sylva_index modules_count; // number of modules
+
+  sylva_func_list_ref static_func_list; // static func_list
+  sylva_func_list_ref instance_func_list; // instance func_list
+};
+
+struct sylva_object_t {
+  sylva_class_ref class;
+};
 
 ////////////////  Value   ///////////////////////
 
@@ -77,11 +90,11 @@ typedef sylva_index sylva_func_id;
  *
  * In an ideal situation, sylva_func_list should be initialized literally
  */
-typedef struct {
+struct sylva_func_list_t {
   sylva_index capacity;
   sylva_func_id *func_ids;
   sylva_func *funcs;
-} sylva_func_list;
+};
 
 SYLVA_EXPORT sylva_func sylva_func_list_get(sylva_func_list list, sylva_func_id func_id);
 

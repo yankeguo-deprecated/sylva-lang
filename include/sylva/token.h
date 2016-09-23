@@ -43,6 +43,11 @@ typedef enum {
       STokenColon,
 
   /**
+   mark `,`
+   */
+      STokenComma,
+
+  /**
    keyword `end`
    */
       STokenEnd,

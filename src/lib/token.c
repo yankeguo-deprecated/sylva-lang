@@ -36,6 +36,7 @@ SYLVA_EXPORT char *const STokenTypeGetName(STokenType tokenType) {
   case STokenId:return "ID";
   case STokenVar:return "VAR";
   case STokenColon:return ":";
+  case STokenComma:return ",";
   case STokenEnd:return "END";
   case STokenNewLine:return "\\n";
   case STokenSemicolon:return ";";

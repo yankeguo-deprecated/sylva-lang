@@ -155,6 +155,11 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
       token = STokenCreate(STokenSemicolon);
     }
       break;
+    case ',': {
+      endIdx += 1;
+      token = STokenCreate(STokenComma);
+    }
+      break;
     case '+': {
       endIdx += 1;
       token = STokenCreate(STokenPlus);

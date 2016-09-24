@@ -77,7 +77,7 @@ sylva_value SYLV_Dog_I_bark(sylva_value self, sylva_args args) {
 ///////////////////////  Global Declarations ///////////////////////
 
 sylva_func_id_registry sylva_runtime_func_id_registry = {
-    .length = 2,
+    .length = 3,
     .func_ids = (sylva_func_id[]) {FUNC_ID_NAME, FUNC_ID_BARK, FUNC_ID_MAIN},
     .func_names = (char *[]) {FUNC_NAME_NAME, FUNC_NAME_BARK, FUNC_NAME_MAIN},
 };

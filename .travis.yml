@@ -4,4 +4,4 @@ language: c
 compiler:
   - clang
   - gcc
-script: cmake . && make
+script: cmake . && make && make test

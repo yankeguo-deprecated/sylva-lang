@@ -93,8 +93,8 @@ sylva_func sylva_class_instance_func_resolve(sylva_class class, sylva_func_id fu
   }
   // search module instance func
   for (sylva_index i = 0; i < class.modules_count; i++) {
-    sylva_module module = class.modules[i];
-    instance_func = sylva_func_list_get(*module.instance_func_list, func_id);
+    sylva_module_ref module = class.modules[i];
+    instance_func = sylva_func_list_get(*(module->instance_func_list), func_id);
     if (instance_func != NULL) {
       return instance_func;
     }
@@ -114,8 +114,8 @@ sylva_func sylva_class_static_func_resolve(sylva_class class, sylva_func_id func
   }
   // search module instance func
   for (sylva_index i = 0; i < class.modules_count; i++) {
-    sylva_module module = class.modules[i];
-    instance_func = sylva_func_list_get(*module.static_func_list, func_id);
+    sylva_module_ref module = class.modules[i];
+    instance_func = sylva_func_list_get(*(module->static_func_list), func_id);
     if (instance_func != NULL) {
       return instance_func;
     }

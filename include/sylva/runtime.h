@@ -60,7 +60,7 @@ struct sylva_class_t {
 
   sylva_class_ref super; // pointer to super class
 
-  sylva_module_ref modules; // pointer to modules
+  sylva_module_ref *modules; // pointer to modules
   sylva_index modules_count; // number of modules
 
   sylva_func_list_ref static_func_list; // static func_list
@@ -103,13 +103,26 @@ typedef struct {
   };
 } sylva_value;
 
-#define sylva_value_nil ((sylva_value){ .type = sylva_value_type_nil, .integer_value = 0 })
-#define sylva_value_boolean(X) ((sylva_value){ .type = sylva_value_type_boolean, .integer_value = (X) != 0 })
-#define sylva_value_integer(X) ((sylva_value){ .type = sylva_value_type_integer, .integer_value = (X)})
-#define sylva_value_float(X) ((sylva_value){ .type = sylva_value_type_float, .float_value = (X)})
-#define sylva_value_object(X) ((sylva_value){ .type = sylva_value_type_object, .object_value = (X)})
-#define sylva_value_class(X) ((sylva_value){ .type = sylva_value_type_class, .class_value = (X)})
-#define sylva_value_module(X) ((sylva_value){ .type = sylva_value_type_module, .module_value = (X)})
+#define sylva_bare_value_nil {.type = sylva_value_type_nil, .integer_value = 0}
+#define sylva_value_nil ((sylva_value) sylva_bare_value_nil)
+
+#define sylva_bare_value_boolean(X) {.type = sylva_value_type_boolean, .integer_value = (X) != 0 }
+#define sylva_value_boolean(X) ((sylva_value) sylva_bare_value_boolean(X))
+
+#define sylva_bare_value_integer(X) {.type = sylva_value_type_integer, .integer_value = (X)}
+#define sylva_value_integer(X) ((sylva_value) sylva_bare_value_integer(X))
+
+#define sylva_bare_value_float(X) {.type = sylva_value_type_float, .float_value = (X)}
+#define sylva_value_float(X) ((sylva_value) sylva_bare_value_float(X))
+
+#define sylva_bare_value_object(X) {.type = sylva_value_type_object, .object_value = (X)}
+#define sylva_value_object(X) ((sylva_value) sylva_bare_value_object(X))
+
+#define sylva_bare_value_class(X) {.type = sylva_value_type_class, .class_value = (X)}
+#define sylva_value_class(X) ((sylva_value) sylva_bare_value_class(X))
+
+#define sylva_bare_value_module(X) {.type = sylva_value_type_module, .module_value = (X)}
+#define sylva_value_module(X) ((sylva_value) sylva_bare_value_module(X))
 
 //////////////// Func Arguments /////////////////////////
 

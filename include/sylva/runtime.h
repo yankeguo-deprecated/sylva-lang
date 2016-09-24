@@ -105,7 +105,7 @@ typedef struct {
 
 #define sylva_value_nil ((sylva_value){ .type = sylva_value_type_nil, .integer_value = 0 })
 #define sylva_value_boolean(X) ((sylva_value){ .type = sylva_value_type_boolean, .integer_value = (X) != 0 })
-#define sylva_value_integer(X) ((sylva_value){ .type = sylva_value_type_boolean, .integer_value = (X)})
+#define sylva_value_integer(X) ((sylva_value){ .type = sylva_value_type_integer, .integer_value = (X)})
 #define sylva_value_float(X) ((sylva_value){ .type = sylva_value_type_float, .float_value = (X)})
 #define sylva_value_object(X) ((sylva_value){ .type = sylva_value_type_object, .object_value = (X)})
 #define sylva_value_class(X) ((sylva_value){ .type = sylva_value_type_class, .class_value = (X)})
@@ -220,11 +220,11 @@ typedef struct {
 typedef sylva_func_id_registry *sylva_func_id_registry_ref;
 
 /**
- * The Global FuncId Registry
+ * The Global FuncId Registry, should be provided by compile target
  *
  * In ideal situation, this global value should be initialized literally
  */
-SYLVA_EXTERN sylva_func_id_registry sylva_runtime_func_id_registry;
+extern sylva_func_id_registry sylva_runtime_func_id_registry;
 
 SYLVA_EXTERN char *sylva_func_id_registry_get_func_name(sylva_func_id_registry registry, sylva_func_id func_id);
 
@@ -264,11 +264,11 @@ typedef struct {
 typedef sylva_member_id_registry *sylva_member_id_registry_ref;
 
 /**
- * The Global FuncId Registry
+ * The Global FuncId Registry, should be provided by compile target
  *
  * In ideal situation, this global value should be initialized literally
  */
-SYLVA_EXTERN sylva_member_id_registry sylva_runtime_member_id_registry;
+extern sylva_member_id_registry sylva_runtime_member_id_registry;
 
 SYLVA_EXTERN char *sylva_member_id_registry_get_func_name(sylva_member_id_registry registry, sylva_member_id member_id);
 

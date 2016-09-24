@@ -88,7 +88,7 @@ sylva_member_id_registry sylva_runtime_member_id_registry = {
     .member_names = NULL,
 };
 
-sylva_class SYLV_Dog = (sylva_class) {
+sylva_class SYLV_Dog = {
     .name = "Dog",
     .super = NULL,
     .modules = NULL,

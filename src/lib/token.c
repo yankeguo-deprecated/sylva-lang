@@ -35,6 +35,7 @@ SYLVA_EXTERN char *const STokenTypeGetName(STokenType tokenType) {
   case STokenEOF:return "EOF";
   case STokenId:return "ID";
   case STokenVar:return "VAR";
+  case STokenWeak:return "WEAK";
   case STokenColon:return ":";
   case STokenComma:return ",";
   case STokenEnd:return "END";

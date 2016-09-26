@@ -38,6 +38,11 @@ typedef enum {
       STokenVar,
 
   /**
+   * keyword `weak`
+   */
+      STokenWeak,
+
+  /**
    mark `:`
    */
       STokenColon,

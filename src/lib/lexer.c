@@ -88,6 +88,8 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
       token = STokenCreate(STokenClass);
     } else if (strcmp(sema->string, "var") == 0) {
       token = STokenCreate(STokenVar);
+    } else if (strcmp(sema->string, "weak") == 0) {
+      token = STokenCreate(STokenWeak);
     } else if (strcmp(sema->string, "end") == 0) {
       token = STokenCreate(STokenEnd);
     } else if (strcmp(sema->string, "module") == 0) {

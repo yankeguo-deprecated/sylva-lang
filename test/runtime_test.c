@@ -60,36 +60,33 @@
 
 #define MEMBER_ID_COUNT 1
 
+sylva_module SYLVA_M_Printer;
+
+sylva_class SYLVA_C_Dog;
+
 /////////////////////   Function Declarations   ///////////////////////
 
 sylva_value SYLVA_C_Dog_S_main(sylva_value self, sylva_args args) {
-  sylva_value dog = {
-      .type = sylva_value_type_object,
-      .object_value = &(sylva_object) {
-          .class = self.class_value,
-          .members = NULL,
-      }
-  };
+  sylva_value dog = sylva_value_object(sylva_object_create(&SYLVA_C_Dog));
+  sylva_retain(&dog);
   sylva_call(dog, FUNC_ID_BARK, 0);
-  sylva_args_destroy(args);
+  sylva_release(&dog);
   return sylva_value_integer(0);
 }
 
 sylva_value SYLVA_C_Dog_I_name(sylva_value self, sylva_args args) {
-  sylva_args_destroy(args);
   return sylva_value_integer(1);
 }
 
 sylva_value SYLVA_C_Dog_I_bark(sylva_value self, sylva_args args) {
-  sylva_call(self, FUNC_ID_PRINT, 1, sylva_call(self, FUNC_ID_NAME, 0));
-  sylva_args_destroy(args);
+  sylva_value name = sylva_call(self, FUNC_ID_NAME, 0);
+  sylva_call(self, FUNC_ID_PRINT, 1, name);
   return sylva_value_nil;
 }
 
 sylva_value SYLVA_M_Printer_I_print(sylva_value self, sylva_args args) {
   sylva_value content = sylva_args_get(args, 0);
   printf("%s:%ld", self.object_value->class->name, content.integer_value);
-  sylva_args_destroy(args);
   return sylva_value_nil;
 }
 
@@ -144,6 +141,7 @@ sylva_class SYLVA_C_Dog = {
         .length = 1,
         .member_ids = (sylva_member_id[]) {MEMBER_ID_COUNT},
         .member_values = (sylva_value[]) {sylva_bare_value_nil},
+        .member_options = (sylva_member_option[]) {sylva_member_normal},
     },
 };
 

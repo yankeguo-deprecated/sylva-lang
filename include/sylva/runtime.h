@@ -76,7 +76,25 @@ struct sylva_object_t {
   sylva_class_ref class;
 
   sylva_members_ref members;
+  sylva_index ref_count;
 };
+
+/**
+ * Increase ref_count of a sylva_object and return it
+ */
+SYLVA_EXTERN sylva_object_ref sylva_object_retain(sylva_object_ref object);
+
+/**
+ * Decrease ref_count of a sylva_object, if it reaches 0, dealloc it and returns NULL
+ */
+SYLVA_EXTERN sylva_object_ref sylva_object_release(sylva_object_ref object);
+
+/**
+ * Dealloc a sylva_object
+ */
+SYLVA_EXTERN void sylva_object_destroy(sylva_object_ref object);
+
+SYLVA_EXTERN sylva_object_ref sylva_object_create(sylva_class_ref class);
 
 ////////////////  Value   ///////////////////////
 
@@ -102,6 +120,18 @@ typedef struct {
     sylva_object_ref object_value; // object
   };
 } sylva_value;
+
+typedef sylva_value *sylva_value_ref;
+
+/**
+ * if it is a object, retain it and return value
+ */
+SYLVA_EXTERN void sylva_retain(sylva_value_ref value);
+
+/**
+ * if it is a object, retain it and return value, return sylva_value_nil if dealloced
+ */
+SYLVA_EXTERN void sylva_release(sylva_value_ref value);
 
 #define sylva_bare_value_nil {.type = sylva_value_type_nil, .integer_value = 0}
 #define sylva_value_nil ((sylva_value) sylva_bare_value_nil)
@@ -255,16 +285,43 @@ enum {
   sylva_member_id_not_found = sylva_index_not_found,
 };
 
+typedef enum {
+  sylva_member_normal = 0,
+  sylva_member_weak = 1 << 0,
+} sylva_member_option;
+
 struct sylva_member_list_t {
   sylva_index length;
   sylva_member_id *member_ids;
+  sylva_member_option *member_options;
 };
 
 struct sylva_members_t {
   sylva_index length;
   sylva_member_id *member_ids;
   sylva_value *member_values;
+  sylva_member_option *member_options;
 };
+
+SYLVA_EXTERN sylva_value sylva_members_get(sylva_members members, sylva_member_id member_id);
+SYLVA_EXTERN sylva_value sylva_object_members_get(sylva_object object, sylva_member_id member_id);
+SYLVA_EXTERN sylva_value sylva_class_members_get(sylva_class class, sylva_member_id member_id);
+SYLVA_EXTERN sylva_value sylva_value_members_get(sylva_value value, sylva_member_id member_id);
+
+SYLVA_EXTERN sylva_boolean sylva_members_set(sylva_members members, sylva_member_id member_id, sylva_value value);
+SYLVA_EXTERN sylva_boolean sylva_object_members_set(sylva_object object, sylva_member_id member_id, sylva_value value);
+SYLVA_EXTERN sylva_boolean sylva_class_members_set(sylva_class class, sylva_member_id member_id, sylva_value value);
+SYLVA_EXTERN sylva_boolean sylva_value_members_set(sylva_value target_value,
+                                                   sylva_member_id member_id,
+                                                   sylva_value value);
+
+SYLVA_EXTERN sylva_members_ref sylva_members_create(sylva_index length);
+
+SYLVA_EXTERN sylva_index sylva_members_partial_init(sylva_members_ref members,
+                                                    sylva_index start_idx,
+                                                    sylva_member_list member_list);
+
+SYLVA_EXTERN void sylva_members_destroy(sylva_members_ref members);
 
 //////////////////// MemberId Registry /////////////////
 

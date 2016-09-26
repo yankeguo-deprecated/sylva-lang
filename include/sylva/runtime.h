@@ -243,6 +243,14 @@ SYLVA_EXTERN sylva_func sylva_class_static_func_resolve(sylva_class class, sylva
 SYLVA_EXTERN sylva_func sylva_func_resolve(sylva_value context, sylva_func_id func_id);
 
 /**
+ * resolve a sylva_func from sylva_func_id and a context
+ *
+ * !!WARN!!, this will not agressively resolve instance func to static func
+ *
+ */
+SYLVA_EXTERN sylva_func sylva_super_func_resolve(sylva_value context, sylva_func_id func_id);
+
+/**
  * resolve a sylva_func with context, and invoke it
  */
 SYLVA_EXTERN sylva_value sylva_call(sylva_value context, sylva_func_id func_id, sylva_index length, ...);
@@ -251,6 +259,17 @@ SYLVA_EXTERN sylva_value sylva_call(sylva_value context, sylva_func_id func_id, 
  * resolve a sylva_func with context, and invoke it, va_list version
  */
 SYLVA_EXTERN sylva_value sylva_v_call(sylva_value context, sylva_func_id func_id, sylva_index length, va_list list);
+
+/**
+ * resolve a sylva_func with context, and invoke it
+ */
+SYLVA_EXTERN sylva_value sylva_super_call(sylva_value context, sylva_func_id func_id, sylva_index length, ...);
+
+/**
+ * resolve a sylva_func with context's super context (instance/static), and invoke it, va_list version
+ */
+SYLVA_EXTERN sylva_value sylva_super_v_call(sylva_value context, sylva_func_id func_id, sylva_index length, va_list list);
+
 
 ///////////////////// FuncId Registry /////////////////
 

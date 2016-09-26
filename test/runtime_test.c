@@ -15,6 +15,7 @@
  *
  *  class Dog
  *    include Printer
+ *    static var count
  *
  *    static func main
  *       self.new.bark
@@ -26,6 +27,10 @@
  *
  *    func bark
  *      print self.name
+ *    end
+ *
+ *    static print
+ *      print self->count
  *    end
  *  end
  *
@@ -68,6 +73,9 @@ sylva_class SYLVA_C_Dog;
 
 sylva_value SYLVA_C_Dog_S_main(sylva_value self, sylva_args args) {
   sylva_value dog = sylva_value_object(sylva_object_create(&SYLVA_C_Dog));
+  sylva_value total_count = sylva_class_members_get(SYLVA_C_Dog, MEMBER_ID_COUNT);
+  sylva_value new_total_count = sylva_value_integer(total_count.integer_value + 1);
+  sylva_class_members_set(SYLVA_C_Dog, MEMBER_ID_COUNT, new_total_count);
   sylva_retain(&dog);
   sylva_call(dog, FUNC_ID_BARK, 0);
   sylva_release(&dog);
@@ -86,7 +94,10 @@ sylva_value SYLVA_C_Dog_I_bark(sylva_value self, sylva_args args) {
 
 sylva_value SYLVA_M_Printer_I_print(sylva_value self, sylva_args args) {
   sylva_value content = sylva_args_get(args, 0);
-  printf("%s:%ld", self.object_value->class->name, content.integer_value);
+  printf("%s:%ld/%ld",
+         self.object_value->class->name,
+         content.integer_value,
+         sylva_class_members_get(*self.object_value->class, MEMBER_ID_COUNT).integer_value);
   return sylva_value_nil;
 }
 
@@ -140,7 +151,7 @@ sylva_class SYLVA_C_Dog = {
     .members = &(sylva_members) {
         .length = 1,
         .member_ids = (sylva_member_id[]) {MEMBER_ID_COUNT},
-        .member_values = (sylva_value[]) {sylva_bare_value_nil},
+        .member_values = (sylva_value[]) {sylva_bare_value_integer(0)},
         .member_options = (sylva_member_option[]) {sylva_member_normal},
     },
 };

@@ -68,7 +68,6 @@ void sylva_class_init_instance_members(sylva_class class, sylva_members_ref memb
 }
 
 sylva_object_ref sylva_object_create(sylva_class_ref class) {
-  //TODO: add custom allocator
   sylva_object_ref object = malloc(sizeof(sylva_object));
   object->class = class;
   //  Calculate members.length
@@ -86,8 +85,11 @@ sylva_object_ref sylva_object_create(sylva_class_ref class) {
 
 void sylva_object_destroy(sylva_object_ref object) {
   //TODO: add custom deallocator
-  //TODO: prevent dealloc loop
-  sylva_members_destroy(object->members);
+  if (object->members != NULL) {
+    sylva_members_ref members = object->members;
+    object->members = NULL;
+    sylva_members_destroy(members);
+  }
   free(object);
 }
 
@@ -254,6 +256,20 @@ sylva_func sylva_func_resolve(sylva_value context, sylva_func_id func_id) {
   return NULL;
 }
 
+sylva_func sylva_super_func_resolve(sylva_value context, sylva_func_id func_id) {
+  if (context.type == sylva_value_type_object) {
+    sylva_class_ref class = context.object_value->class->super;
+    if (class != NULL)
+      return sylva_class_instance_func_resolve(*class, func_id);
+  }
+  if (context.type == sylva_value_type_class) {
+    sylva_class_ref class = context.class_value->super;
+    if (class != NULL)
+      return sylva_class_static_func_resolve(*context.class_value->super, func_id);
+  }
+  return NULL;
+}
+
 sylva_value sylva_call(sylva_value context, sylva_func_id func_id, sylva_index length, ...) {
   va_list list;
   va_start(list, length);
@@ -264,6 +280,22 @@ sylva_value sylva_call(sylva_value context, sylva_func_id func_id, sylva_index l
 
 SYLVA_EXTERN sylva_value sylva_v_call(sylva_value context, sylva_func_id func_id, sylva_index length, va_list list) {
   sylva_func func = sylva_func_resolve(context, func_id);
+  if (func != NULL) {
+    return sylva_func_v_call(func, context, length, list);
+  }
+  return sylva_value_nil;
+}
+
+sylva_value sylva_super_call(sylva_value context, sylva_func_id func_id, sylva_index length, ...) {
+  va_list list;
+  va_start(list, length);
+  sylva_value result = sylva_v_call(context, func_id, length, list);
+  va_end(list);
+  return result;
+}
+
+sylva_value sylva_super_v_call(sylva_value context, sylva_func_id func_id, sylva_index length, va_list list) {
+  sylva_func func = sylva_super_func_resolve(context, func_id);
   if (func != NULL) {
     return sylva_func_v_call(func, context, length, list);
   }

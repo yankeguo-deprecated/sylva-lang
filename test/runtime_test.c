@@ -65,8 +65,6 @@
 
 #define MEMBER_ID_COUNT 1
 
-sylva_module SYLVA_M_Printer;
-
 sylva_class SYLVA_C_Dog;
 
 /////////////////////   Function Declarations   ///////////////////////
@@ -94,7 +92,7 @@ sylva_value SYLVA_C_Dog_I_bark(sylva_value self, sylva_args args) {
 
 sylva_value SYLVA_M_Printer_I_print(sylva_value self, sylva_args args) {
   sylva_value content = sylva_args_get(args, 0);
-  printf("%s:%ld/%ld",
+  printf("%s:%ld/%ld\n",
          self.object_value->class->name,
          content.integer_value,
          sylva_class_members_get(*self.object_value->class, MEMBER_ID_COUNT).integer_value);
@@ -115,33 +113,18 @@ sylva_member_id_registry sylva_runtime_member_id_registry = {
     .member_names = (char *[]) {MEMBER_NAME_COUNT},
 };
 
-sylva_module SYLVA_M_Printer = {
-    .name = "Printer",
-    .super = NULL,
-    .static_func_list = NULL,
-    .instance_func_list = &(sylva_func_list) {
-        .length = 1,
-        .func_ids = (sylva_func_id[]) {FUNC_ID_PRINT},
-        .funcs = (sylva_func[]) {&SYLVA_M_Printer_I_print},
-    },
-    .static_member_list = NULL,
-    .instance_member_list = NULL,
-};
-
 sylva_class SYLVA_C_Dog = {
     .name = "Dog",
     .super = NULL,
-    .modules = (sylva_module_ref[]) {&SYLVA_M_Printer},
-    .modules_count = 1,
-    .static_func_list = &(sylva_func_list) {
+    .static_funcs = &(sylva_funcs) {
         .length = 1,
         .func_ids = (sylva_func_id[]) {FUNC_ID_MAIN},
         .funcs = (sylva_func[]) {&SYLVA_C_Dog_S_main},
     },
-    .instance_func_list = &(sylva_func_list) {
-        .length = 2,
-        .func_ids = (sylva_func_id[]) {FUNC_ID_NAME, FUNC_ID_BARK},
-        .funcs = (sylva_func[]) {&SYLVA_C_Dog_I_name, &SYLVA_C_Dog_I_bark},
+    .instance_funcs = &(sylva_funcs) {
+        .length = 3,
+        .func_ids = (sylva_func_id[]) {FUNC_ID_NAME, FUNC_ID_BARK, FUNC_ID_PRINT},
+        .funcs = (sylva_func[]) {&SYLVA_C_Dog_I_name, &SYLVA_C_Dog_I_bark, &SYLVA_M_Printer_I_print},
     },
     .static_member_list = &(sylva_member_list) {
         .length = 1,

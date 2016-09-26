@@ -14,7 +14,12 @@ SET(SYLVA_LIB_SRCS
 
 SET(SYLVA_RT_SRCS
 
-    runtime/runtime.c)
+    runtime/runtime.c
+    runtime/object.c
+    runtime/value.c
+    runtime/args.c
+    runtime/func.c
+    runtime/member.c)
 
 # libsylva-runtime (static)
 ADD_LIBRARY(sylva-runtime-static STATIC ${SYLVA_RT_SRCS})

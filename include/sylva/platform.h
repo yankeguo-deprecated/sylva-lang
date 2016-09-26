@@ -39,6 +39,8 @@
   #define SYLVA_EXTERN extern
 #endif
 
+#define SYLVA_WEAK __attribute__ ((weak))
+
 //////////// Numeric Types //////////////////////
 
 typedef long SInteger;

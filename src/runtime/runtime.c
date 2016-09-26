@@ -10,6 +10,18 @@
 #include <stdarg.h>
 #include <sylva/runtime.h>
 
+SYLVA_WEAK sylva_func_id_registry sylva_runtime_func_id_registry = {
+    .length = 0,
+    .func_ids = NULL,
+    .func_names = NULL,
+};
+
+SYLVA_WEAK sylva_member_id_registry sylva_runtime_member_id_registry = {
+    .length = 0,
+    .member_ids = NULL,
+    .member_names = NULL,
+};
+
 sylva_func sylva_class_instance_func_resolve(sylva_class class, sylva_func_id func_id) {
   // search from instance_funcs
   if (class.instance_funcs != NULL) {
@@ -105,7 +117,6 @@ sylva_value sylva_v_call_super(sylva_value context,
   return sylva_value_nil;
 }
 
-
 sylva_value sylva_class_members_get(sylva_class class, sylva_member_id member_id) {
   return sylva_members_get(*class.members, member_id);
 }
@@ -123,7 +134,6 @@ sylva_value sylva_value_members_get(sylva_value value, sylva_member_id member_id
   }
   return sylva_value_nil;
 }
-
 
 sylva_boolean sylva_class_members_set(sylva_class class, sylva_member_id member_id, sylva_value value) {
   return sylva_members_set(*class.members, member_id, value);

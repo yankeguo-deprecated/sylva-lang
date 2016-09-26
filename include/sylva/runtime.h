@@ -407,7 +407,7 @@ typedef struct {
  *
  * !!WARN!! in ideal situation, this global value should be initialized literally
  */
-extern sylva_func_id_registry sylva_runtime_func_id_registry;
+SYLVA_EXTERN sylva_func_id_registry sylva_runtime_func_id_registry;
 
 /**
  * get function name of a function id from Function Id Registry
@@ -660,7 +660,7 @@ typedef sylva_member_id_registry *sylva_member_id_registry_ref;
  *
  * !!WARN!! in ideal situation, this global value should be initialized literally
  */
-extern sylva_member_id_registry sylva_runtime_member_id_registry;
+SYLVA_EXTERN sylva_member_id_registry sylva_runtime_member_id_registry;
 
 /**
  * get member name of a member id from Member Id Registry

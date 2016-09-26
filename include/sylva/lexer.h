@@ -21,7 +21,7 @@ typedef enum {
   SLexerErrorFoundNewLine, // new line (\r or \n) should be handled by SParser not SLexer
 } SLexerError;
 
-SYLVA_EXTERN char * const SLexerErrorGetName(SLexerError error);
+SYLVA_EXTERN char *const SLexerErrorGetName(SLexerError error);
 
 typedef struct {
   SStringRef source;

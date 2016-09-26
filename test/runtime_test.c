@@ -102,7 +102,7 @@ sylva_value SYLVA_M_Printer_I_print(sylva_value self, sylva_args args) {
 ///////////////////////  Global Declarations ///////////////////////
 
 sylva_func_id_registry sylva_runtime_func_id_registry = {
-    .length = 3,
+    .length = 4,
     .func_ids = (sylva_func_id[]) {FUNC_ID_NAME, FUNC_ID_BARK, FUNC_ID_MAIN, FUNC_ID_PRINT},
     .func_names = (char *[]) {FUNC_NAME_NAME, FUNC_NAME_BARK, FUNC_NAME_MAIN, FUNC_NAME_PRINT},
 };
@@ -142,5 +142,7 @@ sylva_class SYLVA_C_Dog = {
 ////////////////////// Main Entry  //////////////////////////////
 
 int main(int argc, char **argv) {
+  char *name = sylva_runtime_func_id_to_name(FUNC_ID_PRINT);
+  printf("Resolve FuncName: %s", name);
   return (int) sylva_call(sylva_value_class(&SYLVA_C_Dog), FUNC_ID_MAIN, 0).integer_value;
 }

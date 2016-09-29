@@ -44,6 +44,7 @@
  * */
 
 #include <sylva/runtime.h>
+#include <sylva/foundation.h>
 
 #include <stdio.h>
 
@@ -72,7 +73,12 @@ sylva_class SYLVA_C_Dog;
 sylva_value SYLVA_C_Dog_S_main(sylva_value self, sylva_args args) {
   sylva_value dog = sylva_value_object(sylva_object_create(&SYLVA_C_Dog));
   sylva_value total_count = sylva_class_members_get(SYLVA_C_Dog, MEMBER_ID_COUNT);
-  sylva_value new_total_count = sylva_value_integer(total_count.integer_value + 1);
+  sylva_value new_total_count = SYLVA_Number_I_add(total_count, (sylva_args) {
+      .length = 1,
+      .values = (sylva_value[]) {
+          sylva_value_float(1)
+      }
+  });
   sylva_class_members_set(SYLVA_C_Dog, MEMBER_ID_COUNT, new_total_count);
   sylva_retain(&dog);
   sylva_call(dog, FUNC_ID_BARK, 0);
@@ -92,10 +98,10 @@ sylva_value SYLVA_C_Dog_I_bark(sylva_value self, sylva_args args) {
 
 sylva_value SYLVA_M_Printer_I_print(sylva_value self, sylva_args args) {
   sylva_value content = sylva_args_get(args, 0);
-  printf("%s:%ld/%ld\n",
+  printf("%s:%ld/%f\n",
          self.object_value->class->name,
          content.integer_value,
-         sylva_class_members_get(*self.object_value->class, MEMBER_ID_COUNT).integer_value);
+         sylva_class_members_get(*self.object_value->class, MEMBER_ID_COUNT).float_value);
   return sylva_value_nil;
 }
 

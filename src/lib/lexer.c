@@ -197,8 +197,14 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
       endIdx += 1;
       nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
       if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '=') {
-        endIdx = nextIdx + 1;
-        token = STokenCreate(STokenEqTo);
+        SIndex nextNextIdx = SStringSeekNoBlank(lexer->source, nextIdx);
+        if (nextNextIdx != SIndexNotFound && lexer->source->string[nextNextIdx] == '=') {
+          endIdx = nextNextIdx + 1;
+          token = STokenCreate(STokenIdentical);
+        } else {
+          endIdx = nextIdx + 1;
+          token = STokenCreate(STokenEqTo);
+        }
       } else {
         token = STokenCreate(STokenEq);
       }
@@ -209,10 +215,13 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
       nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
       if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '<') {
         endIdx = nextIdx + 1;
-        token = STokenCreate(STokenBitShift);
+        token = STokenCreate(STokenBitLeftShift);
       } else if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '=') {
         endIdx = nextIdx + 1;
         token = STokenCreate(STokenLtEq);
+      } else if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '>') {
+        endIdx = nextIdx + 1;
+        token = STokenCreate(STokenCompare);
       } else {
         token = STokenCreate(STokenLt);
       }
@@ -223,7 +232,7 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
       nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
       if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '>') {
         endIdx = nextIdx + 1;
-        token = STokenCreate(STokenBitUnshift);
+        token = STokenCreate(STokenBitRightShift);
       } else if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '=') {
         endIdx = nextIdx + 1;
         token = STokenCreate(STokenGtEq);
@@ -263,6 +272,16 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
       } else {
         token = STokenCreate(STokenBitAnd);
       }
+    }
+      break;
+    case '^': {
+      endIdx += 1;
+      token = STokenCreate(STokenBitXor);
+    }
+      break;
+    case '~': {
+      endIdx += 1;
+      token = STokenCreate(STokenTilde);
     }
       break;
     case '?': {

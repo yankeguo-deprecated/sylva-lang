@@ -8,6 +8,9 @@
 #include "sylva/platform.h"
 
 #include <stdarg.h>
+#include <stddef.h>
+#include <assert.h>
+#include <stdbool.h>
 
 __CPP_DECL_START
 
@@ -33,9 +36,27 @@ typedef unsigned long sylva_index;
 typedef double sylva_float;
 
 /**
- * boolean type in sylva runtime, alias to C `unsigned short`
+ * boolean type in sylva runtime, alias to C `bool`
  */
-typedef unsigned short sylva_boolean;
+typedef bool sylva_boolean;
+
+/**
+ * comparison result
+ */
+typedef enum {
+  /**
+   * left < right
+   */
+      sylva_ascending = -1,
+  /**
+   * left == right
+   */
+      sylva_same = 0,
+  /**
+   * left > right
+   */
+      sylva_descending = 1,
+} sylva_compare_result;
 
 /**
  * index type returned when nothing is found, alias to max value for unsigned long
@@ -45,13 +66,13 @@ typedef unsigned short sylva_boolean;
 /**
  * true value for boolean type
  */
-#define sylva_true 1
+#define sylva_true true
 #define sylva_yes  sylva_true
 
 /**
  * false value for boolean type
  */
-#define sylva_false 0
+#define sylva_false false
 #define sylva_no    sylva_false
 
 /***********************************************************************************************************************
@@ -206,6 +227,10 @@ typedef enum {
    */
       sylva_type_class,
   /**
+   * type for wild C pointer, sylva-runtime will never use this type, reserved for native bindings
+   */
+      sylva_type_pointer,
+  /**
    * nil type for sylva
    */
       sylva_type_nil,
@@ -220,6 +245,7 @@ typedef struct {
    * type for this sylva_value
    */
   sylva_value_type type;
+
   union {
     /**
      * value as sylva_integer
@@ -240,7 +266,11 @@ typedef struct {
     /**
      * value for sylva_object pointer
      */
-    sylva_object_ref object_value; // object
+    sylva_object_ref object_value;
+    /**
+     * value for C pointer, will be same as class_value and object_value
+     */
+    void *pointer_value;
   };
 } sylva_value;
 
@@ -252,8 +282,9 @@ typedef sylva_value *sylva_value_ref;
 /**
  * bare sylva_value initializer macros, used for statically init
  */
+#define sylva_bare_value_any(X) {.type = sylva_type_any, .any_value = (X)}
 #define sylva_bare_value_nil {.type = sylva_type_nil, .integer_value = 0}
-#define sylva_bare_value_boolean(X) {.type = sylva_type_boolean, .integer_value = (X) != 0 }
+#define sylva_bare_value_boolean(X) {.type = sylva_type_boolean, .boolean_value = (X)}
 #define sylva_bare_value_integer(X) {.type = sylva_type_integer, .integer_value = (X)}
 #define sylva_bare_value_float(X) {.type = sylva_type_float, .float_value = (X)}
 #define sylva_bare_value_object(X) {.type = sylva_type_object, .object_value = (X)}
@@ -262,6 +293,7 @@ typedef sylva_value *sylva_value_ref;
 /**
  * sylva_value initializer macros
  */
+#define sylva_value_any(X)  ((sylva_value) sylva_bare_value_any(X))
 #define sylva_value_nil ((sylva_value) sylva_bare_value_nil)
 #define sylva_value_boolean(X) ((sylva_value) sylva_bare_value_boolean(X))
 #define sylva_value_integer(X) ((sylva_value) sylva_bare_value_integer(X))
@@ -286,6 +318,33 @@ SYLVA_EXTERN void sylva_retain(sylva_value_ref value);
  * @param value sylva_value to ratain
  */
 SYLVA_EXTERN void sylva_release(sylva_value_ref value);
+
+/**
+ * turns any sylva_value to a resonable boolean value
+ *
+ * @param value sylva_value
+ *
+ * @return sylva_true or sylva_false
+ */
+SYLVA_EXTERN sylva_boolean sylva_to_boolean(sylva_value value);
+
+/**
+ * turns any sylva_value to a resonable integer value
+ *
+ * @param value sylva_value
+ *
+ * @return sylva_value with integer value type
+ */
+SYLVA_EXTERN sylva_integer sylva_to_integer(sylva_value value);
+
+/**
+ * turns any sylva_value to a resonable integer value
+ *
+ * @param value sylva_value
+ *
+ * @return sylva_value with integer value type
+ */
+SYLVA_EXTERN sylva_float sylva_to_float(sylva_value value);
 
 /***********************************************************************************************************************
  * Function Arguments

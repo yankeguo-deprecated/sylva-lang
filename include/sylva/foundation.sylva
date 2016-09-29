@@ -1,0 +1,57 @@
+# system.sylva
+#
+# sylva-runtime system library, provides base class, string, array and hash.
+#
+# Created by Yanke Guo on 2016/9/27.
+#
+
+########################################################################################################################
+# Number
+########################################################################################################################
+
+# Number, virtual class for numeric primitive types
+#
+class Number
+  # Operations
+  native func !     # alias to `not`
+
+  native func +(b)  # alias to `add`
+  native func -(b)  # alias to `sub`
+  native func *(b)  # alias to `mul`
+  native func /(b)  # alias to `div`
+  native func %(b)  # alias to `mod`
+
+  native func <>(b) # alias to `compare`, returns sylva_comparison_result
+  native func <(b)  # alias to `lt`, bridged to `compare`, returns sylva_boolean
+  native func >(b)  # alias to `gt`, bridged to `compare`, returns sylva_boolean
+  native func <=(b) # alias to `lt_eq`, bridged to `compare`, returns sylva_boolean
+  native func >=(b) # alias to `gt_eq`, bridged to `compare`, returns sylva_boolean
+  native func ==(b) # alias to `eq`, bridged to `compare`, returns sylva_boolean
+  native func !=(b) # alias to `not_eq`, bridged to `compare`, returns sylva_boolean
+
+  native func ||(b) # alias to `or`, bridged with `sylva_to_boolean`
+  native func &&(b) # alias to `and`, bridged with `sylva_to_boolean`
+
+  native func |(b)  # alias to `bit_or`
+  native func &(b)  # alias to `bit_and`
+  native func ^(b)  # alias to `bit_xor`
+  native func >>(b) # alias to `rshift`
+  native func <<(b) # alias to `lshift`
+  # Others
+  native func abs
+  # Common
+  native func to_s  # create string representation
+end
+
+########################################################################################################################
+# Object
+########################################################################################################################
+
+# Object, default super class of all other classes
+#
+class Object
+  # Get the class
+  native func class
+  # Compare two object, default implement compares pointer
+  native func ==(b)
+end

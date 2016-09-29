@@ -3,12 +3,12 @@
 //
 
 #define __SYLVA_SOURCE__
-#include "sylva/runtime.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 #include <sylva/runtime.h>
+#include <sylva/foundation.h>
 
 SYLVA_WEAK sylva_func_id_registry sylva_runtime_func_id_registry = {
     .length = 0,
@@ -62,10 +62,16 @@ sylva_func sylva_func_resolve(sylva_value context, sylva_func_id func_id) {
   if (context.type == sylva_type_class) {
     return sylva_class_static_func_resolve(*context.class_value, func_id);
   }
+  if (context.type == sylva_type_float ||
+      context.type == sylva_type_integer ||
+      context.type == sylva_type_boolean) {
+    return sylva_class_instance_func_resolve(SYLVA_Number, func_id);
+  }
   return NULL;
 }
 
 sylva_func sylva_func_resolve_super(sylva_value context, sylva_class_ref class, sylva_func_id func_id) {
+  assert(context.type == sylva_type_object || context.type == sylva_type_class);
   if (context.type == sylva_type_object) {
     if (class != NULL && class->super != NULL)
       return sylva_class_instance_func_resolve(*class->super, func_id);

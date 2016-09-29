@@ -184,6 +184,11 @@ typedef enum {
       STokenEqTo,
 
   /**
+   * operator `===`
+   */
+      STokenIdentical,
+
+  /**
    opertaor `<`
    */
       STokenLt,
@@ -192,6 +197,11 @@ typedef enum {
    operator `>`
    */
       STokenGt,
+
+  /**
+   * operator `<>
+   */
+      STokenCompare,
 
   /**
    operator `>=`
@@ -229,6 +239,16 @@ typedef enum {
       STokenBitAnd,
 
   /**
+   * bit operator `~`
+   */
+      STokenTilde,
+
+  /**
+   * bit operator `^`
+   */
+      STokenBitXor,
+
+  /**
    operator `||`
    */
       STokenOr,
@@ -241,12 +261,12 @@ typedef enum {
   /**
    bit operator `<<`
    */
-      STokenBitShift,
+      STokenBitLeftShift,
 
   /**
    bit operator `>>`
    */
-      STokenBitUnshift,
+      STokenBitRightShift,
 
   /**
    keyword `?`

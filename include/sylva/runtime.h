@@ -43,7 +43,7 @@ typedef bool sylva_boolean;
 /**
  * comparison result
  */
-typedef enum {
+enum {
   /**
    * left < right
    */

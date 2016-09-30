@@ -39,6 +39,8 @@ SYLVA_EXTERN sylva_value SYLVA_Number_I_mul(sylva_value context, sylva_args args
 
 SYLVA_EXTERN sylva_value SYLVA_Number_I_div(sylva_value context, sylva_args args);
 
+SYLVA_EXTERN sylva_value SYLVA_Number_I_mod(sylva_value context, sylva_args args);
+
 /**
  * Comparison
  */

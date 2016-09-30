@@ -192,6 +192,28 @@ sylva_value SYLVA_Number_I_div(sylva_value context, sylva_args args) {
   return context;
 }
 
+sylva_value SYLVA_Number_I_mod(sylva_value context, sylva_args args) {
+  assert_is_number(context);
+  boolean_to_integer(context);
+  assert(args.length == 1);
+  sylva_value value = args.values[0];
+  assert_is_number(value);
+  boolean_to_integer(value);
+  if (value.type == sylva_type_integer) {
+    if (context.type == sylva_type_float) {
+      return sylva_float_value(fmod(context.float_value, (sylva_float) value.integer_value));
+    } else {
+      return sylva_integer_value(context.integer_value % value.integer_value);
+    }
+  } else {
+    if (context.type == sylva_type_float) {
+      return sylva_float_value(fmod(context.float_value, value.float_value));
+    } else {
+      return sylva_integer_value(context.integer_value % (sylva_integer) value.float_value);
+    }
+  }
+}
+
 sylva_value SYLVA_Number_I_compare(sylva_value context, sylva_args args) {
   assert_is_number(context);
   boolean_to_integer(context);

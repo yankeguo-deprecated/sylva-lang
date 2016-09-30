@@ -56,7 +56,7 @@ typedef enum {
    * left > right
    */
       sylva_descending = 1,
-} sylva_compare_result;
+};
 
 /**
  * index type returned when nothing is found, alias to max value for unsigned long
@@ -282,24 +282,28 @@ typedef sylva_value *sylva_value_ref;
 /**
  * bare sylva_value initializer macros, used for statically init
  */
-#define sylva_bare_value_any(X) {.type = sylva_type_any, .any_value = (X)}
-#define sylva_bare_value_nil {.type = sylva_type_nil, .integer_value = 0}
-#define sylva_bare_value_boolean(X) {.type = sylva_type_boolean, .boolean_value = (X)}
-#define sylva_bare_value_integer(X) {.type = sylva_type_integer, .integer_value = (X)}
-#define sylva_bare_value_float(X) {.type = sylva_type_float, .float_value = (X)}
-#define sylva_bare_value_object(X) {.type = sylva_type_object, .object_value = (X)}
-#define sylva_bare_value_class(X) {.type = sylva_type_class, .class_value = (X)}
+#define sylva_bare_pointer_value(X) {.type = sylva_type_any, .any_value = (X)}
+#define sylva_bare_nil_value {.type = sylva_type_nil, .integer_value = 0}
+#define sylva_bare_boolean_value(X) {.type = sylva_type_boolean, .boolean_value = (X)}
+#define sylva_bare_true_value {.type = sylva_type_boolean, .boolean_value = sylva_true}
+#define sylva_bare_false_value {.type = sylva_type_boolean, .boolean_value = sylva_false}
+#define sylva_bare_integer_value(X) {.type = sylva_type_integer, .integer_value = (X)}
+#define sylva_bare_float_value(X) {.type = sylva_type_float, .float_value = (X)}
+#define sylva_bare_object_value(X) {.type = sylva_type_object, .object_value = (X)}
+#define sylva_bare_class_value(X) {.type = sylva_type_class, .class_value = (X)}
 
 /**
  * sylva_value initializer macros
  */
-#define sylva_value_any(X)  ((sylva_value) sylva_bare_value_any(X))
-#define sylva_value_nil ((sylva_value) sylva_bare_value_nil)
-#define sylva_value_boolean(X) ((sylva_value) sylva_bare_value_boolean(X))
-#define sylva_value_integer(X) ((sylva_value) sylva_bare_value_integer(X))
-#define sylva_value_float(X) ((sylva_value) sylva_bare_value_float(X))
-#define sylva_value_object(X) ((sylva_value) sylva_bare_value_object(X))
-#define sylva_value_class(X) ((sylva_value) sylva_bare_value_class(X))
+#define sylva_pointer_value(X)  ((sylva_value) sylva_bare_pointer_value(X))
+#define sylva_nil_value ((sylva_value) sylva_bare_nil_value)
+#define sylva_boolean_value(X) ((sylva_value) sylva_bare_boolean_value(X))
+#define sylva_true_value sylva_boolean_value(sylva_true)
+#define sylva_false_value sylva_boolean_value(sylva_false)
+#define sylva_integer_value(X) ((sylva_value) sylva_bare_integer_value(X))
+#define sylva_float_value(X) ((sylva_value) sylva_bare_float_value(X))
+#define sylva_object_value(X) ((sylva_value) sylva_bare_object_value(X))
+#define sylva_class_value(X) ((sylva_value) sylva_bare_class_value(X))
 
 /**
  * invoke sylva_object_retain if value is an object
@@ -372,7 +376,8 @@ typedef sylva_args *sylva_args_ref;
 /**
  * initializer macro for sylva_args
  */
-#define sylva_args_empty ((sylva_args){ .length = 0, .values = NULL })
+#define sylva_args_empty     ((sylva_args){ .length = 0, .values = NULL })
+#define sylva_args_make(C, ...)  ((sylva_args){ .length = C, .values = (sylva_value[]){ __VA_ARGS__ }})
 
 /**
  * create a sylva_args with length

@@ -96,7 +96,7 @@ SYLVA_EXTERN sylva_value sylva_v_call(sylva_value context, sylva_func_id func_id
   if (func != NULL) {
     return sylva_func_v_call(func, context, length, list);
   }
-  return sylva_value_nil;
+  return sylva_nil_value;
 }
 
 sylva_value sylva_call_super(sylva_value context,
@@ -120,7 +120,7 @@ sylva_value sylva_v_call_super(sylva_value context,
   if (func != NULL) {
     return sylva_func_v_call(func, context, length, list);
   }
-  return sylva_value_nil;
+  return sylva_nil_value;
 }
 
 sylva_value sylva_class_members_get(sylva_class class, sylva_member_id member_id) {
@@ -138,7 +138,7 @@ sylva_value sylva_value_members_get(sylva_value value, sylva_member_id member_id
   if (value.type == sylva_type_class) {
     return sylva_class_members_get(*value.class_value, member_id);
   }
-  return sylva_value_nil;
+  return sylva_nil_value;
 }
 
 sylva_boolean sylva_class_members_set(sylva_class class, sylva_member_id member_id, sylva_value value) {

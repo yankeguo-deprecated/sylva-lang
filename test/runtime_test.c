@@ -71,29 +71,29 @@ sylva_class SYLVA_C_Dog;
 /////////////////////   Function Declarations   ///////////////////////
 
 sylva_value SYLVA_C_Dog_S_main(sylva_value self, sylva_args args) {
-  sylva_value dog = sylva_value_object(sylva_object_create(&SYLVA_C_Dog));
+  sylva_value dog = sylva_object_value(sylva_object_create(&SYLVA_C_Dog));
   sylva_value total_count = sylva_class_members_get(SYLVA_C_Dog, MEMBER_ID_COUNT);
   sylva_value new_total_count = SYLVA_Number_I_add(total_count, (sylva_args) {
       .length = 1,
       .values = (sylva_value[]) {
-          sylva_value_float(1)
+          sylva_float_value(1)
       }
   });
   sylva_class_members_set(SYLVA_C_Dog, MEMBER_ID_COUNT, new_total_count);
   sylva_retain(&dog);
   sylva_call(dog, FUNC_ID_BARK, 0);
   sylva_release(&dog);
-  return sylva_value_integer(0);
+  return sylva_integer_value(0);
 }
 
 sylva_value SYLVA_C_Dog_I_name(sylva_value self, sylva_args args) {
-  return sylva_value_integer(1);
+  return sylva_integer_value(1);
 }
 
 sylva_value SYLVA_C_Dog_I_bark(sylva_value self, sylva_args args) {
   sylva_value name = sylva_call(self, FUNC_ID_NAME, 0);
   sylva_call(self, FUNC_ID_PRINT, 1, name);
-  return sylva_value_nil;
+  return sylva_nil_value;
 }
 
 sylva_value SYLVA_M_Printer_I_print(sylva_value self, sylva_args args) {
@@ -102,7 +102,7 @@ sylva_value SYLVA_M_Printer_I_print(sylva_value self, sylva_args args) {
          self.object_value->class->name,
          content.integer_value,
          sylva_class_members_get(*self.object_value->class, MEMBER_ID_COUNT).float_value);
-  return sylva_value_nil;
+  return sylva_nil_value;
 }
 
 ///////////////////////  Global Declarations ///////////////////////
@@ -140,7 +140,7 @@ sylva_class SYLVA_C_Dog = {
     .members = &(sylva_members) {
         .length = 1,
         .member_ids = (sylva_member_id[]) {MEMBER_ID_COUNT},
-        .member_values = (sylva_value[]) {sylva_bare_value_integer(0)},
+        .member_values = (sylva_value[]) {sylva_bare_integer_value(0)},
         .member_options = (sylva_member_option[]) {sylva_member_normal},
     },
 };
@@ -150,5 +150,5 @@ sylva_class SYLVA_C_Dog = {
 int main(int argc, char **argv) {
   char *name = sylva_runtime_func_id_to_name(FUNC_ID_PRINT);
   printf("Resolve FuncName: %s", name);
-  return (int) sylva_call(sylva_value_class(&SYLVA_C_Dog), FUNC_ID_MAIN, 0).integer_value;
+  return (int) sylva_call(sylva_class_value(&SYLVA_C_Dog), FUNC_ID_MAIN, 0).integer_value;
 }

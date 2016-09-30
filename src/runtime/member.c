@@ -18,7 +18,7 @@ sylva_members_ref sylva_members_create(sylva_index length) {
   for (sylva_index i = 0; i < length; i++) {
     members->member_ids[i] = 0;
     members->member_options[i] = sylva_member_normal;
-    members->member_values[i] = sylva_value_nil;
+    members->member_values[i] = sylva_nil_value;
   }
   return members;
 }
@@ -39,7 +39,7 @@ sylva_value sylva_members_get(sylva_members members, sylva_member_id member_id) 
       return members.member_values[i];
     }
   }
-  return sylva_value_nil;
+  return sylva_nil_value;
 }
 
 sylva_boolean sylva_members_set(sylva_members members, sylva_member_id member_id, sylva_value value) {

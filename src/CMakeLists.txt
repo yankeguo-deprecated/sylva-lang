@@ -32,6 +32,9 @@ SET_TARGET_PROPERTIES(sylva-runtime-static PROPERTIES C_STANDARD 99)
 SET_TARGET_PROPERTIES(sylva-runtime-shared PROPERTIES OUTPUT_NAME "sylva-runtime")
 SET_TARGET_PROPERTIES(sylva-runtime-shared PROPERTIES C_STANDARD 99)
 
+TARGET_LINK_LIBRARIES(sylva-runtime-static m)
+TARGET_LINK_LIBRARIES(sylva-runtime-shared m)
+
 # libsylva (static/shared)
 ADD_LIBRARY(sylva-static STATIC ${SYLVA_LIB_SRCS})
 ADD_LIBRARY(sylva-shared SHARED ${SYLVA_LIB_SRCS})

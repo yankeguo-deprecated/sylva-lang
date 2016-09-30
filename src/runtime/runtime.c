@@ -22,6 +22,22 @@ SYLVA_WEAK sylva_member_id_registry sylva_runtime_member_id_registry = {
     .member_names = NULL,
 };
 
+sylva_class_ref sylva_get_class(sylva_value value) {
+  if (value.type == sylva_type_boolean ||
+      value.type == sylva_type_integer ||
+      value.type == sylva_type_float ||
+      value.type == sylva_type_nil) {
+    return &SYLVA_Number;
+  }
+  if (value.type == sylva_type_object) {
+    return value.object_value->class;
+  }
+  if (value.type == sylva_type_class) {
+    return value.class_value;
+  }
+  return NULL;
+}
+
 sylva_func sylva_class_instance_func_resolve(sylva_class class, sylva_func_id func_id) {
   // search from instance_funcs
   if (class.instance_funcs != NULL) {
@@ -56,22 +72,23 @@ sylva_func sylva_class_static_func_resolve(sylva_class class, sylva_func_id func
 }
 
 sylva_func sylva_func_resolve(sylva_value context, sylva_func_id func_id) {
-  if (context.type == sylva_type_object) {
-    return sylva_class_instance_func_resolve(*context.object_value->class, func_id);
+  sylva_class_ref class = sylva_get_class(context);
+
+  if (class == NULL) {
+    return NULL;
   }
+
   if (context.type == sylva_type_class) {
-    return sylva_class_static_func_resolve(*context.class_value, func_id);
+    return sylva_class_static_func_resolve(*class, func_id);
+  } else {
+    return sylva_class_instance_func_resolve(*class, func_id);
   }
-  if (context.type == sylva_type_float ||
-      context.type == sylva_type_integer ||
-      context.type == sylva_type_boolean) {
-    return sylva_class_instance_func_resolve(SYLVA_Number, func_id);
-  }
-  return NULL;
 }
 
 sylva_func sylva_func_resolve_super(sylva_value context, sylva_class_ref class, sylva_func_id func_id) {
+  //  super can only be called on object or class
   assert(context.type == sylva_type_object || context.type == sylva_type_class);
+
   if (context.type == sylva_type_object) {
     if (class != NULL && class->super != NULL)
       return sylva_class_instance_func_resolve(*class->super, func_id);
@@ -131,7 +148,15 @@ sylva_value sylva_object_members_get(sylva_object object, sylva_member_id member
   return sylva_members_get(*object.members, member_id);
 }
 
-sylva_value sylva_value_members_get(sylva_value value, sylva_member_id member_id) {
+sylva_boolean sylva_class_members_set(sylva_class class, sylva_member_id member_id, sylva_value value) {
+  return sylva_members_set(*class.members, member_id, value);
+}
+
+sylva_boolean sylva_object_members_set(sylva_object object, sylva_member_id member_id, sylva_value value) {
+  return sylva_members_set(*object.members, member_id, value);
+}
+
+sylva_value sylva_get(sylva_value value, sylva_member_id member_id) {
   if (value.type == sylva_type_object) {
     return sylva_object_members_get(*value.object_value, member_id);
   }
@@ -141,17 +166,7 @@ sylva_value sylva_value_members_get(sylva_value value, sylva_member_id member_id
   return sylva_nil_value;
 }
 
-sylva_boolean sylva_class_members_set(sylva_class class, sylva_member_id member_id, sylva_value value) {
-  return sylva_members_set(*class.members, member_id, value);
-}
-
-sylva_boolean sylva_object_members_set(sylva_object object, sylva_member_id member_id, sylva_value value) {
-  return sylva_members_set(*object.members, member_id, value);
-}
-
-sylva_boolean sylva_value_members_set(sylva_value target_value,
-                                      sylva_member_id member_id,
-                                      sylva_value value) {
+sylva_boolean sylva_set(sylva_value target_value, sylva_member_id member_id, sylva_value value) {
   if (target_value.type == sylva_type_object) {
     return sylva_object_members_set(*target_value.object_value, member_id, value);
   }
@@ -160,4 +175,3 @@ sylva_boolean sylva_value_members_set(sylva_value target_value,
   }
   return sylva_false;
 }
-

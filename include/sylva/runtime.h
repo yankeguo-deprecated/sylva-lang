@@ -31,6 +31,26 @@ typedef long sylva_integer;
 typedef unsigned long sylva_index;
 
 /**
+ * sylva_index is used for function id
+ */
+typedef sylva_index sylva_func_id;
+
+/**
+ * sylva_func_id_not_found is aliased to sylva_index_not_found
+ */
+#define sylva_func_id_not_found sylva_index_not_found
+
+/**
+ * use sylva_index as member id
+ */
+typedef sylva_index sylva_member_id;
+
+/**
+ * use sylva_index_not_found as sylva_member_id_not_found
+ */
+#define sylva_member_id_not_found sylva_index_not_found
+
+/**
  * float type in sylva runtime, alias to C `double`
  */
 typedef double sylva_float;
@@ -146,6 +166,11 @@ struct sylva_class_t {
    * storage for all static member variables
    */
   sylva_members_ref members;
+
+  /**
+   * deinitializer (sylva_func)
+   */
+  void *deinitializor;
 };
 
 /**
@@ -166,6 +191,10 @@ struct sylva_object_t {
    * reference counter, used for garbage collection
    */
   sylva_index ref_count;
+  /**
+   * deinitializing
+   */
+  sylva_boolean deinitializing;
 };
 
 /**
@@ -282,7 +311,7 @@ typedef sylva_value *sylva_value_ref;
 /**
  * bare sylva_value initializer macros, used for statically init
  */
-#define sylva_bare_pointer_value(X) {.type = sylva_type_any, .any_value = (X)}
+#define sylva_bare_pointer_value(X) {.type = sylva_type_pointer, .pointer_value = (X)}
 #define sylva_bare_nil_value {.type = sylva_type_nil, .integer_value = 0}
 #define sylva_bare_boolean_value(X) {.type = sylva_type_boolean, .boolean_value = (X)}
 #define sylva_bare_true_value {.type = sylva_type_boolean, .boolean_value = sylva_true}
@@ -304,15 +333,6 @@ typedef sylva_value *sylva_value_ref;
 #define sylva_float_value(X) ((sylva_value) sylva_bare_float_value(X))
 #define sylva_object_value(X) ((sylva_value) sylva_bare_object_value(X))
 #define sylva_class_value(X) ((sylva_value) sylva_bare_class_value(X))
-
-/**
- * invoke sylva_object_retain if value is an object
- *
- * do nothing if value is not an object
- *
- * @param value sylva_value to ratain
- */
-SYLVA_EXTERN void sylva_retain(sylva_value_ref value);
 
 /**
  * invoke sylva_object_release if value is an object
@@ -420,16 +440,6 @@ SYLVA_EXTERN void sylva_args_destroy(sylva_args args);
  * @param args arguments passed in, will be automatically destroyed
  */
 typedef sylva_value (*sylva_func)(sylva_value context, sylva_args args);
-
-/**
- * sylva_index is used for function id
- */
-typedef sylva_index sylva_func_id;
-
-/**
- * sylva_func_id_not_found is aliased to sylva_index_not_found
- */
-#define sylva_func_id_not_found sylva_index_not_found
 
 /**
  * invoke a sylva_func, with context and variable arguments
@@ -573,16 +583,6 @@ SYLVA_EXTERN sylva_func sylva_funcs_set(sylva_funcs list, sylva_func_id func_id,
 /***********************************************************************************************************************
  * Member Viarable Declarations & Storage
  **********************************************************************************************************************/
-
-/**
- * use sylva_index as member id
- */
-typedef sylva_index sylva_member_id;
-
-/**
- * use sylva_index_not_found as sylva_member_id_not_found
- */
-#define sylva_member_id_not_found sylva_index_not_found
 
 /**
  * option for member variable
@@ -772,6 +772,15 @@ SYLVA_EXTERN sylva_member_id sylva_runtime_member_name_to_id(char *member_name);
  * Object-Oriented
  **********************************************************************************************************************/
 
+
+/**
+ * Get the corresponding class value from a value, also resolves virtual class for primitive values
+ *
+ * @param value incoming value
+ * @return class associated
+ */
+SYLVA_EXTERN sylva_class_ref sylva_get_class(sylva_value value);
+
 /**
  * resolve a function id to instance function from a Class, including superclass
  *
@@ -852,13 +861,34 @@ SYLVA_EXTERN sylva_value sylva_v_call_super(sylva_value context,
                                             va_list list);
 
 /**
+ * create a instance of a class and initialize with specifed initializer
+ *
+ * @param class class to intialize
+ * @param func_id function id to initialize
+ * @param length number of arguments
+ * @param list arguments in va_list
+ */
+SYLVA_EXTERN sylva_value sylva_create(sylva_class_ref class, sylva_func_id func_id, sylva_index length, ...);
+
+SYLVA_EXTERN sylva_value sylva_v_create(sylva_class_ref class, sylva_func_id func_id, sylva_index length, va_list list);
+
+/**
+ * invoke sylva_object_retain if value is an object
+ *
+ * do nothing if value is not an object
+ *
+ * @param value sylva_value to ratain
+ */
+SYLVA_EXTERN void sylva_retain(sylva_value_ref value);
+
+/**
  * get member from object, class and value(object/class type)
  *
  * @see sylva_members_get
  */
 SYLVA_EXTERN sylva_value sylva_object_members_get(sylva_object object, sylva_member_id member_id);
 SYLVA_EXTERN sylva_value sylva_class_members_get(sylva_class class, sylva_member_id member_id);
-SYLVA_EXTERN sylva_value sylva_value_members_get(sylva_value value, sylva_member_id member_id);
+SYLVA_EXTERN sylva_value sylva_get(sylva_value value, sylva_member_id member_id);
 
 /**
  * set member to object, class and value(object/class type)
@@ -867,9 +897,7 @@ SYLVA_EXTERN sylva_value sylva_value_members_get(sylva_value value, sylva_member
  */
 SYLVA_EXTERN sylva_boolean sylva_object_members_set(sylva_object object, sylva_member_id member_id, sylva_value value);
 SYLVA_EXTERN sylva_boolean sylva_class_members_set(sylva_class class, sylva_member_id member_id, sylva_value value);
-SYLVA_EXTERN sylva_boolean sylva_value_members_set(sylva_value target_value,
-                                                   sylva_member_id member_id,
-                                                   sylva_value value);
+SYLVA_EXTERN sylva_boolean sylva_set(sylva_value target_value, sylva_member_id member_id, sylva_value value);
 
 __CPP_DECL_END
 

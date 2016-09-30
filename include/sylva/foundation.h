@@ -23,6 +23,12 @@
  */
 SYLVA_EXTERN sylva_class SYLVA_Number;
 
+SYLVA_EXTERN sylva_value SYLVA_Number_S_new(sylva_value context, sylva_args args);
+
+SYLVA_EXTERN sylva_value SYLVA_Number_I_init(sylva_value context, sylva_args args);
+
+SYLVA_EXTERN sylva_value SYLVA_Number_I_deinit(sylva_value context, sylva_args args);
+
 /**
  * Not
  */
@@ -104,6 +110,17 @@ SYLVA_EXTERN sylva_value SYLVA_Number_I_abs(sylva_value context, sylva_args args
  */
 SYLVA_EXTERN sylva_class SYLVA_Object;
 
+/**
+ * default init does nothing
+ */
+SYLVA_EXTERN sylva_value SYLVA_Object_I_init(sylva_value context, sylva_args args);
+
+SYLVA_EXTERN sylva_value SYLVA_Object_I_deinit(sylva_value context, sylva_args args);
+
 SYLVA_EXTERN sylva_value SYLVA_Object_I_class(sylva_value context, sylva_args args);
+
+/***********************************************************************************************************************
+ * String
+ **********************************************************************************************************************/
 
 #endif //__SYLVA_FOUNDATION_H__

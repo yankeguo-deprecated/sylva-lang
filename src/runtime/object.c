@@ -44,6 +44,7 @@ void _sylva_class_init_instance_members(sylva_class class, sylva_members_ref mem
 sylva_object_ref sylva_object_create(sylva_class_ref class) {
   sylva_object_ref object = malloc(sizeof(sylva_object));
   object->class = class;
+  object->deinitializing = sylva_false;
   //  Calculate members.length
   sylva_index members_length = 0;
   _sylva_class_calculate_instance_members_count(*class, &members_length);
@@ -74,11 +75,22 @@ sylva_object_ref sylva_object_release(sylva_object_ref object) {
 }
 
 void sylva_object_destroy(sylva_object_ref object) {
-  //TODO: add custom deallocator
-  if (object->members != NULL) {
-    sylva_members_ref members = object->members;
-    object->members = NULL;
-    sylva_members_destroy(members);
+  //  prevent loop
+  if (object == NULL || object->deinitializing)
+    return;
+  object->deinitializing = sylva_true;
+  //  call custom deinitializer
+  sylva_class_ref class = object->class;
+  while (class != NULL) {
+    if (class->deinitializor != NULL) {
+      //  call custom deinitializer
+      ((sylva_func) class->deinitializor)(sylva_object_value(object), sylva_args_empty);
+    }
+    //  iterate to superclass
+    class = class->super;
   }
+  //  destroy members
+  sylva_members_destroy(object->members);
+  //  free the object it self
   free(object);
 }

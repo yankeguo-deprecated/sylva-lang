@@ -12,6 +12,10 @@
 # Number, virtual class for numeric primitive types
 #
 class Number
+  # virtual initializer, does nothing
+  native func init
+  # virtual deinitializer , does nothing
+  native func deinit
   # Operations
   native func !     # alias to `not`
 
@@ -50,6 +54,10 @@ end
 # Object, default super class of all other classes
 #
 class Object
+  # default initializer, does nothing
+  native func init
+  # virtual deinitializer , does nothing
+  native func deinit
   # Get the class
   native func class
   # Compare two object, default implement compares pointer
@@ -59,3 +67,5 @@ end
 ########################################################################################################################
 # String
 ########################################################################################################################
+
+# String

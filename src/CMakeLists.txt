@@ -24,7 +24,7 @@ SET(SYLVA_RT_SRCS
 
 # libsylva-runtime (static/shared)
 ADD_LIBRARY(sylva-runtime-static STATIC ${SYLVA_RT_SRCS})
-ADD_LIBRARY(sylva-runtime-shared STATIC ${SYLVA_RT_SRCS})
+ADD_LIBRARY(sylva-runtime-shared SHARED ${SYLVA_RT_SRCS})
 
 SET_TARGET_PROPERTIES(sylva-runtime-static PROPERTIES OUTPUT_NAME "sylva-runtime")
 SET_TARGET_PROPERTIES(sylva-runtime-static PROPERTIES C_STANDARD 99)

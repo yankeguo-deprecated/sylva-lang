@@ -6,6 +6,29 @@
 
 #include <stdlib.h>
 #include <sylva/runtime.h>
+#include <sylva/foundation.h>
+
+sylva_value sylva_create(sylva_class_ref class, sylva_func_id func_id, sylva_index length, ...) {
+  va_list list;
+  va_start(list, length);
+  sylva_value result = sylva_v_create(class, func_id, length, list);
+  va_end(list);
+  return result;
+}
+
+sylva_value sylva_v_create(sylva_class_ref class, sylva_func_id func_id, sylva_index length, va_list list) {
+  if (class == &SYLVA_Number) {
+    sylva_value result = SYLVA_Number_S_new(sylva_class_value(&SYLVA_Number), sylva_args_empty);
+    return sylva_v_call(result, func_id, length, list);
+  }
+  sylva_object_ref object = sylva_object_create(class);
+  sylva_value result = sylva_v_call(sylva_object_value(object), func_id, length, list);
+  //  check result, if changed, destroy orignal object
+  if (result.type != sylva_type_object || result.object_value != object) {
+    sylva_object_destroy(object);
+  }
+  return result;
+}
 
 void sylva_retain(sylva_value_ref value) {
   if (value->type == sylva_type_object) {

@@ -55,7 +55,20 @@ SYLVA_WEAK sylva_class SYLVA_Number = {
     .static_member_list = NULL,
     .instance_member_list = NULL,
     .members = NULL,
+    .deinitializor = &SYLVA_Number_I_deinit,
 };
+
+sylva_value SYLVA_Number_S_new(sylva_value context, sylva_args args) {
+  return sylva_integer_value(0);
+}
+
+sylva_value SYLVA_Number_I_init(sylva_value context, sylva_args args) {
+  return context;
+}
+
+sylva_value SYLVA_Number_I_deinit(sylva_value context, sylva_args args) {
+  return sylva_nil_value;
+}
 
 sylva_value SYLVA_Number_I_not(sylva_value context, sylva_args args) {
   assert_is_number(context);
@@ -364,7 +377,16 @@ SYLVA_WEAK sylva_class SYLVA_Object = {
     .static_member_list = NULL,
     .instance_member_list = NULL,
     .members = NULL,
+    .deinitializor = &SYLVA_Object_I_deinit,
 };
+
+sylva_value SYLVA_Object_I_init(sylva_value context, sylva_args args) {
+  return context;
+}
+
+sylva_value SYLVA_Object_I_deinit(sylva_value context, sylva_args args) {
+  return sylva_nil_value;
+}
 
 sylva_value SYLVA_Object_I_class(sylva_value context, sylva_args args) {
   assert_is_object(context);

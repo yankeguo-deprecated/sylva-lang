@@ -67,10 +67,10 @@ sylva_func_id sylva_func_id_registry_get_func_id(sylva_func_id_registry registry
   return sylva_func_id_not_found;
 }
 
-char *sylva_runtime_func_id_to_name(sylva_func_id func_id) {
+char *sylva_func_id_to_name(sylva_func_id func_id) {
   return sylva_func_id_registry_get_func_name(sylva_runtime_func_id_registry, func_id);
 }
 
-sylva_func_id sylva_runtime_func_name_to_id(char *func_name) {
+sylva_func_id sylva_func_name_to_id(char *func_name) {
   return sylva_func_id_registry_get_func_id(sylva_runtime_func_id_registry, func_name);
 }

@@ -88,10 +88,10 @@ sylva_member_id sylva_member_id_registry_get_func_id(sylva_member_id_registry re
   return sylva_member_id_not_found;
 }
 
-char *sylva_runtime_member_id_to_name(sylva_member_id member_id) {
+char *sylva_member_id_to_name(sylva_member_id member_id) {
   return sylva_member_id_registry_get_func_name(sylva_runtime_member_id_registry, member_id);
 }
 
-sylva_member_id sylva_runtime_member_name_to_id(char *member_name) {
+sylva_member_id sylva_member_name_to_id(char *member_name) {
   return sylva_member_id_registry_get_func_id(sylva_runtime_member_id_registry, member_name);
 }

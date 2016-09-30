@@ -209,7 +209,7 @@ sylva_class SYLVA_C_Dog = {
 ////////////////////// Main Entry  //////////////////////////////
 
 int main(int argc, char **argv) {
-  char *name = sylva_runtime_func_id_to_name(FUNC_ID_PRINT);
+  char *name = sylva_func_id_to_name(FUNC_ID_PRINT);
   printf("Resolve FuncName: %s\n", name);
   return (int) sylva_call(sylva_class_value(&SYLVA_C_Dog), FUNC_ID_MAIN, 0).integer_value;
 }

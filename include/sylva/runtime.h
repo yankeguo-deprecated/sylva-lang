@@ -512,7 +512,7 @@ SYLVA_EXTERN sylva_func_id sylva_func_id_registry_get_func_id(sylva_func_id_regi
  *
  * @return function name
  */
-SYLVA_EXTERN char *sylva_runtime_func_id_to_name(sylva_func_id func_id);
+SYLVA_EXTERN char *sylva_func_id_to_name(sylva_func_id func_id);
 
 /**
  * get function id of a function name from global function id registry
@@ -523,7 +523,7 @@ SYLVA_EXTERN char *sylva_runtime_func_id_to_name(sylva_func_id func_id);
  *
  * @return function id
  */
-SYLVA_EXTERN sylva_func_id sylva_runtime_func_name_to_id(char *func_name);
+SYLVA_EXTERN sylva_func_id sylva_func_name_to_id(char *func_name);
 
 /***********************************************************************************************************************
  * Function Storage
@@ -755,7 +755,7 @@ SYLVA_EXTERN sylva_member_id sylva_member_id_registry_get_func_id(sylva_member_i
  *
  * @return member name
  */
-SYLVA_EXTERN char *sylva_runtime_member_id_to_name(sylva_member_id member_id);
+SYLVA_EXTERN char *sylva_member_id_to_name(sylva_member_id member_id);
 
 /**
  * get member id of a member name from global member id registry
@@ -766,7 +766,7 @@ SYLVA_EXTERN char *sylva_runtime_member_id_to_name(sylva_member_id member_id);
  *
  * @return member id
  */
-SYLVA_EXTERN sylva_member_id sylva_runtime_member_name_to_id(char *member_name);
+SYLVA_EXTERN sylva_member_id sylva_member_name_to_id(char *member_name);
 
 /***********************************************************************************************************************
  * Object-Oriented

@@ -9,7 +9,7 @@
 # Number
 ########################################################################################################################
 
-# Number, virtual class for numeric primitive types
+# Number, virtual class for primitive types (integer, float, boolean, nil)
 #
 class Number
   # virtual initializer, does nothing
@@ -69,3 +69,9 @@ end
 ########################################################################################################################
 
 # String
+#
+class String
+  # internal char*
+  var internal
+  var length
+end

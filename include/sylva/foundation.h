@@ -15,7 +15,7 @@
  **********************************************************************************************************************/
 
 /**
- * Number, virtual class for float, integer and boolean
+ * Number, virtual class for primitives (float, integer, boolean, nil)
  *
  * !!WARN!! this is a placeholder, should be overriden by target source
  * !!WARN!! this is a virtual class, it will never create instances, instead, Sylva runtime will resolve functions for

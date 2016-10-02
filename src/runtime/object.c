@@ -15,8 +15,8 @@
  * @param out output
  */
 void _sylva_class_calculate_instance_members_count(sylva_class class, sylva_index *out) {
-  if (class.instance_member_list != NULL) {
-    *out += class.instance_member_list->length;
+  if (class.instance_member_defs != NULL) {
+    *out += class.instance_member_defs->length;
   }
   if (class.super != NULL) {
     _sylva_class_calculate_instance_members_count(*class.super, out);
@@ -33,8 +33,8 @@ void _sylva_class_calculate_instance_members_count(sylva_class class, sylva_inde
  * @param start_idx the start index to initialization, should be 0 at first
  */
 void _sylva_class_init_instance_members(sylva_class class, sylva_members_ref members, sylva_index start_idx) {
-  if (class.instance_member_list != NULL) {
-    start_idx += sylva_members_init(members, start_idx, *class.instance_member_list);
+  if (class.instance_member_defs != NULL) {
+    start_idx += sylva_members_init(members, start_idx, *class.instance_member_defs);
   }
   if (class.super != NULL) {
     _sylva_class_init_instance_members(*class.super, members, start_idx);
@@ -84,7 +84,7 @@ void sylva_object_destroy(sylva_object_ref object) {
   while (class != NULL) {
     if (class->deinitializor != NULL) {
       //  call custom deinitializer
-      ((sylva_func) class->deinitializor)(sylva_object_value(object), sylva_args_empty);
+      ((sylva_imp) class->deinitializor)(sylva_object_value(object), sylva_args_empty);
     }
     //  iterate to superclass
     class = class->super;

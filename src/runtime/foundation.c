@@ -15,13 +15,19 @@
  * Internal Macros
  **********************************************************************************************************************/
 
-#define assert_is_number(V)\
-  assert((V).type==sylva_type_integer||(V).type==sylva_type_float||(V).type==sylva_type_boolean)
+#define assert_primitive(V) assert((V).type & sylva_type_primitive)
 
-#define boolean_to_integer(V)\
+/**
+ * sanitize nil, boolean type to integer
+ */
+#define sanitize_primitive(V)\
   if ((V).type == sylva_type_boolean) {\
     (V).type = sylva_type_integer;\
     (V).integer_value = (V).boolean_value ? 1 : 0;\
+  }\
+  if ((V).type == sylva_type_nil) {\
+    (V).type = sylva_type_integer;\
+    (V).integer_value = 0;\
   }
 
 #define integer_to_float(V)\
@@ -36,24 +42,27 @@
     (V).integer_value = (sylva_integer)(V).float_value;\
   }
 
-#define to_integer(V)\
-  float_to_integer(V);\
-  boolean_to_integer(V);
+/**
+ * convert nil, boolean, float to integer
+ */
+#define to_integer(V) sanitize_primitive(V); float_to_integer(V);
 
+/**
+ * compare two values and returns sylva_compare_result
+ */
 #define to_compare(A, B) ((A) == (B) ? sylva_same : ((A) > (B) ? sylva_descending : sylva_ascending))
 
 /***********************************************************************************************************************
  * Number
  **********************************************************************************************************************/
 
-
 SYLVA_WEAK sylva_class SYLVA_Number = {
     .name = "Number",
     .super = NULL,
     .static_funcs = NULL,
     .instance_funcs = NULL,
-    .static_member_list = NULL,
-    .instance_member_list = NULL,
+    .static_member_defs = NULL,
+    .instance_member_defs = NULL,
     .members = NULL,
     .deinitializor = &SYLVA_Number_I_deinit,
 };
@@ -71,18 +80,18 @@ sylva_value SYLVA_Number_I_deinit(sylva_value context, sylva_args args) {
 }
 
 sylva_value SYLVA_Number_I_not(sylva_value context, sylva_args args) {
-  assert_is_number(context);
+  assert_primitive(context);
   return sylva_boolean_value(!sylva_to_boolean(context));
 }
 
 sylva_value SYLVA_Number_I_add(sylva_value context, sylva_args args) {
-  assert_is_number(context);
-  boolean_to_integer(context);
+  assert_primitive(context);
+  sanitize_primitive(context);
   //  Iterate over arguments
   for (sylva_index i = 0; i < args.length; i++) {
     sylva_value arg = args.values[i];
-    assert_is_number(arg);
-    boolean_to_integer(arg);
+    assert_primitive(arg);
+    sanitize_primitive(arg);
     switch (arg.type) {
     case sylva_type_integer: {
       //  float + integer, integer + integer
@@ -107,8 +116,8 @@ sylva_value SYLVA_Number_I_add(sylva_value context, sylva_args args) {
 }
 
 sylva_value SYLVA_Number_I_sub(sylva_value context, sylva_args args) {
-  assert_is_number(context);
-  boolean_to_integer(context);
+  assert_primitive(context);
+  sanitize_primitive(context);
   //  arguments count == 0, i.e prefix `-` operator
   if (args.length == 0) {
     switch (context.type) {
@@ -138,12 +147,12 @@ sylva_value SYLVA_Number_I_sub(sylva_value context, sylva_args args) {
 }
 
 sylva_value SYLVA_Number_I_mul(sylva_value context, sylva_args args) {
-  assert_is_number(context);
-  boolean_to_integer(context);
+  assert_primitive(context);
+  sanitize_primitive(context);
   for (sylva_index i = 0; i < args.length; i++) {
     sylva_value arg = args.values[i];
-    assert_is_number(arg);
-    boolean_to_integer(arg);
+    assert_primitive(arg);
+    sanitize_primitive(arg);
     switch (arg.type) {
     case sylva_type_integer: {
       //  float * integer
@@ -172,12 +181,12 @@ sylva_value SYLVA_Number_I_mul(sylva_value context, sylva_args args) {
 }
 
 sylva_value SYLVA_Number_I_div(sylva_value context, sylva_args args) {
-  assert_is_number(context);
-  boolean_to_integer(context);
+  assert_primitive(context);
+  sanitize_primitive(context);
   for (sylva_index i = 0; i < args.length; i++) {
     sylva_value arg = args.values[i];
-    assert_is_number(arg);
-    boolean_to_integer(arg);
+    assert_primitive(arg);
+    sanitize_primitive(arg);
     switch (arg.type) {
     case sylva_type_integer: {
       //  float * integer
@@ -206,12 +215,12 @@ sylva_value SYLVA_Number_I_div(sylva_value context, sylva_args args) {
 }
 
 sylva_value SYLVA_Number_I_mod(sylva_value context, sylva_args args) {
-  assert_is_number(context);
-  boolean_to_integer(context);
+  assert_primitive(context);
+  sanitize_primitive(context);
   assert(args.length == 1);
   sylva_value value = args.values[0];
-  assert_is_number(value);
-  boolean_to_integer(value);
+  assert_primitive(value);
+  sanitize_primitive(value);
   if (value.type == sylva_type_integer) {
     if (context.type == sylva_type_float) {
       return sylva_float_value(fmod(context.float_value, (sylva_float) value.integer_value));
@@ -228,11 +237,12 @@ sylva_value SYLVA_Number_I_mod(sylva_value context, sylva_args args) {
 }
 
 sylva_value SYLVA_Number_I_compare(sylva_value context, sylva_args args) {
-  assert_is_number(context);
-  boolean_to_integer(context);
+  assert_primitive(context);
+  sanitize_primitive(context);
   assert(args.length == 1);
   sylva_value value = args.values[0];
-  boolean_to_integer(value);
+  assert_primitive(value);
+  sanitize_primitive(value);
   if (value.type == sylva_type_integer) {
     if (context.type == sylva_type_float) {
       return sylva_integer_value(to_compare(context.float_value, value.integer_value));
@@ -279,21 +289,21 @@ sylva_value SYLVA_Number_I_not_eq(sylva_value context, sylva_args args) {
 }
 
 sylva_value SYLVA_Number_I_or(sylva_value context, sylva_args args) {
-  assert_is_number(context);
+  assert_primitive(context);
   assert(args.length == 1);
   sylva_value value = args.values[0];
   return sylva_boolean_value(sylva_to_boolean(context) || sylva_to_boolean(value));
 }
 
 sylva_value SYLVA_Number_I_and(sylva_value context, sylva_args args) {
-  assert_is_number(context);
+  assert_primitive(context);
   assert(args.length == 1);
   sylva_value value = args.values[0];
   return sylva_boolean_value(sylva_to_boolean(context) && sylva_to_boolean(value));
 }
 
 sylva_value SYLVA_Number_I_bit_or(sylva_value context, sylva_args args) {
-  assert_is_number(context);
+  assert_primitive(context);
   assert(args.length == 1);
   sylva_value value = args.values[0];
   to_integer(context);
@@ -302,7 +312,7 @@ sylva_value SYLVA_Number_I_bit_or(sylva_value context, sylva_args args) {
 }
 
 sylva_value SYLVA_Number_I_bit_and(sylva_value context, sylva_args args) {
-  assert_is_number(context);
+  assert_primitive(context);
   assert(args.length == 1);
   sylva_value value = args.values[0];
   to_integer(context);
@@ -311,7 +321,7 @@ sylva_value SYLVA_Number_I_bit_and(sylva_value context, sylva_args args) {
 }
 
 sylva_value SYLVA_Number_I_bit_xor(sylva_value context, sylva_args args) {
-  assert_is_number(context);
+  assert_primitive(context);
   assert(args.length == 1);
   sylva_value value = args.values[0];
   to_integer(context);
@@ -320,7 +330,7 @@ sylva_value SYLVA_Number_I_bit_xor(sylva_value context, sylva_args args) {
 }
 
 sylva_value SYLVA_Number_I_rshift(sylva_value context, sylva_args args) {
-  assert_is_number(context);
+  assert_primitive(context);
   assert(args.length == 1);
   sylva_value value = args.values[0];
   to_integer(context);
@@ -329,7 +339,7 @@ sylva_value SYLVA_Number_I_rshift(sylva_value context, sylva_args args) {
 }
 
 sylva_value SYLVA_Number_I_lshift(sylva_value context, sylva_args args) {
-  assert_is_number(context);
+  assert_primitive(context);
   assert(args.length == 1);
   sylva_value value = args.values[0];
   to_integer(context);
@@ -338,7 +348,7 @@ sylva_value SYLVA_Number_I_lshift(sylva_value context, sylva_args args) {
 }
 
 sylva_value SYLVA_Number_I_abs(sylva_value context, sylva_args args) {
-  assert_is_number(context);
+  assert_primitive(context);
   if (context.type == sylva_type_float) {
     return sylva_float_value(fabs(context.float_value));
   } else if (context.type == sylva_type_integer) {
@@ -349,17 +359,17 @@ sylva_value SYLVA_Number_I_abs(sylva_value context, sylva_args args) {
 }
 
 sylva_value SYLVA_Number_I_to_i(sylva_value context, sylva_args args) {
-  assert_is_number(context);
+  assert_primitive(context);
   return sylva_integer_value(sylva_to_integer(context));
 }
 
 sylva_value SYLVA_Number_I_to_f(sylva_value context, sylva_args args) {
-  assert_is_number(context);
+  assert_primitive(context);
   return sylva_float_value(sylva_to_float(context));
 }
 
 sylva_value SYLVA_Number_I_to_b(sylva_value context, sylva_args args) {
-  assert_is_number(context);
+  assert_primitive(context);
   return sylva_boolean_value(sylva_to_boolean(context));
 }
 
@@ -374,8 +384,8 @@ SYLVA_WEAK sylva_class SYLVA_Object = {
     .super = NULL,
     .static_funcs = NULL,
     .instance_funcs = NULL,
-    .static_member_list = NULL,
-    .instance_member_list = NULL,
+    .static_member_defs = NULL,
+    .instance_member_defs = NULL,
     .members = NULL,
     .deinitializor = &SYLVA_Object_I_deinit,
 };

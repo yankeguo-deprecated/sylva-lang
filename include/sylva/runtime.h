@@ -19,69 +19,9 @@ __CPP_DECL_START
  **********************************************************************************************************************/
 
 /**
- * integer type in sylva runtime, alias to C `long`
- */
-typedef long sylva_integer;
-
-/**
- * index type, i.e. unsigned integer type, in sylva runtime, alias to C `unsigned long`
- *
- * this is also the type for function id and member id
- */
-typedef unsigned long sylva_index;
-
-/**
- * sylva_index is used for function id
- */
-typedef sylva_index sylva_func_id;
-
-/**
- * sylva_func_id_not_found is aliased to sylva_index_not_found
- */
-#define sylva_func_id_not_found sylva_index_not_found
-
-/**
- * use sylva_index as member id
- */
-typedef sylva_index sylva_member_id;
-
-/**
- * use sylva_index_not_found as sylva_member_id_not_found
- */
-#define sylva_member_id_not_found sylva_index_not_found
-
-/**
- * float type in sylva runtime, alias to C `double`
- */
-typedef double sylva_float;
-
-/**
  * boolean type in sylva runtime, alias to C `bool`
  */
 typedef bool sylva_boolean;
-
-/**
- * comparison result
- */
-enum {
-  /**
-   * left < right
-   */
-      sylva_ascending = -1,
-  /**
-   * left == right
-   */
-      sylva_same = 0,
-  /**
-   * left > right
-   */
-      sylva_descending = 1,
-};
-
-/**
- * index type returned when nothing is found, alias to max value for unsigned long
- */
-#define sylva_index_not_found ULONG_MAX
 
 /**
  * true value for boolean type
@@ -95,6 +35,63 @@ enum {
 #define sylva_false false
 #define sylva_no    sylva_false
 
+/**
+ * index type, i.e. unsigned integer type, in sylva runtime, alias to C `unsigned long`
+ *
+ * this is also the type for function id and member id
+ */
+typedef unsigned long sylva_index;
+
+/**
+ * max possible sylva_index value
+ */
+#define sylva_index_max ULONG_MAX
+
+/**
+ * index type returned when nothing is found, alias to max value for unsigned long
+ */
+#define sylva_index_not_found sylva_index_max
+
+/**
+ * integer type in sylva runtime, alias to C `long`
+ */
+typedef long sylva_integer;
+
+/**
+ * float type in sylva runtime, alias to C `double`
+ */
+typedef double sylva_float;
+
+/**
+ * comparison result
+ */
+typedef enum {
+  /**
+   * left < right
+   */
+      sylva_ascending = -1,
+  /**
+   * left == right
+   */
+      sylva_same = 0,
+  /**
+   * left > right
+   */
+      sylva_descending = 1,
+} sylva_comparison_result;
+
+/**
+ * char* is used as symbole in sylva, used for identify a func or a member variable
+ *
+ * symbol should not be created dynamically
+ */
+typedef char *const sylva_symbol;
+
+/**
+ * check if two symbols are same
+ */
+#define sylva_symbol_equals(A, B) (strcmp((A), (B)) == 0)
+
 /***********************************************************************************************************************
  * Forward Declarations
  **********************************************************************************************************************/
@@ -105,7 +102,7 @@ enum {
 typedef struct sylva_class_t sylva_class;
 typedef struct sylva_object_t sylva_object;
 typedef struct sylva_funcs_t sylva_funcs;
-typedef struct sylva_member_list_t sylva_member_list;
+typedef struct sylva_member_defs_t sylva_member_defs;
 typedef struct sylva_members_t sylva_members;
 typedef struct sylva_args_t sylva_args;
 
@@ -115,7 +112,7 @@ typedef struct sylva_args_t sylva_args;
 typedef sylva_class *sylva_class_ref;
 typedef sylva_object *sylva_object_ref;
 typedef sylva_funcs *sylva_funcs_ref;
-typedef sylva_member_list *sylva_member_list_ref;
+typedef sylva_member_defs *sylva_member_defs_ref;
 typedef sylva_members *sylva_members_ref;
 
 /***********************************************************************************************************************
@@ -155,12 +152,12 @@ struct sylva_class_t {
   /**
    * static member variables declared by this class
    */
-  sylva_member_list_ref static_member_list;
+  sylva_member_defs_ref static_member_defs;
 
   /**
    * instance member variables declared by this class
    */
-  sylva_member_list_ref instance_member_list;
+  sylva_member_defs_ref instance_member_defs;
 
   /**
    * storage for all static member variables
@@ -236,33 +233,37 @@ SYLVA_EXTERN void sylva_object_destroy(sylva_object_ref object);
  */
 typedef enum {
   /**
-   * type for sylva_integer
+   * nil type for sylva
    */
-      sylva_type_integer,
-  /**
-   * type for sylva_float
-   */
-      sylva_type_float,
+      sylva_type_nil = 1,
   /**
    * type for sylva_boolean
    */
-      sylva_type_boolean,
+      sylva_type_boolean = 1 << 1,
   /**
-   * type for sylva_object
+   * type for sylva_integer
    */
-      sylva_type_object,
+      sylva_type_integer = 1 << 2,
   /**
-   * type for sylva_class
+   * type for sylva_float
    */
-      sylva_type_class,
+      sylva_type_float = 1 << 3,
+  /**
+   * sum all primitive types
+   */
+      sylva_type_primitive = sylva_type_nil | sylva_type_boolean | sylva_type_integer | sylva_type_float,
+  /**
+   * type for sylva_object_ref
+   */
+      sylva_type_object = 1 << 4,
+  /**
+   * type for sylva_class_ref
+   */
+      sylva_type_class = 1 << 5,
   /**
    * type for wild C pointer, sylva-runtime will never use this type, reserved for native bindings
    */
-      sylva_type_pointer,
-  /**
-   * nil type for sylva
-   */
-      sylva_type_nil,
+      sylva_type_pointer = 1 << 6,
 
 } sylva_value_type;
 
@@ -396,8 +397,8 @@ typedef sylva_args *sylva_args_ref;
 /**
  * initializer macro for sylva_args
  */
-#define sylva_args_empty     ((sylva_args){ .length = 0, .values = NULL })
-#define sylva_args_make(C, ...)  ((sylva_args){ .length = C, .values = (sylva_value[]){ __VA_ARGS__ }})
+#define sylva_args_make(C, ...) ((sylva_args){ .length = C, .values = (sylva_value[]){ __VA_ARGS__ }})
+#define sylva_args_empty ((sylva_args){ .length = 0, .values = NULL })
 
 /**
  * create a sylva_args with length
@@ -439,7 +440,7 @@ SYLVA_EXTERN void sylva_args_destroy(sylva_args args);
  * @param context for instance functions this is the object, for class functions this is the class
  * @param args arguments passed in, will be automatically destroyed
  */
-typedef sylva_value (*sylva_func)(sylva_value context, sylva_args args);
+typedef sylva_value (*sylva_imp)(sylva_value context, sylva_args args);
 
 /**
  * invoke a sylva_func, with context and variable arguments
@@ -451,86 +452,39 @@ typedef sylva_value (*sylva_func)(sylva_value context, sylva_args args);
  *
  * @return result of function invocation
  */
-SYLVA_EXTERN sylva_value sylva_func_call(sylva_func func, sylva_value context, sylva_index length, ...);
-SYLVA_EXTERN sylva_value sylva_func_v_call(sylva_func func, sylva_value context, sylva_index length, va_list list);
-
-/***********************************************************************************************************************
- * Function ID Registry
- **********************************************************************************************************************/
-
-/**
- * struct for Function ID Registry
- */
-typedef struct {
-  /**
-   * number of function ids
-   */
-  sylva_index length;
-  /**
-   * function ids
-   */
-  sylva_func_id *func_ids;
-  /**
-   * function names
-   */
-  char **func_names;
-} sylva_func_id_registry;
-
-/**
- * the Global FuncId Registry, should be provided by compile target
- *
- * !!WARN!! in ideal situation, this global value should be initialized literally
- */
-SYLVA_EXTERN sylva_func_id_registry sylva_runtime_func_id_registry;
-
-/**
- * get function name of a function id from Function Id Registry
- *
- * @param registry the registry to find from
- * @param func_id the function id to find
- *
- * @param function name, NULL if not found
- */
-SYLVA_EXTERN char *sylva_func_id_registry_get_func_name(sylva_func_id_registry registry, sylva_func_id func_id);
-
-/**
- * get function id of a function name from Function Id Registry
- *
- * @param registry the registry to find from
- * @param func_name the function name to find
- *
- * @param function id, sylva_func_id_not_found if not found
- */
-SYLVA_EXTERN sylva_func_id sylva_func_id_registry_get_func_id(sylva_func_id_registry registry, char *func_name);
-
-/**
- * get function name of a function id from global function id registry
- *
- * @see sylva_func_id_registry_get_func_name
- *
- * @param func_id
- *
- * @return function name
- */
-SYLVA_EXTERN char *sylva_func_id_to_name(sylva_func_id func_id);
-
-/**
- * get function id of a function name from global function id registry
- *
- * @see sylva_func_id_registry_get_func_name
- *
- * @param func_name
- *
- * @return function id
- */
-SYLVA_EXTERN sylva_func_id sylva_func_name_to_id(char *func_name);
+SYLVA_EXTERN sylva_value sylva_func_call(sylva_imp func, sylva_value context, sylva_index length, ...);
+SYLVA_EXTERN sylva_value sylva_func_v_call(sylva_imp func, sylva_value context, sylva_index length, va_list list);
 
 /***********************************************************************************************************************
  * Function Storage
  **********************************************************************************************************************/
 
 /**
- * sylva_funcs stores a sylva_func_id to sylva_func map
+ * function storage entry
+ */
+typedef struct sylva_func_t {
+  /**
+   * function name
+   */
+  char *name;
+
+  /**
+   * function implementation
+   */
+  sylva_imp imp;
+
+} sylva_func;
+
+#define sylva_func_item(NAME, IMP) { .name = NAME, .imp = IMP }
+#define sylva_func_make(NAME, IMP) ((sylva_func) sylva_func_item(NAME, IMP))
+
+/**
+ * pointer type for sylva_funcs_entry
+ */
+typedef sylva_func *sylva_func_ref;
+
+/**
+ * sylva_funcs stores a sylva_symbol to sylva_func map
  *
  * !!WARN!! in an ideal situation, sylva_funcs should be initialized literally
  */
@@ -539,15 +493,14 @@ struct sylva_funcs_t {
    * number of functions
    */
   sylva_index length;
+
   /**
-   * function ids
+   * entries
    */
-  sylva_func_id *func_ids;
-  /**
-   * pointers to functions
-   */
-  sylva_func *funcs;
+  sylva_func_ref entries;
 };
+
+#define sylva_funcs_make(L, ...) ((sylva_funcs) { .length = L, .entries = (sylva_func[]) { __VA_ARGS__ }})
 
 /**
  * find a pointer of function from sylva_funcs by function id
@@ -557,17 +510,7 @@ struct sylva_funcs_t {
  *
  * @return pointer to function
  */
-SYLVA_EXTERN sylva_func sylva_funcs_get(sylva_funcs list, sylva_func_id func_id);
-
-/**
- * check whether a sylva_func_id exists in a sylva_funcs
- *
- * @param list sylva_funcs to check from
- * @param func_id function id to check
- *
- * @return sylva_true or sylva_false
- */
-SYLVA_EXTERN sylva_boolean sylva_funcs_exists(sylva_funcs list, sylva_func_id func_id);
+SYLVA_EXTERN sylva_imp sylva_funcs_get(sylva_funcs list, sylva_symbol name);
 
 /**
  * set a sylva_func to a function id, a NULL sylva_func will not remove function id from sylva_funcs
@@ -578,7 +521,7 @@ SYLVA_EXTERN sylva_boolean sylva_funcs_exists(sylva_funcs list, sylva_func_id fu
  *
  * @return NULL if out of length, func if succeeded
  */
-SYLVA_EXTERN sylva_func sylva_funcs_set(sylva_funcs list, sylva_func_id func_id, sylva_func func);
+SYLVA_EXTERN sylva_imp sylva_funcs_set(sylva_funcs list, sylva_symbol name, sylva_imp func);
 
 /***********************************************************************************************************************
  * Member Viarable Declarations & Storage
@@ -596,14 +539,60 @@ typedef enum {
    * weak variable, will retain/release while setting
    */
       sylva_member_weak = 1 << 0,
+
 } sylva_member_option;
+
+/**
+ * member definition
+ */
+typedef struct {
+  /**
+   * name
+   */
+  char *name;
+  /**
+   * option
+   */
+  sylva_member_option option;
+} sylva_member_def;
+
+typedef sylva_member_def *sylva_member_def_ref;
+
+#define sylva_member_def_item(NAME, OPTION) { .name = NAME, .option = OPTION }
+#define sylva_member_def_make(NAME, OPTION) ((sylva_member_def) sylva_member_def_item(NAME, OPTION))
+
+/**
+ * entry for members storage
+ */
+typedef struct sylva_member_t {
+  /**
+   * name
+   */
+  char *name;
+  /**
+   * option
+   */
+  sylva_member_option option;
+  /**
+   * value
+   */
+  sylva_value value;
+} sylva_member;
+
+#define sylva_member_item(NAME, OPTION) { .name = NAME, .option = OPTION, .value = sylva_bare_nil_value }
+#define sylva_member_make(NAME, OPTION) ((sylva_member) sylva_member_item(NAME, OPTION))
+
+/**
+ * pointer
+ */
+typedef sylva_member *sylva_members_entry_ref;
 
 /**
  * Member Viarable Declarations
  *
  * !!WARN!! in ideal situation, member viarable is declared statically
  */
-struct sylva_member_list_t {
+struct sylva_member_defs_t {
   /**
    * number of members
    */
@@ -611,12 +600,10 @@ struct sylva_member_list_t {
   /**
    * member ids
    */
-  sylva_member_id *member_ids;
-  /**
-   * cooresponding member options
-   */
-  sylva_member_option *member_options;
+  sylva_member_def_ref entries;
 };
+
+#define sylva_member_defs_make(L, ...) ((sylva_member_defs) { .length = L, .entries = (sylva_member_def[]){ __VA_ARGS__ }})
 
 /**
  * Member Storage
@@ -629,18 +616,12 @@ struct sylva_members_t {
    */
   sylva_index length;
   /**
-   * member ids
+   * entries
    */
-  sylva_member_id *member_ids;
-  /**
-   * cooresponding member values
-   */
-  sylva_value *member_values;
-  /**
-   * cooresponding member options
-   */
-  sylva_member_option *member_options;
+  sylva_members_entry_ref entries;
 };
+
+#define sylva_members_make(L, ...) ((sylva_members) { .length = L, .entries = (sylva_member[]) { __VA_ARGS__ }})
 
 /**
  * allocate memory for member storage with length provided
@@ -660,9 +641,7 @@ SYLVA_EXTERN sylva_members_ref sylva_members_create(sylva_index length);
  *
  * @return number of members inited
  */
-SYLVA_EXTERN sylva_index sylva_members_init(sylva_members_ref members,
-                                            sylva_index start_idx,
-                                            sylva_member_list member_list);
+SYLVA_EXTERN sylva_index sylva_members_init(sylva_members_ref members, sylva_index start_idx, sylva_member_defs defs);
 
 /**
  * get a value from member storage with member id
@@ -672,7 +651,7 @@ SYLVA_EXTERN sylva_index sylva_members_init(sylva_members_ref members,
  *
  * @return member value, sylva_value_nil if not found
  */
-SYLVA_EXTERN sylva_value sylva_members_get(sylva_members members, sylva_member_id member_id);
+SYLVA_EXTERN sylva_value sylva_members_get(sylva_members members, sylva_symbol name);
 
 /**
  * set a value to member storage with member id
@@ -685,88 +664,12 @@ SYLVA_EXTERN sylva_value sylva_members_get(sylva_members members, sylva_member_i
  *
  * @param sylva_true if set, sylva_false if member id not found
  */
-SYLVA_EXTERN sylva_boolean sylva_members_set(sylva_members members, sylva_member_id member_id, sylva_value value);
+SYLVA_EXTERN sylva_boolean sylva_members_set(sylva_members members, sylva_symbol name, sylva_value value);
 
 /**
  * destroy a member storage, will free everything and release all members
  */
 SYLVA_EXTERN void sylva_members_destroy(sylva_members_ref members);
-
-/***********************************************************************************************************************
- * Member ID Registry
- **********************************************************************************************************************/
-
-/**
- * Member ID Registry, similar to Function ID Registry
- */
-typedef struct {
-  /**
-   * number of member ids
-   */
-  sylva_index length;
-  /**
-   * member ids
-   */
-  sylva_member_id *member_ids;
-  /**
-   * member names
-   */
-  char **member_names;
-} sylva_member_id_registry;
-
-/**
- * pointer type
- */
-typedef sylva_member_id_registry *sylva_member_id_registry_ref;
-
-/**
- * The Global FuncId Registry, should be provided by compile target
- *
- * !!WARN!! in ideal situation, this global value should be initialized literally
- */
-SYLVA_EXTERN sylva_member_id_registry sylva_runtime_member_id_registry;
-
-/**
- * get member name of a member id from Member Id Registry
- *
- * @param registry the registry to find from
- * @param member_id the member id to find
- *
- * @param member name, NULL if not found
- */
-SYLVA_EXTERN char *sylva_member_id_registry_get_func_name(sylva_member_id_registry registry, sylva_member_id member_id);
-
-/**
- * get member id of a member name from Member Id Registry
- *
- * @param registry the registry to find from
- * @param member_name the member name to find
- *
- * @param member id, sylva_member_id_not_found if not found
- */
-SYLVA_EXTERN sylva_member_id sylva_member_id_registry_get_func_id(sylva_member_id_registry registry, char *member_name);
-
-/**
- * get member name of a member id from global member id registry
- *
- * @see sylva_member_id_registry_get_member_name
- *
- * @param member_id
- *
- * @return member name
- */
-SYLVA_EXTERN char *sylva_member_id_to_name(sylva_member_id member_id);
-
-/**
- * get member id of a member name from global member id registry
- *
- * @see sylva_member_id_registry_get_member_id
- *
- * @param member_name
- *
- * @return member id
- */
-SYLVA_EXTERN sylva_member_id sylva_member_name_to_id(char *member_name);
 
 /***********************************************************************************************************************
  * Object-Oriented
@@ -789,7 +692,7 @@ SYLVA_EXTERN sylva_class_ref sylva_get_class(sylva_value value);
  *
  * @return pointer to function if resolved, NULL or not
  */
-SYLVA_EXTERN sylva_func sylva_class_instance_func_resolve(sylva_class class, sylva_func_id func_id);
+SYLVA_EXTERN sylva_imp sylva_class_instance_func_resolve(sylva_class class, sylva_symbol name);
 
 /**
  * resolve a function id to static function from a Class, including superclass
@@ -799,7 +702,7 @@ SYLVA_EXTERN sylva_func sylva_class_instance_func_resolve(sylva_class class, syl
  *
  * @return pointer to function if resolved, NULL or not
  */
-SYLVA_EXTERN sylva_func sylva_class_static_func_resolve(sylva_class class, sylva_func_id func_id);
+SYLVA_EXTERN sylva_imp sylva_class_static_func_resolve(sylva_class class, sylva_symbol name);
 
 /**
  * resolve a function id to function from a Class or an Object, including superclass
@@ -811,7 +714,7 @@ SYLVA_EXTERN sylva_func sylva_class_static_func_resolve(sylva_class class, sylva
  *
  * @return pointer to function if resolved, NULL or not
  */
-SYLVA_EXTERN sylva_func sylva_func_resolve(sylva_value context, sylva_func_id func_id);
+SYLVA_EXTERN sylva_imp sylva_func_resolve(sylva_value context, sylva_symbol name);
 
 /**
  * resolve a function id to function from superclass of a Class or an Object's class, including superclass
@@ -824,7 +727,7 @@ SYLVA_EXTERN sylva_func sylva_func_resolve(sylva_value context, sylva_func_id fu
  *
  * @return pointer to function if resolved, NULL or not
  */
-SYLVA_EXTERN sylva_func sylva_func_resolve_super(sylva_value context, sylva_class_ref class, sylva_func_id func_id);
+SYLVA_EXTERN sylva_imp sylva_func_resolve_super(sylva_value context, sylva_class_ref class, sylva_symbol name);
 
 /**
  * resolve a function with a Class or an Object, and invoke it
@@ -836,8 +739,8 @@ SYLVA_EXTERN sylva_func sylva_func_resolve_super(sylva_value context, sylva_clas
  *
  * @return function invocation result
  */
-SYLVA_EXTERN sylva_value sylva_call(sylva_value context, sylva_func_id func_id, sylva_index length, ...);
-SYLVA_EXTERN sylva_value sylva_v_call(sylva_value context, sylva_func_id func_id, sylva_index length, va_list list);
+SYLVA_EXTERN sylva_value sylva_call(sylva_value context, sylva_symbol name, sylva_index length, ...);
+SYLVA_EXTERN sylva_value sylva_v_call(sylva_value context, sylva_symbol name, sylva_index length, va_list list);
 
 /**
  * resolve a function with superclass of a Class or an Object, and invoke it
@@ -851,12 +754,12 @@ SYLVA_EXTERN sylva_value sylva_v_call(sylva_value context, sylva_func_id func_id
  */
 SYLVA_EXTERN sylva_value sylva_call_super(sylva_value context,
                                           sylva_class_ref class,
-                                          sylva_func_id func_id,
+                                          sylva_symbol name,
                                           sylva_index length,
                                           ...);
 SYLVA_EXTERN sylva_value sylva_v_call_super(sylva_value context,
                                             sylva_class_ref class,
-                                            sylva_func_id func_id,
+                                            sylva_symbol name,
                                             sylva_index length,
                                             va_list list);
 
@@ -868,9 +771,9 @@ SYLVA_EXTERN sylva_value sylva_v_call_super(sylva_value context,
  * @param length number of arguments
  * @param list arguments in va_list
  */
-SYLVA_EXTERN sylva_value sylva_create(sylva_class_ref class, sylva_func_id func_id, sylva_index length, ...);
+SYLVA_EXTERN sylva_value sylva_create(sylva_class_ref class, sylva_symbol name, sylva_index length, ...);
 
-SYLVA_EXTERN sylva_value sylva_v_create(sylva_class_ref class, sylva_func_id func_id, sylva_index length, va_list list);
+SYLVA_EXTERN sylva_value sylva_v_create(sylva_class_ref class, sylva_symbol name, sylva_index length, va_list list);
 
 /**
  * invoke sylva_object_retain if value is an object
@@ -886,18 +789,20 @@ SYLVA_EXTERN void sylva_retain(sylva_value_ref value);
  *
  * @see sylva_members_get
  */
-SYLVA_EXTERN sylva_value sylva_object_members_get(sylva_object object, sylva_member_id member_id);
-SYLVA_EXTERN sylva_value sylva_class_members_get(sylva_class class, sylva_member_id member_id);
-SYLVA_EXTERN sylva_value sylva_get(sylva_value value, sylva_member_id member_id);
+SYLVA_EXTERN sylva_value sylva_object_members_get(sylva_object object, sylva_symbol name);
+SYLVA_EXTERN sylva_value sylva_class_members_get(sylva_class class, sylva_symbol name);
+SYLVA_EXTERN sylva_value sylva_get(sylva_value value, sylva_symbol name);
+SYLVA_EXTERN sylva_value sylva_static_get(sylva_value value, sylva_symbol name);
 
 /**
  * set member to object, class and value(object/class type)
  *
  * @see sylva_members_set
  */
-SYLVA_EXTERN sylva_boolean sylva_object_members_set(sylva_object object, sylva_member_id member_id, sylva_value value);
-SYLVA_EXTERN sylva_boolean sylva_class_members_set(sylva_class class, sylva_member_id member_id, sylva_value value);
-SYLVA_EXTERN sylva_boolean sylva_set(sylva_value target_value, sylva_member_id member_id, sylva_value value);
+SYLVA_EXTERN sylva_boolean sylva_object_members_set(sylva_object object, sylva_symbol name, sylva_value value);
+SYLVA_EXTERN sylva_boolean sylva_class_members_set(sylva_class class, sylva_symbol name, sylva_value value);
+SYLVA_EXTERN sylva_boolean sylva_set(sylva_value target_value, sylva_symbol name, sylva_value value);
+SYLVA_EXTERN sylva_boolean sylva_static_set(sylva_value target_value, sylva_symbol name, sylva_value value);
 
 __CPP_DECL_END
 

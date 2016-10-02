@@ -132,7 +132,7 @@ struct sylva_class_t {
   /**
    * name of class
    */
-  char *name;
+  sylva_symbol name;
 
   /**
    * pointer to superclass

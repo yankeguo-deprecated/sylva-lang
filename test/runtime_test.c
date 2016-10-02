@@ -34,9 +34,6 @@
  *      print self.name
  *    end
  *
- *    static print
- *      print self->count
- *    end
  *  end
  *
  * */
@@ -80,7 +77,7 @@ sylva_value SYLVA_C_Dog_I_bark(sylva_value self, sylva_args args) {
 sylva_value SYLVA_M_Printer_I_print(sylva_value self, sylva_args args) {
   sylva_value content = sylva_args_get(args, 0);
   printf("%s:%s, I'm the number %ld dog\n",
-         self.object_value->class->name,
+         sylva_get_class(self)->name,
          (char *) content.pointer_value,
          sylva_static_get(self, "count").integer_value);
   return sylva_nil_value;
@@ -90,7 +87,7 @@ sylva_value SYLVA_M_Printer_I_print(sylva_value self, sylva_args args) {
 
 sylva_class SYLVA_C_Dog = {
     .name = "Dog",
-    .super = NULL,
+    .super = &SYLVA_Object,
     .static_funcs =
     &sylva_funcs_make(1,
                       sylva_func_item("main", &SYLVA_C_Dog_S_main)

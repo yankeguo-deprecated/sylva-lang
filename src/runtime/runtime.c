@@ -172,9 +172,8 @@ sylva_boolean sylva_set(sylva_value target_value, sylva_symbol name, sylva_value
 }
 
 sylva_boolean sylva_static_set(sylva_value target_value, sylva_symbol name, sylva_value value) {
-  if (value.type == sylva_type_object) {
-    value = sylva_class_value(value.object_value->class);
+  if (target_value.type == sylva_type_object) {
+    target_value = sylva_class_value(target_value.object_value->class);
   }
   return sylva_set(target_value, name, value);
 }
-

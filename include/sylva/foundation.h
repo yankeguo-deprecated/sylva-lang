@@ -17,17 +17,15 @@
 /**
  * Number, virtual class for primitives (float, integer, boolean, nil)
  *
- * !!WARN!! this is a placeholder, should be overriden by target source
  * !!WARN!! this is a virtual class, it will never create instances, instead, Sylva runtime will resolve functions for
  * all numeric primitive values into instance functions of Number class
  */
 SYLVA_EXTERN sylva_class SYLVA_Number;
 
-SYLVA_EXTERN sylva_value SYLVA_Number_S_new(sylva_value context, sylva_args args);
-
+/**
+ * virtual init for Number.new call
+ */
 SYLVA_EXTERN sylva_value SYLVA_Number_I_init(sylva_value context, sylva_args args);
-
-SYLVA_EXTERN sylva_value SYLVA_Number_I_deinit(sylva_value context, sylva_args args);
 
 /**
  * Not
@@ -105,8 +103,6 @@ SYLVA_EXTERN sylva_value SYLVA_Number_I_abs(sylva_value context, sylva_args args
 
 /**
  * Object
- *
- * !!WARN!! this is a placeholder, should be overridden by target source
  */
 SYLVA_EXTERN sylva_class SYLVA_Object;
 
@@ -114,8 +110,6 @@ SYLVA_EXTERN sylva_class SYLVA_Object;
  * default init does nothing
  */
 SYLVA_EXTERN sylva_value SYLVA_Object_I_init(sylva_value context, sylva_args args);
-
-SYLVA_EXTERN sylva_value SYLVA_Object_I_deinit(sylva_value context, sylva_args args);
 
 SYLVA_EXTERN sylva_value SYLVA_Object_I_class(sylva_value context, sylva_args args);
 

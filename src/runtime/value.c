@@ -18,7 +18,7 @@ sylva_value sylva_create(sylva_class_ref class, sylva_symbol name, sylva_index l
 
 sylva_value sylva_v_create(sylva_class_ref class, sylva_symbol name, sylva_index length, va_list list) {
   if (class == &SYLVA_Number) {
-    sylva_value result = SYLVA_Number_S_new(sylva_class_value(&SYLVA_Number), sylva_args_empty);
+    sylva_value result = sylva_integer_value(0);
     return sylva_v_call(result, name, length, list);
   }
   sylva_object_ref object = sylva_object_create(class);

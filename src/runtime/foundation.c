@@ -15,6 +15,9 @@
  * Internal Macros
  **********************************************************************************************************************/
 
+/**
+ * assert a value is a primitive value
+ */
 #define assert_primitive(V) assert((V).type & sylva_type_primitive)
 
 /**
@@ -56,27 +59,46 @@
  * Number
  **********************************************************************************************************************/
 
-SYLVA_WEAK sylva_class SYLVA_Number = {
+sylva_class SYLVA_Number = {
     .name = "Number",
     .super = NULL,
     .static_funcs = NULL,
-    .instance_funcs = NULL,
+    .instance_funcs = &sylva_funcs_make(26,
+                                        sylva_func_item("init", &SYLVA_Number_I_init),
+                                        sylva_func_item("not", &SYLVA_Number_I_not),
+                                        sylva_func_item("add", &SYLVA_Number_I_add),
+                                        sylva_func_item("sub", &SYLVA_Number_I_sub),
+                                        sylva_func_item("mul", &SYLVA_Number_I_mul),
+                                        sylva_func_item("div", &SYLVA_Number_I_div),
+                                        sylva_func_item("mod", &SYLVA_Number_I_mod),
+                                        sylva_func_item("compare", &SYLVA_Number_I_compare),
+                                        sylva_func_item("lt", &SYLVA_Number_I_lt),
+                                        sylva_func_item("lt_eq", &SYLVA_Number_I_lt_eq),
+                                        sylva_func_item("gt", &SYLVA_Number_I_gt),
+                                        sylva_func_item("gt_eq", &SYLVA_Number_I_gt_eq),
+                                        sylva_func_item("eq", &SYLVA_Number_I_eq),
+                                        sylva_func_item("not_eq", &SYLVA_Number_I_not_eq),
+                                        sylva_func_item("or", &SYLVA_Number_I_or),
+                                        sylva_func_item("and", &SYLVA_Number_I_and),
+                                        sylva_func_item("or", &SYLVA_Number_I_or),
+                                        sylva_func_item("bit_or", &SYLVA_Number_I_bit_or),
+                                        sylva_func_item("bit_and", &SYLVA_Number_I_bit_and),
+                                        sylva_func_item("bit_xor", &SYLVA_Number_I_bit_xor),
+                                        sylva_func_item("rshift", &SYLVA_Number_I_rshift),
+                                        sylva_func_item("lshift", &SYLVA_Number_I_lshift),
+                                        sylva_func_item("to_i", &SYLVA_Number_I_to_i),
+                                        sylva_func_item("to_f", &SYLVA_Number_I_to_f),
+                                        sylva_func_item("to_b", &SYLVA_Number_I_to_b),
+                                        sylva_func_item("abs", &SYLVA_Number_I_abs),
+    ),
     .static_member_defs = NULL,
     .instance_member_defs = NULL,
     .members = NULL,
-    .deinitializor = &SYLVA_Number_I_deinit,
+    .deinitializor = NULL,
 };
-
-sylva_value SYLVA_Number_S_new(sylva_value context, sylva_args args) {
-  return sylva_integer_value(0);
-}
 
 sylva_value SYLVA_Number_I_init(sylva_value context, sylva_args args) {
   return context;
-}
-
-sylva_value SYLVA_Number_I_deinit(sylva_value context, sylva_args args) {
-  return sylva_nil_value;
 }
 
 sylva_value SYLVA_Number_I_not(sylva_value context, sylva_args args) {
@@ -379,23 +401,22 @@ sylva_value SYLVA_Number_I_to_b(sylva_value context, sylva_args args) {
 
 #define assert_is_object(V) assert((V).type == sylva_type_object)
 
-SYLVA_WEAK sylva_class SYLVA_Object = {
+sylva_class SYLVA_Object = {
     .name = "Object",
     .super = NULL,
     .static_funcs = NULL,
-    .instance_funcs = NULL,
+    .instance_funcs = &sylva_funcs_make(3,
+                                        sylva_func_item("init", &SYLVA_Object_I_init),
+                                        sylva_func_item("class", &SYLVA_Object_I_class),
+    ),
     .static_member_defs = NULL,
     .instance_member_defs = NULL,
     .members = NULL,
-    .deinitializor = &SYLVA_Object_I_deinit,
+    .deinitializor = NULL,
 };
 
 sylva_value SYLVA_Object_I_init(sylva_value context, sylva_args args) {
   return context;
-}
-
-sylva_value SYLVA_Object_I_deinit(sylva_value context, sylva_args args) {
-  return sylva_nil_value;
 }
 
 sylva_value SYLVA_Object_I_class(sylva_value context, sylva_args args) {

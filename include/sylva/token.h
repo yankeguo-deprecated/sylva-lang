@@ -28,6 +28,11 @@ typedef enum {
       STokenComment,
 
   /**
+   * #! started line will be considered as inline C code
+   */
+      STokenInlineC,
+
+  /**
    Identifier, such as class name, method name, variable name, etc
    */
       STokenId,

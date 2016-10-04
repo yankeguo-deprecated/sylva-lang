@@ -13,6 +13,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
+#include <sylva/string.h>
 
 SStringRef SStringCreateIL(char *string, SIndex index, SIndex length) {
   assert(index >= 0);
@@ -45,6 +46,15 @@ SIndex SStringSeekNoBlank(SStringRef string, SIndex start) {
 SIndex SStringSeekBlank(SStringRef string, SIndex start) {
   for (SIndex i = start; i < string->length; i++) {
     if (isblank(string->string[i])) {
+      return i;
+    }
+  }
+  return SIndexNotFound;
+}
+
+SIndex SStringSeekNewLine(SStringRef string, SIndex start) {
+  for (SIndex i = start; i < string->length; i++) {
+    if (string->string[i] == '\n' || string->string[i] == '\r') {
       return i;
     }
   }

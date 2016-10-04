@@ -30,6 +30,8 @@ SYLVA_EXTERN SIndex SStringSeekNoBlank(SStringRef string, SIndex start);
 
 SYLVA_EXTERN SIndex SStringSeekBlank(SStringRef string, SIndex start);
 
+SYLVA_EXTERN SIndex SStringSeekNewLine(SStringRef string, SIndex start);
+
 SYLVA_EXTERN SIndex SStringSeekNoAlphaNumberUnderscore(SStringRef string, SIndex start);
 
 SYLVA_EXTERN void SStringDestroy(SStringRef string);

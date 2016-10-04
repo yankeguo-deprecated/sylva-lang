@@ -16,6 +16,7 @@
 
 SSemaType STokenTypeGetSemaType(STokenType tokenType) {
   if (tokenType == STokenComment ||
+      tokenType == STokenInlineC ||
       tokenType == STokenId ||
       tokenType == STokenString) {
     return SSemaString;
@@ -32,6 +33,7 @@ SSemaType STokenTypeGetSemaType(STokenType tokenType) {
 SYLVA_EXTERN char *const STokenTypeGetName(STokenType tokenType) {
   switch (tokenType) {
   case STokenComment:return "COMMENT";
+  case STokenInlineC:return "INLINE_C";
   case STokenEOF:return "EOF";
   case STokenId:return "ID";
   case STokenVar:return "VAR";

@@ -7,13 +7,25 @@
 # Object, default super class of all other classes
 #
 class Object
-  # default initializer, does nothing
-  native func init
-  # virtual deinitializer , does nothing
-  native func deinit
-  # Get the class
-  native func class
-  # Compare two object, default implement compares pointer
-  native func ==(b)
-end
 
+  # default initializer, does nothing
+  func init
+    return self
+  end
+
+  # Get the class
+  func class
+    ` return sl_class_value(self.object_value->class);
+  end
+
+  # Compare two object, default implement compares pointer
+  #
+  # alias to function name 'eq'
+  func ==
+    ` sl_assert(arguments.length == 1,
+    `           "wrong number of arguments for function '==', expecting 1, got %ld",
+    `           arguments.length);
+    ` sl_value b = sl_args_get(arguments, 0);
+    ` return sl_boolean_value(self.pointer_value == b.pointer_value);
+  end
+end

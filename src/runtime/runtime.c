@@ -10,7 +10,7 @@ sl_class_ref sl_get_class(sl_value value) {
       value.type == sl_type_integer ||
       value.type == sl_type_float ||
       value.type == sl_type_nil) {
-    return &SYLVA_Number;
+    return &SYLVA_C_Number;
   }
   if (value.type == sl_type_object) {
     return value.object_value->class;
@@ -158,7 +158,7 @@ sl_value sl_create(sl_class_ref class, sl_symbol name, sl_index length, ...) {
 }
 
 sl_value sl_v_create(sl_class_ref class, sl_symbol name, sl_index length, va_list list) {
-  if (class == &SYLVA_Number) {
+  if (class == &SYLVA_C_Number) {
     sl_value result = sl_integer_value(0);
     return sl_v_call(result, name, length, list);
   }

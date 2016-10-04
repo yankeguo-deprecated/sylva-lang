@@ -84,7 +84,7 @@ sl_value SYLVA_M_Printer_I_print(sl_value self, sl_args args) {
 
 sl_class SYLVA_C_Dog = {
     .name = "Dog",
-    .super = &SYLVA_Object,
+    .super = &SYLVA_C_Object,
     .static_funcs =
     &sl_funcs_make(1,
                    sl_func_item("main", &SYLVA_C_Dog_S_main)

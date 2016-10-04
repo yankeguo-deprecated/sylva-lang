@@ -762,9 +762,11 @@ SYLVA_RUNTIME_EXTERN sl_boolean sl_static_set(sl_value target_value, sl_symbol n
  * Pre-declaration for Foundation
  **********************************************************************************************************************/
 
-sl_class SYLVA_Number;
-sl_class SYLVA_Object;
-sl_class SYLVA_String;
+sl_class SYLVA_C_Number;
+sl_class SYLVA_C_Object;
+sl_class SYLVA_C_String;
+sl_class SYLVA_C_Hash;
+sl_class SYLVA_C_Array;
 
 __CPP_DECL_END
 

@@ -7,6 +7,7 @@
 #include "sylva/runtime.h"
 
 #include <math.h>
+#include <sylva/runtime.h>
 
 /***********************************************************************************************************************
  * Number
@@ -199,7 +200,7 @@ sl_value SYLVA_Number_I_lt(sl_value self, sl_args arguments) {
             "wrong number of arguments for operator <, expecting 1, got %ld",
             arguments.length);
   sl_value result = SYLVA_Number_I_compare(self, arguments);
-  return sl_boolean_value(result.integer_value == sl_descending);
+  return sl_boolean_value(result.integer_value == sl_ascending);
 }
 
 sl_value SYLVA_Number_I_lt_eq(sl_value self, sl_args arguments) {
@@ -207,7 +208,7 @@ sl_value SYLVA_Number_I_lt_eq(sl_value self, sl_args arguments) {
             "wrong number of arguments for operator <=, expecting 1, got %ld",
             arguments.length);
   sl_value result = SYLVA_Number_I_compare(self, arguments);
-  return sl_boolean_value(result.integer_value == sl_descending || result.integer_value == sl_same);
+  return sl_boolean_value(result.integer_value == sl_ascending || result.integer_value == sl_same);
 }
 
 sl_value SYLVA_Number_I_gt(sl_value self, sl_args arguments) {
@@ -215,7 +216,7 @@ sl_value SYLVA_Number_I_gt(sl_value self, sl_args arguments) {
             "wrong number of arguments for operator >, expecting 1, got %ld",
             arguments.length);
   sl_value result = SYLVA_Number_I_compare(self, arguments);
-  return sl_boolean_value(result.integer_value == sl_ascending);
+  return sl_boolean_value(result.integer_value == sl_descending);
 }
 
 sl_value SYLVA_Number_I_gt_eq(sl_value self, sl_args arguments) {
@@ -223,7 +224,7 @@ sl_value SYLVA_Number_I_gt_eq(sl_value self, sl_args arguments) {
             "wrong number of arguments for operator >=, expecting 1, got %ld",
             arguments.length);
   sl_value result = SYLVA_Number_I_compare(self, arguments);
-  return sl_boolean_value(result.integer_value == sl_ascending || result.integer_value == sl_same);
+  return sl_boolean_value(result.integer_value == sl_descending || result.integer_value == sl_same);
 }
 
 sl_value SYLVA_Number_I_eq(sl_value self, sl_args arguments) {
@@ -346,22 +347,27 @@ sl_value SYLVA_Number_I_to_b(sl_value self, sl_args arguments) {
  * Object
  **********************************************************************************************************************/
 
-#define assert_is_object(V) assert((V).type == sl_type_object)
-
 sl_value SYLVA_Object_I_init(sl_value self, sl_args arguments) {
   return self;
 }
 
 sl_value SYLVA_Object_I_class(sl_value self, sl_args arguments) {
-  assert_is_object(self);
   return sl_class_value(self.object_value->class);
+}
+
+sl_value SYLVA_Object_I_eq(sl_value self, sl_args arguments) {
+  sl_assert(arguments.length == 1,
+            "wrong number of arguments for function '==', expecting 1, got %ld",
+            arguments.length);
+  sl_value b = sl_args_get(arguments, 0);
+  return sl_boolean_value(self.pointer_value == b.pointer_value);
 }
 
 /***********************************************************************************************************************
  * Class Declarations
  **********************************************************************************************************************/
 
-sl_class SYLVA_Number = {
+sl_class SYLVA_C_Number = {
     .name = "Number",
     .super = NULL,
     .static_funcs = NULL,
@@ -399,13 +405,14 @@ sl_class SYLVA_Number = {
     .deinitializor = NULL,
 };
 
-sl_class SYLVA_Object = {
+sl_class SYLVA_C_Object = {
     .name = "Object",
     .super = NULL,
     .static_funcs = NULL,
     .instance_funcs = &sl_funcs_make(3,
                                      sl_func_item("init", &SYLVA_Object_I_init),
                                      sl_func_item("class", &SYLVA_Object_I_class),
+                                     sl_func_item("eq", &SYLVA_Object_I_eq),
     ),
     .static_member_defs = NULL,
     .instance_member_defs = NULL,

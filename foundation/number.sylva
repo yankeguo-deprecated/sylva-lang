@@ -137,28 +137,298 @@ class Number
     ` return self;
   end
 
-  native func /(b)  # alias to `div`
-  native func %(b)  # alias to `mod`
+  # divide operator
+  #
+  # support multiple arguments
+  # alias to function name 'div'
+  func /
+    ` sl_assert(arguments.length > 0, "wrong number of arguments for operator *, expecting >= 1, got 0");
+    ` sl_trans_to_numeric(&self);
+    ` for (sl_index i = 0; i < arguments.length; i++) {
+    `   sl_value arg = arguments.values[i];
+    `   sl_trans_to_numeric(&arg);
+    `   switch (arg.type) {
+    `   case sl_type_integer: {
+    `     //  float * integer
+    `     if (self.type == sl_type_float) {
+    `       self.float_value *= arg.integer_value;
+    `     }
+    `     // integer * integer
+    `     if (self.type == sl_type_integer) {
+    `       self.integer_value *= arg.integer_value;
+    `     }
+    `   }
+    `     break;
+    `   case sl_type_float: {
+    `     //  integer * float
+    `     sl_trans_to_float(&self);
+    `     //  float * float
+    `     if (self.type == sl_type_float) {
+    `       self.float_value *= arg.float_value;
+    `     }
+    `   }
+    `     break;
+    `   default:break;
+    `   }
+    ` }
+    ` return self;
+  end
 
-  native func <>(b) # alias to `compare`, returns sl_comparison_result
-  native func <(b)  # alias to `lt`, bridged to `compare`, returns sl_boolean
-  native func >(b)  # alias to `gt`, bridged to `compare`, returns sl_boolean
-  native func <=(b) # alias to `lt_eq`, bridged to `compare`, returns sl_boolean
-  native func >=(b) # alias to `gt_eq`, bridged to `compare`, returns sl_boolean
-  native func ==(b) # alias to `eq`, bridged to `compare`, returns sl_boolean
-  native func !=(b) # alias to `not_eq`, bridged to `compare`, returns sl_boolean
+  # mod operator
+  #
+  # alias to function name 'mod'
+  func %(b)
+    ` sl_trans_to_numeric(&self);
+    ` sl_assert(arguments.length == 1,
+    `           "wrong number of arguments for operator %%, expecting 1, got %ld",
+    `           arguments.length);
+    ` sl_value value = arguments.values[0];
+    ` sl_trans_to_numeric(&value);
+    ` if (value.type == sl_type_integer) {
+    `   if (self.type == sl_type_float) {
+    `     return sl_float_value(fmod(self.float_value, (sl_float) value.integer_value));
+    `   } else {
+    `     return sl_integer_value(self.integer_value % value.integer_value);
+    `   }
+    ` } else {
+    `   if (self.type == sl_type_float) {
+    `     return sl_float_value(fmod(self.float_value, value.float_value));
+    `   } else {
+    `     return sl_integer_value(self.integer_value % (sl_integer) value.float_value);
+    `   }
+    ` }
+  end
 
-  native func ||(b) # alias to `or`, bridged with `sl_to_boolean`
-  native func &&(b) # alias to `and`, bridged with `sl_to_boolean`
+  # compare operator
+  #
+  # alias to function name 'compare'
+  func <>
+    ` sl_trans_to_numeric(&self);
+    ` sl_assert(arguments.length == 1,
+    `           "wrong number of arguments for operator <>, expecting 1, got %ld",
+    `           arguments.length);
+    ` sl_value value = arguments.values[0];
+    ` sl_trans_to_numeric(&value);
+    ` if (value.type == sl_type_integer) {
+    `   if (self.type == sl_type_float) {
+    `     return sl_integer_value(sl_compare(self.float_value, value.integer_value));
+    `   } else {
+    `     return sl_integer_value(sl_compare(self.integer_value, value.integer_value));
+    `   }
+    ` } else {
+    `   if (self.type == sl_type_float) {
+    `     return sl_integer_value(sl_compare(self.float_value, value.float_value));
+    `   } else {
+    `     return sl_integer_value(sl_compare(self.integer_value, value.float_value));
+    `   }
+    ` }
+  end
 
-  native func |(b)  # alias to `bit_or`
-  native func &(b)  # alias to `bit_and`
-  native func ^(b)  # alias to `bit_xor`
-  native func >>(b) # alias to `rshift`
-  native func <<(b) # alias to `lshift`
+  # lesser than operator, bridged to 'compare'
+  #
+  # alias to function name 'lt'
+  func <
+    ` sl_assert(arguments.length == 1,
+    `           "wrong number of arguments for operator <, expecting 1, got %ld",
+    `           arguments.length);
+    ` sl_value result = SYLVA_Number_I_compare(self, arguments);
+    ` return sl_boolean_value(result.integer_value == sl_ascending);
+  end
+
+  # greater than operator, bridged to 'compare'
+  #
+  # alias to function name 'gt'
+  func >
+    ` sl_assert(arguments.length == 1,
+    `           "wrong number of arguments for operator >, expecting 1, got %ld",
+    `           arguments.length);
+    ` sl_value result = SYLVA_Number_I_compare(self, arguments);
+    ` return sl_boolean_value(result.integer_value == sl_descending);
+  end
+
+  # lesser than or equal to, bridged to 'compare'
+  #
+  # alias to function name 'lt_eq'
+  func <=
+    ` sl_assert(arguments.length == 1,
+    `           "wrong number of arguments for operator <=, expecting 1, got %ld",
+    `           arguments.length);
+    ` sl_value result = SYLVA_Number_I_compare(self, arguments);
+    ` return sl_boolean_value(result.integer_value == sl_ascending || result.integer_value == sl_same);
+  end
+
+  # greater than or equal to, bridged to 'compare'
+  #
+  # alias to function name 'gt_eq'
+  func >=
+    ` sl_assert(arguments.length == 1,
+    `           "wrong number of arguments for operator >=, expecting 1, got %ld",
+    `           arguments.length);
+    ` sl_value result = SYLVA_Number_I_compare(self, arguments);
+    ` return sl_boolean_value(result.integer_value == sl_descending || result.integer_value == sl_same);
+  end
+
+  # equal to operator, bridged to 'compare'
+  #
+  # alias to function named 'eq'
+  func ==
+    ` sl_assert(arguments.length == 1,
+    `           "wrong number of arguments for operator ==, expecting 1, got %ld",
+    `           arguments.length);
+    ` sl_value result = SYLVA_Number_I_compare(self, arguments);
+    ` return sl_boolean_value(result.integer_value == sl_same);
+  end
+
+  # not equal to operator, bridged to 'compare'
+  #
+  # alias to function named 'not_eq'
+  func !=
+    ` sl_assert(arguments.length == 1,
+    `           "wrong number of arguments for operator !=, expecting 1, got %ld",
+    `           arguments.length);
+    ` sl_value result = SYLVA_Number_I_compare(self, arguments);
+    ` return sl_boolean_value(result.integer_value != sl_same);
+  end
+
+  # or operator, bridged to 'sl_to_boolean'
+  #
+  # alias to function name 'or'
+  func ||
+    ` sl_assert(arguments.length == 1,
+    `           "wrong number of arguments for operator ||, expecting 1, got %ld",
+    `           arguments.length);
+    ` sl_value value = arguments.values[0];
+    ` return sl_boolean_value(sl_to_boolean(self) || sl_to_boolean(value));
+  end
+
+  # and operator, bridged to 'sl_to_boolean'
+  #
+  # alias to function name 'and'
+  func &&
+    ` sl_assert(arguments.length == 1,
+    `           "wrong number of arguments for operator &&, expecting 1, got %ld",
+    `           arguments.length);
+    ` sl_value value = arguments.values[0];
+    ` return sl_boolean_value(sl_to_boolean(self) && sl_to_boolean(value));
+  end
+
+  # bit or operator
+  #
+  # alias to function name 'bit_or'
+  func |
+    ` sl_assert(arguments.length == 1,
+    `           "wrong number of arguments for operator |, expecting 1, got %ld",
+    `           arguments.length);
+    ` sl_value value = arguments.values[0];
+    ` sl_trans_to_integer(&self);
+    ` sl_trans_to_integer(&value);
+    ` return sl_integer_value(self.integer_value | value.integer_value);
+  end
+
+  # bit and operator
+  #
+  # alias to function name 'bit_and'
+  func &
+    ` sl_assert(arguments.length == 1,
+    `           "wrong number of arguments for operator &, expecting 1, got %ld",
+    `           arguments.length);
+    ` sl_value value = arguments.values[0];
+    ` sl_trans_to_integer(&self);
+    ` sl_trans_to_integer(&value);
+    ` return sl_integer_value(self.integer_value & value.integer_value);
+  end
+
+  # xor operator
+  #
+  # alias to function name 'bit_xor'
+  func ^
+    ` sl_assert(arguments.length == 1,
+    `           "wrong number of arguments for operator ^, expecting 1, got %ld",
+    `           arguments.length);
+    ` sl_value value = arguments.values[0];
+    ` sl_trans_to_integer(&self);
+    ` sl_trans_to_integer(&value);
+    ` return sl_integer_value(self.integer_value ^ value.integer_value);
+  end
+
+  # right shift operator
+  #
+  # alias to function name 'rshift'
+  func >>
+    ` sl_assert(arguments.length == 1,
+    `           "wrong number of arguments for operator >>, expecting 1, got %ld",
+    `           arguments.length);
+    ` sl_value value = arguments.values[0];
+    ` sl_trans_to_integer(&self);
+    ` sl_trans_to_integer(&value);
+    ` return sl_integer_value(self.integer_value >> value.integer_value);
+  end
+
+  # left shift operator
+  #
+  # alias to function name 'lshift'
+  func <<
+    ` sl_assert(arguments.length == 1,
+    `           "wrong number of arguments for operator <<, expecting 1, got %ld",
+    `           arguments.length);
+    ` sl_value value = arguments.values[0];
+    ` sl_trans_to_integer(&self);
+    ` sl_trans_to_integer(&value);
+    ` return sl_integer_value(self.integer_value << value.integer_value);
+  end
+
+  func ~
+    # TODO: implement
+  end
+
+  ####################################################
+  # Convert
+  ####################################################
+
+  # convert to integer type
+
+  func to_i
+    ` sl_assert(arguments.length == 0,
+    `           "wrong number of arguments for function 'to_i', expecting 0, got %ld",
+    `           arguments.length);
+    ` sl_trans_to_integer(&self);
+    ` return self;
+  end
+
+  # convert to float type
+  func to_f
+    ` sl_assert(arguments.length == 0,
+    `           "wrong number of arguments for function 'to_f', expecting 0, got %ld",
+    `           arguments.length);
+    ` sl_trans_to_float(&self);
+    ` return self;
+  end
+
+  # convert to boolean type
+
+  func to_b
+    ` sl_assert(arguments.length == 0,
+    `           "wrong number of arguments for function 'to_b', expecting 0, got %ld",
+    `           arguments.length);
+    ` sl_trans_to_boolean(&self);
+    ` return self;
+  end
+
+  native func to_s  # TODO: implement
+
+  ####################################################
   # Others
-  native func abs
-  # Common
-  native func to_s  # create string representation
+  ####################################################
+
+  func abs
+    ` if (self.type == sl_type_float) {
+    `   return sl_float_value(fabs(self.float_value));
+    ` } else if (self.type == sl_type_integer) {
+    `   return sl_integer_value(labs(self.integer_value));
+    ` } else {
+    `   return self;
+    ` }
+  end
+
 end
 

@@ -6,14 +6,10 @@
 //  Created by Yanke Guo on 2016/9/22.
 //
 
-#include <sylva/platform.h>
+#include <sylva/define.h>
 #include <sylva/runtime.h>
 #include <sylva/token.h>
 #include <sylva/lexer.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 typedef enum {
   SCLIExitCommon = 1,
@@ -50,7 +46,7 @@ static void SCLIScanFile(char *fileName) {
     int lexerFailed = 0;
     for (;;) {
       SLexerError err = SLexerErrorOK;
-      SIndex errIndex = 0;
+      sl_index errIndex = 0;
       STokenRef token = SLexerGetNextToken(lexer, &err, &errIndex);
       int lexerFinished = (token == NULL) || (token->type == STokenEOF);
       if (token == NULL) {

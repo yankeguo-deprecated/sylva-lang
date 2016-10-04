@@ -9,7 +9,7 @@
 #ifndef _SYLVA_TOKEN_H_
 #define _SYLVA_TOKEN_H_
 
-#include "sylva/platform.h"
+#include "sylva/define.h"
 #include "sylva/string.h"
 
 #include <stdio.h>
@@ -353,7 +353,7 @@ typedef enum {
 
 /**
  Get SSemaType from STokenType
- 
+
  @param tokenType STokenType
  @return SSemaType
  */
@@ -369,8 +369,8 @@ SYLVA_EXTERN char *const STokenTypeGetName(STokenType tokenType);
 
 typedef struct {
   union {
-    SInteger integerValue;
-    SFloat floatValue;
+    sl_integer integerValue;
+    sl_float floatValue;
     SStringRef stringValue;
   };
   SSemaType semaType;
@@ -389,21 +389,21 @@ SYLVA_EXTERN STokenRef STokenCreate(STokenType type);
 /**
  Create a STokenRef with Integer sema
  */
-SYLVA_EXTERN STokenRef STokenCreateInteger(STokenType type, SInteger integer);
+SYLVA_EXTERN STokenRef STokenCreateInteger(STokenType type, sl_integer integer);
 
 /**
  Create a STokenRef with Float sema
  */
-SYLVA_EXTERN STokenRef STokenCreateFloat(STokenType type, SFloat f);
+SYLVA_EXTERN STokenRef STokenCreateFloat(STokenType type, sl_float f);
 
 /**
  Create a STokenRef with SString sema
  */
 SYLVA_EXTERN STokenRef STokenCreateString(STokenType type, char *string);
 
-SYLVA_EXTERN STokenRef STokenCreateStringL(STokenType type, char *string, SIndex length);
+SYLVA_EXTERN STokenRef STokenCreateStringL(STokenType type, char *string, sl_index length);
 
-SYLVA_EXTERN STokenRef STokenCreateStringIL(STokenType type, char *string, SIndex start, SIndex length);
+SYLVA_EXTERN STokenRef STokenCreateStringIL(STokenType type, char *string, sl_index start, sl_index length);
 
 /**
  Destroy a STokenRef, free SString if existed

@@ -30,7 +30,7 @@ SSemaType STokenTypeGetSemaType(STokenType tokenType) {
   return SSemaNone;
 }
 
-SYLVA_EXTERN char *const STokenTypeGetName(STokenType tokenType) {
+SYLVA_RUNTIME_EXTERN char *const STokenTypeGetName(STokenType tokenType) {
   switch (tokenType) {
   case STokenComment:return "COMMENT";
   case STokenInlineC:return "INLINE_C";
@@ -102,7 +102,7 @@ SYLVA_EXTERN char *const STokenTypeGetName(STokenType tokenType) {
   }
 }
 
-SYLVA_EXTERN void STokenPrint(FILE *stream, STokenRef token) {
+SYLVA_RUNTIME_EXTERN void STokenPrint(FILE *stream, STokenRef token) {
   switch (token->semaType) {
   case SSemaNone:fprintf(stream, "<%s>", STokenTypeGetName(token->type));
     break;
@@ -123,7 +123,7 @@ STokenRef STokenCreate(STokenType type) {
   return token;
 }
 
-STokenRef STokenCreateInteger(STokenType type, SInteger integer) {
+STokenRef STokenCreateInteger(STokenType type, sl_integer integer) {
   assert(STokenTypeGetSemaType(type) == SSemaInteger);
 
   STokenRef token = malloc(sizeof(SToken));
@@ -133,7 +133,7 @@ STokenRef STokenCreateInteger(STokenType type, SInteger integer) {
   return token;
 }
 
-STokenRef STokenCreateFloat(STokenType type, SFloat f) {
+STokenRef STokenCreateFloat(STokenType type, sl_float f) {
   assert(STokenTypeGetSemaType(type) == SSemaFloat);
 
   STokenRef token = malloc(sizeof(SToken));
@@ -143,7 +143,7 @@ STokenRef STokenCreateFloat(STokenType type, SFloat f) {
   return token;
 }
 
-STokenRef STokenCreateStringIL(STokenType type, char *string, SIndex start, SIndex length) {
+STokenRef STokenCreateStringIL(STokenType type, char *string, sl_index start, sl_index length) {
   assert(STokenTypeGetSemaType(type) == SSemaString);
 
   STokenRef token = malloc(sizeof(SToken));
@@ -153,7 +153,7 @@ STokenRef STokenCreateStringIL(STokenType type, char *string, SIndex start, SInd
   return token;
 }
 
-STokenRef STokenCreateStringL(STokenType type, char *string, SIndex length) {
+STokenRef STokenCreateStringL(STokenType type, char *string, sl_index length) {
   return STokenCreateStringIL(type, string, 0, length);
 }
 

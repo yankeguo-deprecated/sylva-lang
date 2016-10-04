@@ -32,8 +32,8 @@ SLexerRef SLexerCreate(SStringRef source) {
   return lexer;
 };
 
-STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex) {
-  SIndex idx = lexer->index;
+STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, sl_index *errIndex) {
+  sl_index idx = lexer->index;
 
   //  Check EOF
   if (idx >= lexer->source->length) {
@@ -42,7 +42,7 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
 
   //  Seek first non blank
   idx = SStringSeekNoBlank(lexer->source, lexer->index);
-  if (idx == SIndexNotFound) {
+  if (idx == sl_index_not_found) {
     if (err) {
       *err = SLexerErrorOK;
     }
@@ -71,8 +71,8 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
       *err = SLexerErrorOK;
     }
     //  Find endIndex
-    SIndex endIdx = SStringSeekNewLine(lexer->source, idx);
-    if (endIdx == SIndexNotFound) {
+    sl_index endIdx = SStringSeekNewLine(lexer->source, idx);
+    if (endIdx == sl_index_not_found) {
       endIdx = lexer->source->length;
     }
     lexer->index = endIdx;
@@ -85,8 +85,8 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
       *err = SLexerErrorOK;
     }
     //  Find endIndex
-    SIndex endIdx = SStringSeekNewLine(lexer->source, idx);
-    if (endIdx == SIndexNotFound) {
+    sl_index endIdx = SStringSeekNewLine(lexer->source, idx);
+    if (endIdx == sl_index_not_found) {
       endIdx = lexer->source->length;
     }
     lexer->index = endIdx;
@@ -95,8 +95,8 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
 
   //  Alphabet started
   if (isalpha(first) || first == '_') {
-    SIndex endIdx = SStringSeekNoAlphaNumberUnderscore(lexer->source, idx);
-    if (endIdx == SIndexNotFound) {
+    sl_index endIdx = SStringSeekNoAlphaNumberUnderscore(lexer->source, idx);
+    if (endIdx == sl_index_not_found) {
       endIdx = lexer->source->length;
     }
     SStringRef sema = SStringCreateIL(lexer->source->string, idx, endIdx - idx);
@@ -162,7 +162,7 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
 
   //  Marks and operators
   {
-    SIndex nextIdx = 0, endIdx = idx;
+    sl_index nextIdx = 0, endIdx = idx;
     STokenRef token = NULL;
     switch (first) {
     case ':': {
@@ -188,7 +188,7 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
     case '-': {
       endIdx += 1;
       nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
-      if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '>') {
+      if (nextIdx != sl_index_not_found && lexer->source->string[nextIdx] == '>') {
         endIdx = nextIdx + 1;
         token = STokenCreate(STokenArrow);
       } else {
@@ -214,9 +214,9 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
     case '=': {
       endIdx += 1;
       nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
-      if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '=') {
-        SIndex nextNextIdx = SStringSeekNoBlank(lexer->source, nextIdx);
-        if (nextNextIdx != SIndexNotFound && lexer->source->string[nextNextIdx] == '=') {
+      if (nextIdx != sl_index_not_found && lexer->source->string[nextIdx] == '=') {
+        sl_index nextNextIdx = SStringSeekNoBlank(lexer->source, nextIdx);
+        if (nextNextIdx != sl_index_not_found && lexer->source->string[nextNextIdx] == '=') {
           endIdx = nextNextIdx + 1;
           token = STokenCreate(STokenIdentical);
         } else {
@@ -231,13 +231,13 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
     case '<': {
       endIdx += 1;
       nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
-      if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '<') {
+      if (nextIdx != sl_index_not_found && lexer->source->string[nextIdx] == '<') {
         endIdx = nextIdx + 1;
         token = STokenCreate(STokenBitLeftShift);
-      } else if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '=') {
+      } else if (nextIdx != sl_index_not_found && lexer->source->string[nextIdx] == '=') {
         endIdx = nextIdx + 1;
         token = STokenCreate(STokenLtEq);
-      } else if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '>') {
+      } else if (nextIdx != sl_index_not_found && lexer->source->string[nextIdx] == '>') {
         endIdx = nextIdx + 1;
         token = STokenCreate(STokenCompare);
       } else {
@@ -248,10 +248,10 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
     case '>': {
       endIdx += 1;
       nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
-      if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '>') {
+      if (nextIdx != sl_index_not_found && lexer->source->string[nextIdx] == '>') {
         endIdx = nextIdx + 1;
         token = STokenCreate(STokenBitRightShift);
-      } else if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '=') {
+      } else if (nextIdx != sl_index_not_found && lexer->source->string[nextIdx] == '=') {
         endIdx = nextIdx + 1;
         token = STokenCreate(STokenGtEq);
       } else {
@@ -262,7 +262,7 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
     case '!': {
       endIdx += 1;
       nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
-      if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '=') {
+      if (nextIdx != sl_index_not_found && lexer->source->string[nextIdx] == '=') {
         endIdx = nextIdx + 1;
         token = STokenCreate(STokenNotEq);
       } else {
@@ -273,7 +273,7 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
     case '|': {
       endIdx += 1;
       nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
-      if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '|') {
+      if (nextIdx != sl_index_not_found && lexer->source->string[nextIdx] == '|') {
         endIdx = nextIdx + 1;
         token = STokenCreate(STokenOr);
       } else {
@@ -284,7 +284,7 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
     case '&': {
       endIdx += 1;
       nextIdx = SStringSeekNoBlank(lexer->source, endIdx);
-      if (nextIdx != SIndexNotFound && lexer->source->string[nextIdx] == '&') {
+      if (nextIdx != sl_index_not_found && lexer->source->string[nextIdx] == '&') {
         endIdx = nextIdx + 1;
         token = STokenCreate(STokenAnd);
       } else {

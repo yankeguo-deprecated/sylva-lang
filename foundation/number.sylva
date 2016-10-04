@@ -26,8 +26,8 @@ class Number
   # alias to 'not' function name
 
   func !
-    ` sylva_assert(arguments.length == 0, "wrong number of arguments for operator !, expecting 0, got %ld", arguments.length);
-    ` return sylva_boolean_value(!sylva_to_boolean(self));
+    ` sl_assert(arguments.length == 0, "wrong number of arguments for operator !, expecting 0, got %ld", arguments.length);
+    ` return sl_boolean_value(!sl_to_boolean(self));
   end
 
   # add operator
@@ -35,25 +35,25 @@ class Number
   # alias to 'add' function name, support add multiple values
 
   func +
-    ` sylva_assert(arguments.length > 0, "wrong number of arguments for operator +, expecting >= 1, got 0");
-    ` sylva_trans_to_numeric(&self);
+    ` sl_assert(arguments.length > 0, "wrong number of arguments for operator +, expecting >= 1, got 0");
+    ` sl_trans_to_numeric(&self);
     ` // iterate over arguments
-    ` for (sylva_index i = 0; i < arguments.length; i++) {
-    `   sylva_value arg = arguments.values[i];
-    `   sylva_trans_to_numeric(&arg);
+    ` for (sl_index i = 0; i < arguments.length; i++) {
+    `   sl_value arg = arguments.values[i];
+    `   sl_trans_to_numeric(&arg);
     `   switch (arg.type) {
-    `   case sylva_type_integer: {
+    `   case sl_type_integer: {
     `     // float + integer, integer + integer
-    `     if (self.type == sylva_type_float) {
+    `     if (self.type == sl_type_float) {
     `       self.float_value += arg.integer_value;
     `     } else {
     `       self.integer_value += arg.integer_value;
     `     }
     `   }
     `   break;
-    `   case sylva_type_float: {
+    `   case sl_type_float: {
     `     //  integer + float, convert self to float and continue
-    `     sylva_trans_to_float(&self);
+    `     sl_trans_to_float(&self);
     `     //  float + float
     `     self.float_value += arg.float_value;
     `   }
@@ -70,17 +70,17 @@ class Number
   # when no arguments are given, returns the reverted value, else returns the minus value
 
   func -
-    ` sylva_trans_to_numeric(&self);
+    ` sl_trans_to_numeric(&self);
     ` //  arguments count == 0, i.e prefix `-` operator
     ` if (arguments.length == 0) {
     `   switch (self.type) {
     `     //  integer
-    `   case sylva_type_integer: {
+    `   case sl_type_integer: {
     `     self.integer_value = -self.integer_value;
     `   }
     `     break;
     `     //  float
-    `   case sylva_type_float: {
+    `   case sl_type_float: {
     `     self.float_value = -self.float_value;
     `   }
     `     break;
@@ -89,11 +89,11 @@ class Number
     `   return self;
     ` } else {
     `   //  arguments count != 0, i.e infix `-` operator
-    `   for (sylva_index i = 0; i < arguments.length; i++) {
+    `   for (sl_index i = 0; i < arguments.length; i++) {
     `     //  get the reverted value by recursively invoke SYLVA_Number_I_sub
-    `     sylva_value reverted = SYLVA_Number_I_sub(arguments.values[i], sylva_args_empty);
+    `     sl_value reverted = SYLVA_Number_I_sub(arguments.values[i], sl_args_empty);
     `     //  add the reverted value
-    `     self = SYLVA_Number_I_add(self, sylva_args_make(1, reverted));
+    `     self = SYLVA_Number_I_add(self, sl_args_make(1, reverted));
     `   }
     `   return self;
     ` }
@@ -105,28 +105,28 @@ class Number
   # alias to function name 'mul'
 
   func *
-    ` sylva_assert(arguments.length > 0, "wrong number of arguments for operator *, expecting >= 1, got 0");
-    ` sylva_trans_to_numeric(&self);
-    ` for (sylva_index i = 0; i < arguments.length; i++) {
-    `   sylva_value arg = arguments.values[i];
-    `   sylva_trans_to_numeric(&arg);
+    ` sl_assert(arguments.length > 0, "wrong number of arguments for operator *, expecting >= 1, got 0");
+    ` sl_trans_to_numeric(&self);
+    ` for (sl_index i = 0; i < arguments.length; i++) {
+    `   sl_value arg = arguments.values[i];
+    `   sl_trans_to_numeric(&arg);
     `   switch (arg.type) {
-    `   case sylva_type_integer: {
+    `   case sl_type_integer: {
     `     //  float * integer
-    `     if (self.type == sylva_type_float) {
+    `     if (self.type == sl_type_float) {
     `       self.float_value *= arg.integer_value;
     `     }
     `     // integer * integer
-    `     if (self.type == sylva_type_integer) {
+    `     if (self.type == sl_type_integer) {
     `       self.integer_value *= arg.integer_value;
     `     }
     `   }
     `     break;
-    `   case sylva_type_float: {
+    `   case sl_type_float: {
     `     //  integer * float
-    `     sylva_trans_to_float(&self);
+    `     sl_trans_to_float(&self);
     `     //  float * float
-    `     if (self.type == sylva_type_float) {
+    `     if (self.type == sl_type_float) {
     `       self.float_value *= arg.float_value;
     `     }
     `   }
@@ -140,16 +140,16 @@ class Number
   native func /(b)  # alias to `div`
   native func %(b)  # alias to `mod`
 
-  native func <>(b) # alias to `compare`, returns sylva_comparison_result
-  native func <(b)  # alias to `lt`, bridged to `compare`, returns sylva_boolean
-  native func >(b)  # alias to `gt`, bridged to `compare`, returns sylva_boolean
-  native func <=(b) # alias to `lt_eq`, bridged to `compare`, returns sylva_boolean
-  native func >=(b) # alias to `gt_eq`, bridged to `compare`, returns sylva_boolean
-  native func ==(b) # alias to `eq`, bridged to `compare`, returns sylva_boolean
-  native func !=(b) # alias to `not_eq`, bridged to `compare`, returns sylva_boolean
+  native func <>(b) # alias to `compare`, returns sl_comparison_result
+  native func <(b)  # alias to `lt`, bridged to `compare`, returns sl_boolean
+  native func >(b)  # alias to `gt`, bridged to `compare`, returns sl_boolean
+  native func <=(b) # alias to `lt_eq`, bridged to `compare`, returns sl_boolean
+  native func >=(b) # alias to `gt_eq`, bridged to `compare`, returns sl_boolean
+  native func ==(b) # alias to `eq`, bridged to `compare`, returns sl_boolean
+  native func !=(b) # alias to `not_eq`, bridged to `compare`, returns sl_boolean
 
-  native func ||(b) # alias to `or`, bridged with `sylva_to_boolean`
-  native func &&(b) # alias to `and`, bridged with `sylva_to_boolean`
+  native func ||(b) # alias to `or`, bridged with `sl_to_boolean`
+  native func &&(b) # alias to `and`, bridged with `sl_to_boolean`
 
   native func |(b)  # alias to `bit_or`
   native func &(b)  # alias to `bit_and`

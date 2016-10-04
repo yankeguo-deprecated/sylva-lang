@@ -9,6 +9,6 @@
 #ifndef _SYLVA_H_
 #define _SYLVA_H_
 
-#include "sylva/platform.h"
+#include "sylva/define.h"
 
 #endif // _SYLVA_H_

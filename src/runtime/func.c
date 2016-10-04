@@ -2,38 +2,36 @@
 // Created by Ryan on 2016/9/26.
 //
 
+#define __SYLVA_RUNTIME_SOURCE__
 #include "sylva/runtime.h"
 
-#include <stdlib.h>
-#include <string.h>
-
-sylva_value sylva_func_call(sylva_imp func, sylva_value context, sylva_index length, ...) {
+sl_value sl_func_call(sl_imp func, sl_value context, sl_index length, ...) {
   va_list list;
   va_start(list, length);
-  sylva_value result = sylva_func_v_call(func, context, length, list);
+  sl_value result = sl_func_v_call(func, context, length, list);
   va_end(list);
   return result;
 }
 
-sylva_value sylva_func_v_call(sylva_imp func, sylva_value context, sylva_index length, va_list list) {
-  sylva_args args = sylva_args_v_create(length, list);
-  sylva_value result = func(context, args);
-  sylva_args_destroy(args);
+sl_value sl_func_v_call(sl_imp func, sl_value context, sl_index length, va_list list) {
+  sl_args args = sl_args_v_create(length, list);
+  sl_value result = func(context, args);
+  sl_args_destroy(args);
   return result;
 }
 
-sylva_imp sylva_funcs_get(sylva_funcs list, sylva_symbol name) {
-  for (sylva_index i = 0; i < list.length; i++) {
-    if (sylva_symbol_equals(name, list.entries[i].name)) {
+sl_imp sl_funcs_get(sl_funcs list, sl_symbol name) {
+  for (sl_index i = 0; i < list.length; i++) {
+    if (sl_symbol_equals(name, list.entries[i].name)) {
       return list.entries[i].imp;
     }
   }
   return NULL;
 }
 
-sylva_imp sylva_funcs_set(sylva_funcs list, sylva_symbol name, sylva_imp func) {
-  for (sylva_index i = 0; i < list.length; i++) {
-    if (sylva_symbol_equals(name, list.entries[i].name)) {
+sl_imp sl_funcs_set(sl_funcs list, sl_symbol name, sl_imp func) {
+  for (sl_index i = 0; i < list.length; i++) {
+    if (sl_symbol_equals(name, list.entries[i].name)) {
       list.entries[i].imp = func;
       return func;
     }

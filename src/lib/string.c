@@ -15,7 +15,7 @@
 #include <assert.h>
 #include <sylva/string.h>
 
-SStringRef SStringCreateIL(char *string, SIndex index, SIndex length) {
+SStringRef SStringCreateIL(char *string, sl_index index, sl_index length) {
   assert(index >= 0);
   assert(index + length <= strlen(string));
   SStringRef ref = malloc(sizeof(SString));
@@ -26,7 +26,7 @@ SStringRef SStringCreateIL(char *string, SIndex index, SIndex length) {
   return ref;
 }
 
-SStringRef SStringCreateL(char *string, SIndex length) {
+SStringRef SStringCreateL(char *string, sl_index length) {
   return SStringCreateIL(string, 0, length);
 }
 
@@ -34,40 +34,40 @@ SStringRef SStringCreate(char *string) {
   return SStringCreateL(string, strlen(string));
 }
 
-SIndex SStringSeekNoBlank(SStringRef string, SIndex start) {
-  for (SIndex i = start; i < string->length; i++) {
+sl_index SStringSeekNoBlank(SStringRef string, sl_index start) {
+  for (sl_index i = start; i < string->length; i++) {
     if (!isblank(string->string[i])) {
       return i;
     }
   }
-  return SIndexNotFound;
+  return sl_index_not_found;
 }
 
-SIndex SStringSeekBlank(SStringRef string, SIndex start) {
-  for (SIndex i = start; i < string->length; i++) {
+sl_index SStringSeekBlank(SStringRef string, sl_index start) {
+  for (sl_index i = start; i < string->length; i++) {
     if (isblank(string->string[i])) {
       return i;
     }
   }
-  return SIndexNotFound;
+  return sl_index_not_found;
 }
 
-SIndex SStringSeekNewLine(SStringRef string, SIndex start) {
-  for (SIndex i = start; i < string->length; i++) {
+sl_index SStringSeekNewLine(SStringRef string, sl_index start) {
+  for (sl_index i = start; i < string->length; i++) {
     if (string->string[i] == '\n' || string->string[i] == '\r') {
       return i;
     }
   }
-  return SIndexNotFound;
+  return sl_index_not_found;
 }
 
-SIndex SStringSeekNoAlphaNumberUnderscore(SStringRef string, SIndex start) {
-  for (SIndex i = start; i < string->length; i++) {
+sl_index SStringSeekNoAlphaNumberUnderscore(SStringRef string, sl_index start) {
+  for (sl_index i = start; i < string->length; i++) {
     if (!isalnum(string->string[i]) && string->string[i] != '_') {
       return i;
     }
   }
-  return SIndexNotFound;
+  return sl_index_not_found;
 }
 
 void SStringDestroy(SStringRef string) {

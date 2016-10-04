@@ -5,7 +5,7 @@
 #ifndef _SYLVA_PARSER_H_
 #define _SYLVA_PARSER_H_
 
-#include "sylva/platform.h"
+#include "sylva/define.h"
 #include "sylva/string.h"
 
 __CPP_DECL_START

@@ -40,78 +40,78 @@
 
 #include <sylva/runtime.h>
 
-sylva_class SYLVA_C_Dog;
+sl_class SYLVA_C_Dog;
 
 /////////////////////   Function Declarations   ///////////////////////
 
-sylva_value SYLVA_C_Dog_S_main(sylva_value self, sylva_args args) {
-  sylva_value dog = sylva_create(&SYLVA_C_Dog, "init", 1, sylva_pointer_value("woff"));
-  sylva_retain(&dog);
-  sylva_call(dog, "bark", 0);
-  sylva_release(&dog);
-  return sylva_integer_value(0);
+sl_value SYLVA_C_Dog_S_main(sl_value self, sl_args args) {
+  sl_value dog = sl_create(&SYLVA_C_Dog, "init", 1, sl_pointer_value("woff"));
+  sl_retain(&dog);
+  sl_call(dog, "bark", 0);
+  sl_release(&dog);
+  return sl_integer_value(0);
 }
 
-sylva_value SYLVA_C_Dog_I_name(sylva_value self, sylva_args args) {
-  return sylva_get(self, "name");
+sl_value SYLVA_C_Dog_I_name(sl_value self, sl_args args) {
+  return sl_get(self, "name");
 }
 
-sylva_value SYLVA_C_Dog_I_init(sylva_value self, sylva_args args) {
-  sylva_value name = sylva_args_get(args, 0);
-  sylva_set(self, "name", name);
-  sylva_value total_count = sylva_static_get(self, "count");
-  sylva_value new_total_count = sylva_call(total_count, "add", 1, sylva_integer_value(1));
-  sylva_static_set(self, "count", new_total_count);
+sl_value SYLVA_C_Dog_I_init(sl_value self, sl_args args) {
+  sl_value name = sl_args_get(args, 0);
+  sl_set(self, "name", name);
+  sl_value total_count = sl_static_get(self, "count");
+  sl_value new_total_count = sl_call(total_count, "add", 1, sl_integer_value(1));
+  sl_static_set(self, "count", new_total_count);
   return self;
 }
 
-sylva_value SYLVA_C_Dog_I_bark(sylva_value self, sylva_args args) {
-  sylva_value name = sylva_call(self, "name", 0);
-  sylva_call(self, "print", 1, name);
-  return sylva_nil_value;
+sl_value SYLVA_C_Dog_I_bark(sl_value self, sl_args args) {
+  sl_value name = sl_call(self, "name", 0);
+  sl_call(self, "print", 1, name);
+  return sl_nil_value;
 }
 
-sylva_value SYLVA_M_Printer_I_print(sylva_value self, sylva_args args) {
-  sylva_value content = sylva_args_get(args, 0);
+sl_value SYLVA_M_Printer_I_print(sl_value self, sl_args args) {
+  sl_value content = sl_args_get(args, 0);
   printf("%s:%s, I'm the number %ld dog\n",
-         sylva_get_class(self)->name,
+         sl_get_class(self)->name,
          (char *) content.pointer_value,
-         sylva_static_get(self, "count").integer_value);
-  return sylva_nil_value;
+         sl_static_get(self, "count").integer_value);
+  return sl_nil_value;
 }
 
 ///////////////////////  Global Declarations ///////////////////////
 
-sylva_class SYLVA_C_Dog = {
+sl_class SYLVA_C_Dog = {
     .name = "Dog",
     .super = &SYLVA_Object,
     .static_funcs =
-    &sylva_funcs_make(1,
-                      sylva_func_item("main", &SYLVA_C_Dog_S_main)
+    &sl_funcs_make(1,
+                   sl_func_item("main", &SYLVA_C_Dog_S_main)
     ),
     .instance_funcs =
-    &sylva_funcs_make(4,
-                      sylva_func_item("name", &SYLVA_C_Dog_I_name),
-                      sylva_func_item("bark", &SYLVA_C_Dog_I_bark),
-                      sylva_func_item("print", &SYLVA_M_Printer_I_print),
-                      sylva_func_item("init", &SYLVA_C_Dog_I_init),
+    &sl_funcs_make(4,
+                   sl_func_item("name", &SYLVA_C_Dog_I_name),
+                   sl_func_item("bark", &SYLVA_C_Dog_I_bark),
+                   sl_func_item("print", &SYLVA_M_Printer_I_print),
+                   sl_func_item("init", &SYLVA_C_Dog_I_init),
     ),
     .static_member_defs =
-    &sylva_member_defs_make(1,
-                            sylva_member_def_item("count", sylva_member_normal)
+    &sl_member_defs_make(1,
+                         sl_member_def_item("count", sl_member_normal)
     ),
     .instance_member_defs =
-    &sylva_member_defs_make(1,
-                            sylva_member_def_item("name", sylva_member_normal)
+    &sl_member_defs_make(1,
+                         sl_member_def_item("name", sl_member_normal)
     ),
     .members =
-    &sylva_members_make(1,
-                        sylva_member_item("count", sylva_member_normal)
+    &sl_members_make(1,
+                     sl_member_item("count", sl_member_normal)
     )
 };
 
 ////////////////////// Main Entry  //////////////////////////////
 
 int main(int argc, char **argv) {
-  return (int) sylva_call(sylva_class_value(&SYLVA_C_Dog), "main", 0).integer_value;
+  return (int) sl_call(sl_class_value(&SYLVA_C_Dog), "main", 0).integer_value;
 }

@@ -15,10 +15,10 @@
 #include <assert.h>
 #include <sylva/string.h>
 
-SStringRef SStringCreateIL(char *string, sl_index index, sl_index length) {
+sl_string_ref sl_string_create_il(char *string, sl_index index, sl_index length) {
   assert(index >= 0);
   assert(index + length <= strlen(string));
-  SStringRef ref = malloc(sizeof(SString));
+  sl_string_ref ref = malloc(sizeof(sl_string));
   ref->length = length;
   ref->string = malloc(sizeof(char) * (ref->length + 1));
   memcpy(ref->string, &string[index], sizeof(char) * length);
@@ -26,15 +26,15 @@ SStringRef SStringCreateIL(char *string, sl_index index, sl_index length) {
   return ref;
 }
 
-SStringRef SStringCreateL(char *string, sl_index length) {
-  return SStringCreateIL(string, 0, length);
+sl_string_ref sl_string_create_l(char *string, sl_index length) {
+  return sl_string_create_il(string, 0, length);
 }
 
-SStringRef SStringCreate(char *string) {
-  return SStringCreateL(string, strlen(string));
+sl_string_ref sl_string_create(char *string) {
+  return sl_string_create_l(string, strlen(string));
 }
 
-sl_index SStringSeekNoBlank(SStringRef string, sl_index start) {
+sl_index sl_string_seek_no_blank(sl_string_ref string, sl_index start) {
   for (sl_index i = start; i < string->length; i++) {
     if (!isblank(string->string[i])) {
       return i;
@@ -43,7 +43,7 @@ sl_index SStringSeekNoBlank(SStringRef string, sl_index start) {
   return sl_index_not_found;
 }
 
-sl_index SStringSeekBlank(SStringRef string, sl_index start) {
+sl_index sl_string_seek_blank(sl_string_ref string, sl_index start) {
   for (sl_index i = start; i < string->length; i++) {
     if (isblank(string->string[i])) {
       return i;
@@ -52,7 +52,7 @@ sl_index SStringSeekBlank(SStringRef string, sl_index start) {
   return sl_index_not_found;
 }
 
-sl_index SStringSeekNewLine(SStringRef string, sl_index start) {
+sl_index sl_string_seek_new_line(sl_string_ref string, sl_index start) {
   for (sl_index i = start; i < string->length; i++) {
     if (string->string[i] == '\n' || string->string[i] == '\r') {
       return i;
@@ -61,7 +61,7 @@ sl_index SStringSeekNewLine(SStringRef string, sl_index start) {
   return sl_index_not_found;
 }
 
-sl_index SStringSeekNoAlphaNumberUnderscore(SStringRef string, sl_index start) {
+sl_index sl_string_seek_id(sl_string_ref string, sl_index start) {
   for (sl_index i = start; i < string->length; i++) {
     if (!isalnum(string->string[i]) && string->string[i] != '_') {
       return i;
@@ -70,7 +70,7 @@ sl_index SStringSeekNoAlphaNumberUnderscore(SStringRef string, sl_index start) {
   return sl_index_not_found;
 }
 
-void SStringDestroy(SStringRef string) {
+void sl_string_destroy(sl_string_ref string) {
   if (string == NULL)
     return;
   free(string->string);

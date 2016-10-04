@@ -16,25 +16,25 @@ __CPP_DECL_START
 typedef struct {
   char *string;
   sl_index length;
-} SString;
+} sl_string;
 
-typedef SString *SStringRef;
+typedef sl_string *sl_string_ref;
 
-SYLVA_EXTERN SStringRef SStringCreate(char *string);
+SYLVA_EXTERN sl_string_ref sl_string_create(char *string);
 
-SYLVA_EXTERN SStringRef SStringCreateIL(char *string, sl_index index, sl_index length);
+SYLVA_EXTERN sl_string_ref sl_string_create_il(char *string, sl_index index, sl_index length);
 
-SYLVA_EXTERN SStringRef SStringCreateL(char *string, sl_index length);
+SYLVA_EXTERN sl_string_ref sl_string_create_l(char *string, sl_index length);
 
-SYLVA_EXTERN sl_index SStringSeekNoBlank(SStringRef string, sl_index start);
+SYLVA_EXTERN sl_index sl_string_seek_no_blank(sl_string_ref string, sl_index start);
 
-SYLVA_EXTERN sl_index SStringSeekBlank(SStringRef string, sl_index start);
+SYLVA_EXTERN sl_index sl_string_seek_blank(sl_string_ref string, sl_index start);
 
-SYLVA_EXTERN sl_index SStringSeekNewLine(SStringRef string, sl_index start);
+SYLVA_EXTERN sl_index sl_string_seek_new_line(sl_string_ref string, sl_index start);
 
-SYLVA_EXTERN sl_index SStringSeekNoAlphaNumberUnderscore(SStringRef string, sl_index start);
+SYLVA_EXTERN sl_index sl_string_seek_id(sl_string_ref string, sl_index start);
 
-SYLVA_EXTERN void SStringDestroy(SStringRef string);
+SYLVA_EXTERN void sl_string_destroy(sl_string_ref string);
 
 __CPP_DECL_END
 

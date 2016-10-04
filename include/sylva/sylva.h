@@ -9,6 +9,10 @@
 #ifndef _SYLVA_H_
 #define _SYLVA_H_
 
-#include "sylva/define.h"
+#include <sylva/define.h>
+#include <sylva/token.h>
+#include <sylva/string.h>
+#include <sylva/lexer.h>
+#include <sylva/parser.h>
 
 #endif // _SYLVA_H_

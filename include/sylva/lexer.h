@@ -15,27 +15,27 @@
 __CPP_DECL_START
 
 typedef enum {
-  SLexerErrorOK,
-  SLexerErrorInvalidSequence,
-  SLexerErrorInvalidId,
-  SLexerErrorFoundNewLine, // new line (\r or \n) should be handled by SParser not SLexer
-} SLexerError;
+  sl_lexer_error_ok,
+  sl_lexer_error_invalid_sequence,
+  sl_lexer_error_invalid_id,
+  sl_lexer_error_found_new_line, // new line (\r or \n) should be handled by sl_parser not sl_lexer
+} sl_lexer_error;
 
-SYLVA_EXTERN char *const SLexerErrorGetName(SLexerError error);
+SYLVA_EXTERN char *const sl_lexer_error_get_name(sl_lexer_error error);
 
 typedef struct {
-  SStringRef source;
+  sl_string_ref source;
   sl_index index;
-} SLexer;
+} sl_lexer;
 
-typedef SLexer *SLexerRef;
+typedef sl_lexer *sl_lexer_ref;
 
 /**
  Create a SLexer from source
 
  @param source the source code will be parsed
  */
-SYLVA_EXTERN SLexerRef SLexerCreate(SStringRef source);
+SYLVA_EXTERN sl_lexer_ref sl_lexer_create(sl_string_ref source);
 
 /**
  Get the next token from source
@@ -43,19 +43,19 @@ SYLVA_EXTERN SLexerRef SLexerCreate(SStringRef source);
  @param lexer the lexer in use
  @return token next token
  */
-SYLVA_EXTERN STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, sl_index *errIndex);
+SYLVA_EXTERN sl_token_ref sl_lexer_next_token(sl_lexer_ref lexer, sl_lexer_error *err, sl_index *errIndex);
 
 /**
  Reset the SLexer to initial state
  */
-SYLVA_EXTERN void SLexerReset(SLexerRef lexer);
+SYLVA_EXTERN void sl_lexer_reset(sl_lexer_ref lexer);
 
 /**
  Destroy the SLexer
 
  @param lexer the lexer to destroy
  */
-SYLVA_EXTERN void SLexerDestroy(SLexerRef lexer);
+SYLVA_EXTERN void sl_lexer_destroy(sl_lexer_ref lexer);
 
 __CPP_DECL_END
 

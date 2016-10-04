@@ -10,7 +10,13 @@
 #define _SYLVA_DEFINE_H_
 
 #include <limits.h>
+#include <assert.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
 
 /***********************************************************************************************************************
  * OS

@@ -7,13 +7,13 @@
 
 #include <stdlib.h>
 
-SParserRef SParserCreate(char *src) {
-  SParserRef parser = malloc(sizeof(SParser));
-  parser->source = SStringCreate(src);
+sl_parser_ref sl_parser_create(char *src) {
+  sl_parser_ref parser = malloc(sizeof(sl_parser));
+  parser->source = sl_string_create(src);
   return parser;
 }
 
-void SParserDestroy(SParserRef parser) {
-  SStringDestroy(parser->source);
+void sl_parser_destroy(sl_parser_ref parser) {
+  sl_string_destroy(parser->source);
   free(parser);
 }

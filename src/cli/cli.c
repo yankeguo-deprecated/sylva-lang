@@ -7,7 +7,6 @@
 //
 
 #include <sylva/define.h>
-#include <sylva/runtime.h>
 #include <sylva/token.h>
 #include <sylva/lexer.h>
 
@@ -42,26 +41,26 @@ static void SCLIScanFile(char *fileName) {
   char lineBuf[500];
   int lineNo = 1;
   while (fgets(lineBuf, sizeof(lineBuf), file) != NULL) {
-    SLexerRef lexer = SLexerCreate(SStringCreate(lineBuf));
+    sl_lexer_ref lexer = sl_lexer_create(sl_string_create(lineBuf));
     int lexerFailed = 0;
     for (;;) {
-      SLexerError err = SLexerErrorOK;
+      sl_lexer_error err = sl_lexer_error_ok;
       sl_index errIndex = 0;
-      STokenRef token = SLexerGetNextToken(lexer, &err, &errIndex);
-      int lexerFinished = (token == NULL) || (token->type == STokenEOF);
+      sl_token_ref token = sl_lexer_next_token(lexer, &err, &errIndex);
+      int lexerFinished = (token == NULL) || (token->type == sl_token_eof);
       if (token == NULL) {
-        fprintf(stderr, "ERROR: %s at %d:%ld\n", SLexerErrorGetName(err), lineNo, errIndex);
+        fprintf(stderr, "ERROR: %s at %d:%ld\n", sl_lexer_error_get_name(err), lineNo, errIndex);
         lexerFailed = 1;
       }
       if (lexerFinished) {
         break;
       } else {
-        STokenPrint(stdout, token);
+        sl_token_print(stdout, token);
         fprintf(stdout, "\n");
-        STokenDestroy(token);
+        sl_token_destroy(token);
       }
     }
-    SLexerDestroy(lexer);
+    sl_lexer_destroy(lexer);
     if (lexerFailed) {
       break;
     }

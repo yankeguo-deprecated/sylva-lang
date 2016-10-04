@@ -4,32 +4,6 @@
 
 #include "sylva/runtime.h"
 
-#include <stdlib.h>
-#include <sylva/runtime.h>
-#include <sylva/foundation.h>
-
-sylva_value sylva_create(sylva_class_ref class, sylva_symbol name, sylva_index length, ...) {
-  va_list list;
-  va_start(list, length);
-  sylva_value result = sylva_v_create(class, name, length, list);
-  va_end(list);
-  return result;
-}
-
-sylva_value sylva_v_create(sylva_class_ref class, sylva_symbol name, sylva_index length, va_list list) {
-  if (class == &SYLVA_Number) {
-    sylva_value result = sylva_integer_value(0);
-    return sylva_v_call(result, name, length, list);
-  }
-  sylva_object_ref object = sylva_object_create(class);
-  sylva_value result = sylva_v_call(sylva_object_value(object), name, length, list);
-  //  check result, if changed, destroy orignal object
-  if (result.type != sylva_type_object || result.object_value != object) {
-    sylva_object_destroy(object);
-  }
-  return result;
-}
-
 void sylva_retain(sylva_value_ref value) {
   if (value->type == sylva_type_object) {
     sylva_object_retain(value->object_value);
@@ -80,4 +54,42 @@ sylva_float sylva_to_float(sylva_value value) {
   case sylva_type_boolean:return value.boolean_value ? 1 : 0;
   default:return 0;
   }
+}
+
+void sylva_trans_to_numeric(sylva_value_ref value) {
+  switch (value->type) {
+  case sylva_type_nil: {
+    value->type = sylva_type_integer;
+    value->integer_value = 0;
+    break;
+  }
+  case sylva_type_boolean: {
+    value->type = sylva_type_integer;
+    value->integer_value = value->boolean_value ? 1 : 0;
+    break;
+  }
+  case sylva_type_integer:
+  case sylva_type_float: {
+    break;
+  }
+  default: {
+    value->type = sylva_type_integer;
+    value->integer_value = 0;
+  }
+  }
+}
+
+void sylva_trans_to_float(sylva_value_ref value) {
+  value->float_value = sylva_to_float(*value);
+  value->type = sylva_type_float;
+}
+
+void sylva_trans_to_integer(sylva_value_ref value) {
+  value->integer_value = sylva_to_integer(*value);
+  value->type = sylva_type_integer;
+}
+
+void sylva_trans_to_boolean(sylva_value_ref value) {
+  value->boolean_value = sylva_to_boolean(*value);
+  value->type = sylva_type_boolean;
 }

@@ -1,25 +1,74 @@
-# system.sylva
+# foundation.sylva
 #
-# sylva-runtime system library, provides base class, string, array and hash.
+# foundation.sylva provides the most basic class and functions for sylva-runtime
 #
-# Created by Yanke Guo on 2016/9/27.
+# Created by Ryan Guo<ryan@islandzero.net> on 2016/9/27.
 #
+
+#! #include<math.h>
 
 ########################################################################################################################
 # Number
 ########################################################################################################################
 
-# Number, virtual class for primitive types (integer, float, boolean, nil)
+# Number, virtual class for all primitive types, including integer, float, boolean and nil
 #
 class Number
-  # virtual initializer, does nothing
-  native func init
-  # virtual deinitializer , does nothing
-  native func deinit
-  # Operations
-  native func !     # alias to `not`
+  # initializer for 'Number.new', does nothing
+  # TODO: add init from string
+  func init
+    return self
+  end
 
-  native func +(b)  # alias to `add`
+  ####################################################
+  # Operations
+  ####################################################
+
+  # not operator
+  #
+  # convert to boolean and returns inverted boolean value
+  # alias to 'not' function name
+
+  func !
+    #! sylva_assert(arguments.length == 0, "wrong number of arguments for operator !, expecting 0, got %ld", arguments.length);
+    #! return sylva_boolean_value(!sylva_to_boolean(self));
+  end
+
+  # add operator
+  #
+  # alias to 'add' function name, support add multiple values
+
+  func +(b)  # alias to `add`
+    #! sylva_assert(arguments.length > 0, "wrong number of arguments for operator +, expecting >= 1, got 0");
+    #! sylva_trans_to_numeric(&self);
+
+    # iterate over arguments
+    #! for (sylva_index i = 0; i < arguments.length; i++) {
+    #!   sylva_value arg = arguments.values[i];
+    #!   sylva_trans_to_numeric(&arg);
+    #!   switch (arg.type) {
+    #!   case sylva_type_integer: {
+    #      # float + integer, integer + integer
+    #!     if (self.type == sylva_type_float) {
+             self.float_value += arg.integer_value;
+    #!     } else {
+    #!       self.integer_value += arg.integer_value;
+    #!     }
+    #!   }
+    #!  break;
+    #! case sylva_type_float: {
+    #!  //  integer + float, convert self to float and continue
+    #!  sylva_trans_to_float(&self);
+    #!  //  float + float
+    #!  self.float_value += arg.float_value;
+    #! }
+    #!  break;
+    #!  default:break;
+    #!  }
+    #!  }
+    #! return self;
+  end
+
   native func -(b)  # alias to `sub`
   native func *(b)  # alias to `mul`
   native func /(b)  # alias to `div`

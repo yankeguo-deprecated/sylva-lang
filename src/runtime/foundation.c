@@ -9,51 +9,9 @@
 #include <assert.h>
 #include <sylva/runtime.h>
 #include <stdlib.h>
+#include <signal.h>
+#include <stdio.h>
 #include <math.h>
-
-/***********************************************************************************************************************
- * Internal Macros
- **********************************************************************************************************************/
-
-/**
- * assert a value is a primitive value
- */
-#define assert_primitive(V) assert((V).type & sylva_type_primitive)
-
-/**
- * sanitize nil, boolean type to integer
- */
-#define sanitize_primitive(V)\
-  if ((V).type == sylva_type_boolean) {\
-    (V).type = sylva_type_integer;\
-    (V).integer_value = (V).boolean_value ? 1 : 0;\
-  }\
-  if ((V).type == sylva_type_nil) {\
-    (V).type = sylva_type_integer;\
-    (V).integer_value = 0;\
-  }
-
-#define integer_to_float(V)\
-  if ((V).type == sylva_type_integer) {\
-    (V).type = sylva_type_float;\
-    (V).float_value = (sylva_float)(V).integer_value;\
-  }
-
-#define float_to_integer(V)\
-  if ((V).type == sylva_type_float) {\
-    (V).type = sylva_type_integer;\
-    (V).integer_value = (sylva_integer)(V).float_value;\
-  }
-
-/**
- * convert nil, boolean, float to integer
- */
-#define to_integer(V) sanitize_primitive(V); float_to_integer(V);
-
-/**
- * compare two values and returns sylva_compare_result
- */
-#define to_compare(A, B) ((A) == (B) ? sylva_same : ((A) > (B) ? sylva_descending : sylva_ascending))
 
 /***********************************************************************************************************************
  * Number
@@ -97,302 +55,295 @@ sylva_class SYLVA_Number = {
     .deinitializor = NULL,
 };
 
-sylva_value SYLVA_Number_I_init(sylva_value context, sylva_args args) {
-  return context;
+sylva_value SYLVA_Number_I_init(sylva_value self, sylva_args arguments) {
+  return self;
 }
 
-sylva_value SYLVA_Number_I_not(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  return sylva_boolean_value(!sylva_to_boolean(context));
+sylva_value SYLVA_Number_I_not(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 0, "wrong number of arguments for operator !, expecting 0, got %ld", arguments.length);
+  return sylva_boolean_value(!sylva_to_boolean(self));
 }
 
-sylva_value SYLVA_Number_I_add(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  sanitize_primitive(context);
+sylva_value SYLVA_Number_I_add(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length > 0, "wrong number of arguments for operator +, expecting >= 1, got 0");
+  sylva_trans_to_numeric(&self);
   //  Iterate over arguments
-  for (sylva_index i = 0; i < args.length; i++) {
-    sylva_value arg = args.values[i];
-    assert_primitive(arg);
-    sanitize_primitive(arg);
+  for (sylva_index i = 0; i < arguments.length; i++) {
+    sylva_value arg = arguments.values[i];
+    sylva_trans_to_numeric(&arg);
     switch (arg.type) {
     case sylva_type_integer: {
       //  float + integer, integer + integer
-      if (context.type == sylva_type_float) {
-        context.float_value += arg.integer_value;
+      if (self.type == sylva_type_float) {
+        self.float_value += arg.integer_value;
       } else {
-        context.integer_value += arg.integer_value;
+        self.integer_value += arg.integer_value;
       }
     }
       break;
     case sylva_type_float: {
-      //  integer + float, convert context to float and continue
-      integer_to_float(context);
+      //  integer + float, convert self to float and continue
+      sylva_trans_to_float(&self);
       //  float + float
-      context.float_value += arg.float_value;
+      self.float_value += arg.float_value;
     }
       break;
     default:break;
     }
   }
-  return context;
+  return self;
 }
 
-sylva_value SYLVA_Number_I_sub(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  sanitize_primitive(context);
+sylva_value SYLVA_Number_I_sub(sylva_value self, sylva_args arguments) {
+  sylva_trans_to_numeric(&self);
   //  arguments count == 0, i.e prefix `-` operator
-  if (args.length == 0) {
-    switch (context.type) {
+  if (arguments.length == 0) {
+    switch (self.type) {
       //  integer
     case sylva_type_integer: {
-      context.integer_value = -context.integer_value;
+      self.integer_value = -self.integer_value;
     }
       break;
       //  float
     case sylva_type_float: {
-      context.float_value = -context.float_value;
+      self.float_value = -self.float_value;
     }
       break;
     default:break;
     }
-    return context;
+    return self;
   } else {
     //  arguments count != 0, i.e infix `-` operator
-    for (sylva_index i = 0; i < args.length; i++) {
+    for (sylva_index i = 0; i < arguments.length; i++) {
       //  get the reverted value by recursively invoke SYLVA_Number_I_sub
-      sylva_value reverted = SYLVA_Number_I_sub(args.values[i], sylva_args_empty);
+      sylva_value reverted = SYLVA_Number_I_sub(arguments.values[i], sylva_args_empty);
       //  add the reverted value
-      context = SYLVA_Number_I_add(context, sylva_args_make(1, reverted));
+      self = SYLVA_Number_I_add(self, sylva_args_make(1, reverted));
     }
-    return context;
+    return self;
   }
 }
 
-sylva_value SYLVA_Number_I_mul(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  sanitize_primitive(context);
-  for (sylva_index i = 0; i < args.length; i++) {
-    sylva_value arg = args.values[i];
-    assert_primitive(arg);
-    sanitize_primitive(arg);
+sylva_value SYLVA_Number_I_mul(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length > 0, "wrong number of arguments for operator *, expecting >= 1, got 0");
+  sylva_trans_to_numeric(&self);
+  for (sylva_index i = 0; i < arguments.length; i++) {
+    sylva_value arg = arguments.values[i];
+    sylva_trans_to_numeric(&arg);
     switch (arg.type) {
     case sylva_type_integer: {
       //  float * integer
-      if (context.type == sylva_type_float) {
-        context.float_value *= arg.integer_value;
+      if (self.type == sylva_type_float) {
+        self.float_value *= arg.integer_value;
       }
       // integer * integer
-      if (context.type == sylva_type_integer) {
-        context.integer_value *= arg.integer_value;
+      if (self.type == sylva_type_integer) {
+        self.integer_value *= arg.integer_value;
       }
     }
       break;
     case sylva_type_float: {
       //  integer * float
-      integer_to_float(context);
+      sylva_trans_to_float(&self);
       //  float * float
-      if (context.type == sylva_type_float) {
-        context.float_value *= arg.float_value;
+      if (self.type == sylva_type_float) {
+        self.float_value *= arg.float_value;
       }
     }
       break;
     default:break;
     }
   }
-  return context;
+  return self;
 }
 
-sylva_value SYLVA_Number_I_div(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  sanitize_primitive(context);
-  for (sylva_index i = 0; i < args.length; i++) {
-    sylva_value arg = args.values[i];
-    assert_primitive(arg);
-    sanitize_primitive(arg);
+sylva_value SYLVA_Number_I_div(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length > 0, "wrong number of arguments for operator /, expecting >= 1, got 0");
+  sylva_trans_to_numeric(&self);
+  for (sylva_index i = 0; i < arguments.length; i++) {
+    sylva_value arg = arguments.values[i];
+    sylva_trans_to_numeric(&arg);
     switch (arg.type) {
     case sylva_type_integer: {
       //  float * integer
-      if (context.type == sylva_type_float) {
-        context.float_value /= arg.integer_value;
+      if (self.type == sylva_type_float) {
+        self.float_value /= arg.integer_value;
       }
       // integer * integer
-      if (context.type == sylva_type_integer) {
-        context.integer_value /= arg.integer_value;
+      if (self.type == sylva_type_integer) {
+        self.integer_value /= arg.integer_value;
       }
     }
       break;
     case sylva_type_float: {
       //  integer * float
-      integer_to_float(context);
+      sylva_trans_to_float(&self);
       //  float * float
-      if (context.type == sylva_type_float) {
-        context.float_value /= arg.float_value;
+      if (self.type == sylva_type_float) {
+        self.float_value /= arg.float_value;
       }
     }
       break;
     default:break;
     }
   }
-  return context;
+  return self;
 }
 
-sylva_value SYLVA_Number_I_mod(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  sanitize_primitive(context);
-  assert(args.length == 1);
-  sylva_value value = args.values[0];
-  assert_primitive(value);
-  sanitize_primitive(value);
+sylva_value SYLVA_Number_I_mod(sylva_value self, sylva_args arguments) {
+  sylva_trans_to_numeric(&self);
+  sylva_assert(arguments.length == 1, "wrong number of arguments for operator %%, expecting 1, got %ld", arguments.length);
+  sylva_value value = arguments.values[0];
+  sylva_trans_to_numeric(&value);
   if (value.type == sylva_type_integer) {
-    if (context.type == sylva_type_float) {
-      return sylva_float_value(fmod(context.float_value, (sylva_float) value.integer_value));
+    if (self.type == sylva_type_float) {
+      return sylva_float_value(fmod(self.float_value, (sylva_float) value.integer_value));
     } else {
-      return sylva_integer_value(context.integer_value % value.integer_value);
+      return sylva_integer_value(self.integer_value % value.integer_value);
     }
   } else {
-    if (context.type == sylva_type_float) {
-      return sylva_float_value(fmod(context.float_value, value.float_value));
+    if (self.type == sylva_type_float) {
+      return sylva_float_value(fmod(self.float_value, value.float_value));
     } else {
-      return sylva_integer_value(context.integer_value % (sylva_integer) value.float_value);
+      return sylva_integer_value(self.integer_value % (sylva_integer) value.float_value);
     }
   }
 }
 
-sylva_value SYLVA_Number_I_compare(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  sanitize_primitive(context);
-  assert(args.length == 1);
-  sylva_value value = args.values[0];
-  assert_primitive(value);
-  sanitize_primitive(value);
+sylva_value SYLVA_Number_I_compare(sylva_value self, sylva_args arguments) {
+  sylva_trans_to_numeric(&self);
+  sylva_assert(arguments.length == 1, "wrong number of arguments for operator <>, expecting 1, got %ld", arguments.length);
+  sylva_value value = arguments.values[0];
+  sylva_trans_to_numeric(&value);
   if (value.type == sylva_type_integer) {
-    if (context.type == sylva_type_float) {
-      return sylva_integer_value(to_compare(context.float_value, value.integer_value));
+    if (self.type == sylva_type_float) {
+      return sylva_integer_value(sylva_compare(self.float_value, value.integer_value));
     } else {
-      return sylva_integer_value(to_compare(context.integer_value, value.integer_value));
+      return sylva_integer_value(sylva_compare(self.integer_value, value.integer_value));
     }
   } else {
-    if (context.type == sylva_type_float) {
-      return sylva_integer_value(to_compare(context.float_value, value.float_value));
+    if (self.type == sylva_type_float) {
+      return sylva_integer_value(sylva_compare(self.float_value, value.float_value));
     } else {
-      return sylva_integer_value(to_compare(context.integer_value, value.float_value));
+      return sylva_integer_value(sylva_compare(self.integer_value, value.float_value));
     }
   }
 }
 
-sylva_value SYLVA_Number_I_lt(sylva_value context, sylva_args args) {
-  sylva_value result = SYLVA_Number_I_compare(context, args);
+sylva_value SYLVA_Number_I_lt(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 1, "wrong number of arguments for operator <, expecting 1, got %ld", arguments.length);
+  sylva_value result = SYLVA_Number_I_compare(self, arguments);
   return sylva_boolean_value(result.integer_value == sylva_descending);
 }
 
-sylva_value SYLVA_Number_I_lt_eq(sylva_value context, sylva_args args) {
-  sylva_value result = SYLVA_Number_I_compare(context, args);
+sylva_value SYLVA_Number_I_lt_eq(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 1, "wrong number of arguments for operator <=, expecting 1, got %ld", arguments.length);
+  sylva_value result = SYLVA_Number_I_compare(self, arguments);
   return sylva_boolean_value(result.integer_value == sylva_descending || result.integer_value == sylva_same);
 }
 
-sylva_value SYLVA_Number_I_gt(sylva_value context, sylva_args args) {
-  sylva_value result = SYLVA_Number_I_compare(context, args);
+sylva_value SYLVA_Number_I_gt(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 1, "wrong number of arguments for operator >, expecting 1, got %ld", arguments.length);
+  sylva_value result = SYLVA_Number_I_compare(self, arguments);
   return sylva_boolean_value(result.integer_value == sylva_ascending);
 }
 
-sylva_value SYLVA_Number_I_gt_eq(sylva_value context, sylva_args args) {
-  sylva_value result = SYLVA_Number_I_compare(context, args);
+sylva_value SYLVA_Number_I_gt_eq(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 1, "wrong number of arguments for operator >=, expecting 1, got %ld", arguments.length);
+  sylva_value result = SYLVA_Number_I_compare(self, arguments);
   return sylva_boolean_value(result.integer_value == sylva_ascending || result.integer_value == sylva_same);
 }
 
-sylva_value SYLVA_Number_I_eq(sylva_value context, sylva_args args) {
-  sylva_value result = SYLVA_Number_I_compare(context, args);
+sylva_value SYLVA_Number_I_eq(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 1, "wrong number of arguments for operator ==, expecting 1, got %ld", arguments.length);
+  sylva_value result = SYLVA_Number_I_compare(self, arguments);
   return sylva_boolean_value(result.integer_value == sylva_same);
 }
 
-sylva_value SYLVA_Number_I_not_eq(sylva_value context, sylva_args args) {
-  sylva_value result = SYLVA_Number_I_compare(context, args);
+sylva_value SYLVA_Number_I_not_eq(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 1, "wrong number of arguments for operator !=, expecting 1, got %ld", arguments.length);
+  sylva_value result = SYLVA_Number_I_compare(self, arguments);
   return sylva_boolean_value(result.integer_value != sylva_same);
 }
 
-sylva_value SYLVA_Number_I_or(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  assert(args.length == 1);
-  sylva_value value = args.values[0];
-  return sylva_boolean_value(sylva_to_boolean(context) || sylva_to_boolean(value));
+sylva_value SYLVA_Number_I_or(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 1, "wrong number of arguments for operator ||, expecting 1, got %ld", arguments.length);
+  sylva_value value = arguments.values[0];
+  return sylva_boolean_value(sylva_to_boolean(self) || sylva_to_boolean(value));
 }
 
-sylva_value SYLVA_Number_I_and(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  assert(args.length == 1);
-  sylva_value value = args.values[0];
-  return sylva_boolean_value(sylva_to_boolean(context) && sylva_to_boolean(value));
+sylva_value SYLVA_Number_I_and(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 1, "wrong number of arguments for operator &&, expecting 1, got %ld", arguments.length);
+  sylva_value value = arguments.values[0];
+  return sylva_boolean_value(sylva_to_boolean(self) && sylva_to_boolean(value));
 }
 
-sylva_value SYLVA_Number_I_bit_or(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  assert(args.length == 1);
-  sylva_value value = args.values[0];
-  to_integer(context);
-  to_integer(value);
-  return sylva_integer_value(context.integer_value | value.integer_value);
+sylva_value SYLVA_Number_I_bit_or(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 1, "wrong number of arguments for operator |, expecting 1, got %ld", arguments.length);
+  sylva_value value = arguments.values[0];
+  sylva_trans_to_integer(&self);
+  sylva_trans_to_integer(&value);
+  return sylva_integer_value(self.integer_value | value.integer_value);
 }
 
-sylva_value SYLVA_Number_I_bit_and(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  assert(args.length == 1);
-  sylva_value value = args.values[0];
-  to_integer(context);
-  to_integer(value);
-  return sylva_integer_value(context.integer_value & value.integer_value);
+sylva_value SYLVA_Number_I_bit_and(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 1, "wrong number of arguments for operator &, expecting 1, got %ld", arguments.length);
+  sylva_value value = arguments.values[0];
+  sylva_trans_to_integer(&self);
+  sylva_trans_to_integer(&value);
+  return sylva_integer_value(self.integer_value & value.integer_value);
 }
 
-sylva_value SYLVA_Number_I_bit_xor(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  assert(args.length == 1);
-  sylva_value value = args.values[0];
-  to_integer(context);
-  to_integer(value);
-  return sylva_integer_value(context.integer_value ^ value.integer_value);
+sylva_value SYLVA_Number_I_bit_xor(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 1, "wrong number of arguments for operator ^, expecting 1, got %ld", arguments.length);
+  sylva_value value = arguments.values[0];
+  sylva_trans_to_integer(&self);
+  sylva_trans_to_integer(&value);
+  return sylva_integer_value(self.integer_value ^ value.integer_value);
 }
 
-sylva_value SYLVA_Number_I_rshift(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  assert(args.length == 1);
-  sylva_value value = args.values[0];
-  to_integer(context);
-  to_integer(value);
-  return sylva_integer_value(context.integer_value >> value.integer_value);
+sylva_value SYLVA_Number_I_rshift(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 1, "wrong number of arguments for operator >>, expecting 1, got %ld", arguments.length);
+  sylva_value value = arguments.values[0];
+  sylva_trans_to_integer(&self);
+  sylva_trans_to_integer(&value);
+  return sylva_integer_value(self.integer_value >> value.integer_value);
 }
 
-sylva_value SYLVA_Number_I_lshift(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  assert(args.length == 1);
-  sylva_value value = args.values[0];
-  to_integer(context);
-  to_integer(value);
-  return sylva_integer_value(context.integer_value << value.integer_value);
+sylva_value SYLVA_Number_I_lshift(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 1, "wrong number of arguments for operator <<, expecting 1, got %ld", arguments.length);
+  sylva_value value = arguments.values[0];
+  sylva_trans_to_integer(&self);
+  sylva_trans_to_integer(&value);
+  return sylva_integer_value(self.integer_value << value.integer_value);
 }
 
-sylva_value SYLVA_Number_I_abs(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  if (context.type == sylva_type_float) {
-    return sylva_float_value(fabs(context.float_value));
-  } else if (context.type == sylva_type_integer) {
-    return sylva_integer_value(labs(context.integer_value));
+sylva_value SYLVA_Number_I_abs(sylva_value self, sylva_args arguments) {
+  if (self.type == sylva_type_float) {
+    return sylva_float_value(fabs(self.float_value));
+  } else if (self.type == sylva_type_integer) {
+    return sylva_integer_value(labs(self.integer_value));
   } else {
-    return context;
+    return self;
   }
 }
 
-sylva_value SYLVA_Number_I_to_i(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  return sylva_integer_value(sylva_to_integer(context));
+sylva_value SYLVA_Number_I_to_i(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 0, "wrong number of arguments for function 'to_i', expecting 0, got %ld", arguments.length);
+  sylva_trans_to_integer(&self);
+  return self;
 }
 
-sylva_value SYLVA_Number_I_to_f(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  return sylva_float_value(sylva_to_float(context));
+sylva_value SYLVA_Number_I_to_f(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 0, "wrong number of arguments for function 'to_f', expecting 0, got %ld", arguments.length);
+  sylva_trans_to_float(&self);
+  return self;
 }
 
-sylva_value SYLVA_Number_I_to_b(sylva_value context, sylva_args args) {
-  assert_primitive(context);
-  return sylva_boolean_value(sylva_to_boolean(context));
+sylva_value SYLVA_Number_I_to_b(sylva_value self, sylva_args arguments) {
+  sylva_assert(arguments.length == 0, "wrong number of arguments for function 'to_b', expecting 0, got %ld", arguments.length);
+  sylva_trans_to_boolean(&self);
+  return self;
 }
 
 /***********************************************************************************************************************
@@ -415,11 +366,11 @@ sylva_class SYLVA_Object = {
     .deinitializor = NULL,
 };
 
-sylva_value SYLVA_Object_I_init(sylva_value context, sylva_args args) {
-  return context;
+sylva_value SYLVA_Object_I_init(sylva_value self, sylva_args arguments) {
+  return self;
 }
 
-sylva_value SYLVA_Object_I_class(sylva_value context, sylva_args args) {
-  assert_is_object(context);
-  return sylva_class_value(context.object_value->class);
+sylva_value SYLVA_Object_I_class(sylva_value self, sylva_args arguments) {
+  assert_is_object(self);
+  return sylva_class_value(self.object_value->class);
 }

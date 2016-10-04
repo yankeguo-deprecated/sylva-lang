@@ -154,6 +154,28 @@ sylva_value sylva_get(sylva_value value, sylva_symbol name) {
   return sylva_nil_value;
 }
 
+sylva_value sylva_create(sylva_class_ref class, sylva_symbol name, sylva_index length, ...) {
+  va_list list;
+  va_start(list, length);
+  sylva_value result = sylva_v_create(class, name, length, list);
+  va_end(list);
+  return result;
+}
+
+sylva_value sylva_v_create(sylva_class_ref class, sylva_symbol name, sylva_index length, va_list list) {
+  if (class == &SYLVA_Number) {
+    sylva_value result = sylva_integer_value(0);
+    return sylva_v_call(result, name, length, list);
+  }
+  sylva_object_ref object = sylva_object_create(class);
+  sylva_value result = sylva_v_call(sylva_object_value(object), name, length, list);
+  //  check result, if changed, destroy orignal object
+  if (result.type != sylva_type_object || result.object_value != object) {
+    sylva_object_destroy(object);
+  }
+  return result;
+}
+
 sylva_value sylva_static_get(sylva_value value, sylva_symbol name) {
   if (value.type == sylva_type_object) {
     value = sylva_class_value(value.object_value->class);

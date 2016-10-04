@@ -25,30 +25,30 @@ SYLVA_EXTERN sylva_class SYLVA_Number;
 /**
  * virtual init for Number.new call
  */
-SYLVA_EXTERN sylva_value SYLVA_Number_I_init(sylva_value context, sylva_args args);
+SYLVA_EXTERN sylva_value SYLVA_Number_I_init(sylva_value self, sylva_args arguments);
 
 /**
  * Not
  */
-SYLVA_EXTERN sylva_value SYLVA_Number_I_not(sylva_value context, sylva_args args);
+SYLVA_EXTERN sylva_value SYLVA_Number_I_not(sylva_value self, sylva_args arguments);
 
 /**
  * Basic Operation
  */
-SYLVA_EXTERN sylva_value SYLVA_Number_I_add(sylva_value context, sylva_args args);
+SYLVA_EXTERN sylva_value SYLVA_Number_I_add(sylva_value self, sylva_args arguments);
 
-SYLVA_EXTERN sylva_value SYLVA_Number_I_sub(sylva_value context, sylva_args args);
+SYLVA_EXTERN sylva_value SYLVA_Number_I_sub(sylva_value self, sylva_args arguments);
 
-SYLVA_EXTERN sylva_value SYLVA_Number_I_mul(sylva_value context, sylva_args args);
+SYLVA_EXTERN sylva_value SYLVA_Number_I_mul(sylva_value self, sylva_args arguments);
 
-SYLVA_EXTERN sylva_value SYLVA_Number_I_div(sylva_value context, sylva_args args);
+SYLVA_EXTERN sylva_value SYLVA_Number_I_div(sylva_value self, sylva_args arguments);
 
-SYLVA_EXTERN sylva_value SYLVA_Number_I_mod(sylva_value context, sylva_args args);
+SYLVA_EXTERN sylva_value SYLVA_Number_I_mod(sylva_value self, sylva_args arguments);
 
 /**
  * Comparison
  */
-SYLVA_EXTERN sylva_value SYLVA_Number_I_compare(sylva_value context, sylva_args args);
+SYLVA_EXTERN sylva_value SYLVA_Number_I_compare(sylva_value self, sylva_args arguments);
 
 SYLVA_EXTERN sylva_value SYLVA_Number_I_lt(sylva_value context, sylva_args args);
 

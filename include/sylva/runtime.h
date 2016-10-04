@@ -7,10 +7,12 @@
 
 #include "sylva/platform.h"
 
-#include <stdarg.h>
-#include <stddef.h>
 #include <assert.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 __CPP_DECL_START
 
@@ -81,6 +83,11 @@ typedef enum {
 } sylva_comparison_result;
 
 /**
+ * compare two values and returns sylva_compare_result
+ */
+#define sylva_compare(A, B) ((A) == (B) ? sylva_same : ((A) > (B) ? sylva_descending : sylva_ascending))
+
+/**
  * char* is used as symbole in sylva, used for identify a func or a member variable
  *
  * symbol should not be created dynamically
@@ -91,6 +98,12 @@ typedef char *const sylva_symbol;
  * check if two symbols are same
  */
 #define sylva_symbol_equals(A, B) (strcmp((A), (B)) == 0)
+
+/***********************************************************************************************************************
+ * Assert
+ **********************************************************************************************************************/
+
+#define sylva_assert(CLAUSE, ...) if (!(CLAUSE)) { fprintf(stderr, __VA_ARGS__); abort(); }
 
 /***********************************************************************************************************************
  * Forward Declarations
@@ -249,6 +262,10 @@ typedef enum {
    */
       sylva_type_float = 1 << 3,
   /**
+   * sum all numeric types
+   */
+      sylva_type_numeric = sylva_type_integer | sylva_type_float,
+  /**
    * sum all primitive types
    */
       sylva_type_primitive = sylva_type_nil | sylva_type_boolean | sylva_type_integer | sylva_type_float,
@@ -336,15 +353,6 @@ typedef sylva_value *sylva_value_ref;
 #define sylva_class_value(X) ((sylva_value) sylva_bare_class_value(X))
 
 /**
- * invoke sylva_object_release if value is an object
- *
- * do nothing if value is not a object
- *
- * @param value sylva_value to ratain
- */
-SYLVA_EXTERN void sylva_release(sylva_value_ref value);
-
-/**
  * turns any sylva_value to a resonable boolean value
  *
  * @param value sylva_value
@@ -370,6 +378,34 @@ SYLVA_EXTERN sylva_integer sylva_to_integer(sylva_value value);
  * @return sylva_value with integer value type
  */
 SYLVA_EXTERN sylva_float sylva_to_float(sylva_value value);
+
+/**
+ * turns to number values
+ *
+ * @param value pointer to value to convert
+ */
+SYLVA_EXTERN void sylva_trans_to_numeric(sylva_value_ref value);
+
+/**
+ * turns to float
+ *
+ * @param value pointer to value to convert
+ */
+SYLVA_EXTERN void sylva_trans_to_float(sylva_value_ref value);
+
+/**
+ * turns to integer
+ *
+ * @param value pointer to value to convert
+ */
+SYLVA_EXTERN void sylva_trans_to_integer(sylva_value_ref value);
+
+/**
+ * turns to boolean
+ *
+ * @param value pointer to value to convert
+ */
+SYLVA_EXTERN void sylva_trans_to_boolean(sylva_value_ref value);
 
 /***********************************************************************************************************************
  * Function Arguments
@@ -783,6 +819,15 @@ SYLVA_EXTERN sylva_value sylva_v_create(sylva_class_ref class, sylva_symbol name
  * @param value sylva_value to ratain
  */
 SYLVA_EXTERN void sylva_retain(sylva_value_ref value);
+
+/**
+ * invoke sylva_object_release if value is an object
+ *
+ * do nothing if value is not a object
+ *
+ * @param value sylva_value to ratain
+ */
+SYLVA_EXTERN void sylva_release(sylva_value_ref value);
 
 /**
  * get member from object, class and value(object/class type)

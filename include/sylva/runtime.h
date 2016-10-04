@@ -407,8 +407,8 @@ typedef sl_value (*sl_imp)(sl_value context, sl_args args);
  *
  * @return result of function invocation
  */
-SYLVA_RUNTIME_EXTERN sl_value sl_func_call(sl_imp func, sl_value context, sl_index length, ...);
-SYLVA_RUNTIME_EXTERN sl_value sl_func_v_call(sl_imp func, sl_value context, sl_index length, va_list list);
+SYLVA_RUNTIME_EXTERN sl_value sl_imp_call(sl_imp imp, sl_value context, sl_index length, ...);
+SYLVA_RUNTIME_EXTERN sl_value sl_imp_v_call(sl_imp imp, sl_value context, sl_index length, va_list list);
 
 /***********************************************************************************************************************
  * Function Storage

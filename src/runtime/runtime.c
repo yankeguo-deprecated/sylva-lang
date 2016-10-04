@@ -94,7 +94,7 @@ sl_value sl_call(sl_value context, sl_symbol name, sl_index length, ...) {
 SYLVA_RUNTIME_EXTERN sl_value sl_v_call(sl_value context, sl_symbol name, sl_index length, va_list list) {
   sl_imp func = sl_func_resolve(context, name);
   if (func != NULL) {
-    return sl_func_v_call(func, context, length, list);
+    return sl_imp_v_call(func, context, length, list);
   }
   return sl_nil_value;
 }
@@ -118,7 +118,7 @@ sl_value sl_v_call_super(sl_value context,
                          va_list list) {
   sl_imp func = sl_func_resolve_super(context, class, name);
   if (func != NULL) {
-    return sl_func_v_call(func, context, length, list);
+    return sl_imp_v_call(func, context, length, list);
   }
   return sl_nil_value;
 }

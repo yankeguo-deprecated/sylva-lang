@@ -5,17 +5,17 @@
 #define __SYLVA_RUNTIME_SOURCE__
 #include "sylva/runtime.h"
 
-sl_value sl_func_call(sl_imp func, sl_value context, sl_index length, ...) {
+sl_value sl_imp_call(sl_imp imp, sl_value context, sl_index length, ...) {
   va_list list;
   va_start(list, length);
-  sl_value result = sl_func_v_call(func, context, length, list);
+  sl_value result = sl_imp_v_call(imp, context, length, list);
   va_end(list);
   return result;
 }
 
-sl_value sl_func_v_call(sl_imp func, sl_value context, sl_index length, va_list list) {
+sl_value sl_imp_v_call(sl_imp imp, sl_value context, sl_index length, va_list list) {
   sl_args args = sl_args_v_create(length, list);
-  sl_value result = func(context, args);
+  sl_value result = imp(context, args);
   sl_args_destroy(args);
   return result;
 }

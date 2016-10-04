@@ -1,0 +1,15 @@
+# string.sylva
+#
+# string.sylva provides the basic string implementation for sylva-lang
+#
+# Created by Ryan Guo<ryan@islandzero.net> on 2016/9/27.
+#
+
+# String
+#
+class String
+  # internal char*
+  var internal
+  var length
+end
+

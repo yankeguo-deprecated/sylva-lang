@@ -1,0 +1,19 @@
+# object.sylva
+#
+# provides basic class for all classes
+#
+# Create by Ryan Guo<ryan@islandzero.net> on 2016/10/04
+
+# Object, default super class of all other classes
+#
+class Object
+  # default initializer, does nothing
+  native func init
+  # virtual deinitializer , does nothing
+  native func deinit
+  # Get the class
+  native func class
+  # Compare two object, default implement compares pointer
+  native func ==(b)
+end
+

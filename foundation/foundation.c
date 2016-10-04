@@ -1,66 +1,26 @@
 //
 // Created by Yanke Guo on 2016/9/27.
 //
+// TODO: should be removed after foundation library completed
 
 #define __SYLVA_SOURCE__
 #include "sylva/runtime.h"
-#include "sylva/foundation.h"
 
-#include <assert.h>
-#include <sylva/runtime.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <stdio.h>
 #include <math.h>
 
 /***********************************************************************************************************************
  * Number
  **********************************************************************************************************************/
 
-sylva_class SYLVA_Number = {
-    .name = "Number",
-    .super = NULL,
-    .static_funcs = NULL,
-    .instance_funcs = &sylva_funcs_make(26,
-                                        sylva_func_item("init", &SYLVA_Number_I_init),
-                                        sylva_func_item("not", &SYLVA_Number_I_not),
-                                        sylva_func_item("add", &SYLVA_Number_I_add),
-                                        sylva_func_item("sub", &SYLVA_Number_I_sub),
-                                        sylva_func_item("mul", &SYLVA_Number_I_mul),
-                                        sylva_func_item("div", &SYLVA_Number_I_div),
-                                        sylva_func_item("mod", &SYLVA_Number_I_mod),
-                                        sylva_func_item("compare", &SYLVA_Number_I_compare),
-                                        sylva_func_item("lt", &SYLVA_Number_I_lt),
-                                        sylva_func_item("lt_eq", &SYLVA_Number_I_lt_eq),
-                                        sylva_func_item("gt", &SYLVA_Number_I_gt),
-                                        sylva_func_item("gt_eq", &SYLVA_Number_I_gt_eq),
-                                        sylva_func_item("eq", &SYLVA_Number_I_eq),
-                                        sylva_func_item("not_eq", &SYLVA_Number_I_not_eq),
-                                        sylva_func_item("or", &SYLVA_Number_I_or),
-                                        sylva_func_item("and", &SYLVA_Number_I_and),
-                                        sylva_func_item("or", &SYLVA_Number_I_or),
-                                        sylva_func_item("bit_or", &SYLVA_Number_I_bit_or),
-                                        sylva_func_item("bit_and", &SYLVA_Number_I_bit_and),
-                                        sylva_func_item("bit_xor", &SYLVA_Number_I_bit_xor),
-                                        sylva_func_item("rshift", &SYLVA_Number_I_rshift),
-                                        sylva_func_item("lshift", &SYLVA_Number_I_lshift),
-                                        sylva_func_item("to_i", &SYLVA_Number_I_to_i),
-                                        sylva_func_item("to_f", &SYLVA_Number_I_to_f),
-                                        sylva_func_item("to_b", &SYLVA_Number_I_to_b),
-                                        sylva_func_item("abs", &SYLVA_Number_I_abs),
-    ),
-    .static_member_defs = NULL,
-    .instance_member_defs = NULL,
-    .members = NULL,
-    .deinitializor = NULL,
-};
 
 sylva_value SYLVA_Number_I_init(sylva_value self, sylva_args arguments) {
   return self;
 }
 
 sylva_value SYLVA_Number_I_not(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 0, "wrong number of arguments for operator !, expecting 0, got %ld", arguments.length);
+  sylva_assert(arguments.length == 0,
+               "wrong number of arguments for operator !, expecting 0, got %ld",
+               arguments.length);
   return sylva_boolean_value(!sylva_to_boolean(self));
 }
 
@@ -192,7 +152,9 @@ sylva_value SYLVA_Number_I_div(sylva_value self, sylva_args arguments) {
 
 sylva_value SYLVA_Number_I_mod(sylva_value self, sylva_args arguments) {
   sylva_trans_to_numeric(&self);
-  sylva_assert(arguments.length == 1, "wrong number of arguments for operator %%, expecting 1, got %ld", arguments.length);
+  sylva_assert(arguments.length == 1,
+               "wrong number of arguments for operator %%, expecting 1, got %ld",
+               arguments.length);
   sylva_value value = arguments.values[0];
   sylva_trans_to_numeric(&value);
   if (value.type == sylva_type_integer) {
@@ -212,7 +174,9 @@ sylva_value SYLVA_Number_I_mod(sylva_value self, sylva_args arguments) {
 
 sylva_value SYLVA_Number_I_compare(sylva_value self, sylva_args arguments) {
   sylva_trans_to_numeric(&self);
-  sylva_assert(arguments.length == 1, "wrong number of arguments for operator <>, expecting 1, got %ld", arguments.length);
+  sylva_assert(arguments.length == 1,
+               "wrong number of arguments for operator <>, expecting 1, got %ld",
+               arguments.length);
   sylva_value value = arguments.values[0];
   sylva_trans_to_numeric(&value);
   if (value.type == sylva_type_integer) {
@@ -231,55 +195,73 @@ sylva_value SYLVA_Number_I_compare(sylva_value self, sylva_args arguments) {
 }
 
 sylva_value SYLVA_Number_I_lt(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 1, "wrong number of arguments for operator <, expecting 1, got %ld", arguments.length);
+  sylva_assert(arguments.length == 1,
+               "wrong number of arguments for operator <, expecting 1, got %ld",
+               arguments.length);
   sylva_value result = SYLVA_Number_I_compare(self, arguments);
   return sylva_boolean_value(result.integer_value == sylva_descending);
 }
 
 sylva_value SYLVA_Number_I_lt_eq(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 1, "wrong number of arguments for operator <=, expecting 1, got %ld", arguments.length);
+  sylva_assert(arguments.length == 1,
+               "wrong number of arguments for operator <=, expecting 1, got %ld",
+               arguments.length);
   sylva_value result = SYLVA_Number_I_compare(self, arguments);
   return sylva_boolean_value(result.integer_value == sylva_descending || result.integer_value == sylva_same);
 }
 
 sylva_value SYLVA_Number_I_gt(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 1, "wrong number of arguments for operator >, expecting 1, got %ld", arguments.length);
+  sylva_assert(arguments.length == 1,
+               "wrong number of arguments for operator >, expecting 1, got %ld",
+               arguments.length);
   sylva_value result = SYLVA_Number_I_compare(self, arguments);
   return sylva_boolean_value(result.integer_value == sylva_ascending);
 }
 
 sylva_value SYLVA_Number_I_gt_eq(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 1, "wrong number of arguments for operator >=, expecting 1, got %ld", arguments.length);
+  sylva_assert(arguments.length == 1,
+               "wrong number of arguments for operator >=, expecting 1, got %ld",
+               arguments.length);
   sylva_value result = SYLVA_Number_I_compare(self, arguments);
   return sylva_boolean_value(result.integer_value == sylva_ascending || result.integer_value == sylva_same);
 }
 
 sylva_value SYLVA_Number_I_eq(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 1, "wrong number of arguments for operator ==, expecting 1, got %ld", arguments.length);
+  sylva_assert(arguments.length == 1,
+               "wrong number of arguments for operator ==, expecting 1, got %ld",
+               arguments.length);
   sylva_value result = SYLVA_Number_I_compare(self, arguments);
   return sylva_boolean_value(result.integer_value == sylva_same);
 }
 
 sylva_value SYLVA_Number_I_not_eq(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 1, "wrong number of arguments for operator !=, expecting 1, got %ld", arguments.length);
+  sylva_assert(arguments.length == 1,
+               "wrong number of arguments for operator !=, expecting 1, got %ld",
+               arguments.length);
   sylva_value result = SYLVA_Number_I_compare(self, arguments);
   return sylva_boolean_value(result.integer_value != sylva_same);
 }
 
 sylva_value SYLVA_Number_I_or(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 1, "wrong number of arguments for operator ||, expecting 1, got %ld", arguments.length);
+  sylva_assert(arguments.length == 1,
+               "wrong number of arguments for operator ||, expecting 1, got %ld",
+               arguments.length);
   sylva_value value = arguments.values[0];
   return sylva_boolean_value(sylva_to_boolean(self) || sylva_to_boolean(value));
 }
 
 sylva_value SYLVA_Number_I_and(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 1, "wrong number of arguments for operator &&, expecting 1, got %ld", arguments.length);
+  sylva_assert(arguments.length == 1,
+               "wrong number of arguments for operator &&, expecting 1, got %ld",
+               arguments.length);
   sylva_value value = arguments.values[0];
   return sylva_boolean_value(sylva_to_boolean(self) && sylva_to_boolean(value));
 }
 
 sylva_value SYLVA_Number_I_bit_or(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 1, "wrong number of arguments for operator |, expecting 1, got %ld", arguments.length);
+  sylva_assert(arguments.length == 1,
+               "wrong number of arguments for operator |, expecting 1, got %ld",
+               arguments.length);
   sylva_value value = arguments.values[0];
   sylva_trans_to_integer(&self);
   sylva_trans_to_integer(&value);
@@ -287,7 +269,9 @@ sylva_value SYLVA_Number_I_bit_or(sylva_value self, sylva_args arguments) {
 }
 
 sylva_value SYLVA_Number_I_bit_and(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 1, "wrong number of arguments for operator &, expecting 1, got %ld", arguments.length);
+  sylva_assert(arguments.length == 1,
+               "wrong number of arguments for operator &, expecting 1, got %ld",
+               arguments.length);
   sylva_value value = arguments.values[0];
   sylva_trans_to_integer(&self);
   sylva_trans_to_integer(&value);
@@ -295,7 +279,9 @@ sylva_value SYLVA_Number_I_bit_and(sylva_value self, sylva_args arguments) {
 }
 
 sylva_value SYLVA_Number_I_bit_xor(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 1, "wrong number of arguments for operator ^, expecting 1, got %ld", arguments.length);
+  sylva_assert(arguments.length == 1,
+               "wrong number of arguments for operator ^, expecting 1, got %ld",
+               arguments.length);
   sylva_value value = arguments.values[0];
   sylva_trans_to_integer(&self);
   sylva_trans_to_integer(&value);
@@ -303,7 +289,9 @@ sylva_value SYLVA_Number_I_bit_xor(sylva_value self, sylva_args arguments) {
 }
 
 sylva_value SYLVA_Number_I_rshift(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 1, "wrong number of arguments for operator >>, expecting 1, got %ld", arguments.length);
+  sylva_assert(arguments.length == 1,
+               "wrong number of arguments for operator >>, expecting 1, got %ld",
+               arguments.length);
   sylva_value value = arguments.values[0];
   sylva_trans_to_integer(&self);
   sylva_trans_to_integer(&value);
@@ -311,7 +299,9 @@ sylva_value SYLVA_Number_I_rshift(sylva_value self, sylva_args arguments) {
 }
 
 sylva_value SYLVA_Number_I_lshift(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 1, "wrong number of arguments for operator <<, expecting 1, got %ld", arguments.length);
+  sylva_assert(arguments.length == 1,
+               "wrong number of arguments for operator <<, expecting 1, got %ld",
+               arguments.length);
   sylva_value value = arguments.values[0];
   sylva_trans_to_integer(&self);
   sylva_trans_to_integer(&value);
@@ -329,19 +319,25 @@ sylva_value SYLVA_Number_I_abs(sylva_value self, sylva_args arguments) {
 }
 
 sylva_value SYLVA_Number_I_to_i(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 0, "wrong number of arguments for function 'to_i', expecting 0, got %ld", arguments.length);
+  sylva_assert(arguments.length == 0,
+               "wrong number of arguments for function 'to_i', expecting 0, got %ld",
+               arguments.length);
   sylva_trans_to_integer(&self);
   return self;
 }
 
 sylva_value SYLVA_Number_I_to_f(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 0, "wrong number of arguments for function 'to_f', expecting 0, got %ld", arguments.length);
+  sylva_assert(arguments.length == 0,
+               "wrong number of arguments for function 'to_f', expecting 0, got %ld",
+               arguments.length);
   sylva_trans_to_float(&self);
   return self;
 }
 
 sylva_value SYLVA_Number_I_to_b(sylva_value self, sylva_args arguments) {
-  sylva_assert(arguments.length == 0, "wrong number of arguments for function 'to_b', expecting 0, got %ld", arguments.length);
+  sylva_assert(arguments.length == 0,
+               "wrong number of arguments for function 'to_b', expecting 0, got %ld",
+               arguments.length);
   sylva_trans_to_boolean(&self);
   return self;
 }
@@ -352,7 +348,58 @@ sylva_value SYLVA_Number_I_to_b(sylva_value self, sylva_args arguments) {
 
 #define assert_is_object(V) assert((V).type == sylva_type_object)
 
-sylva_class SYLVA_Object = {
+sylva_value SYLVA_Object_I_init(sylva_value self, sylva_args arguments) {
+  return self;
+}
+
+sylva_value SYLVA_Object_I_class(sylva_value self, sylva_args arguments) {
+  assert_is_object(self);
+  return sylva_class_value(self.object_value->class);
+}
+
+/***********************************************************************************************************************
+ * Class Declarations
+ **********************************************************************************************************************/
+
+SYLVA_WEAK sylva_class SYLVA_Number = {
+    .name = "Number",
+    .super = NULL,
+    .static_funcs = NULL,
+    .instance_funcs = &sylva_funcs_make(26,
+                                        sylva_func_item("init", &SYLVA_Number_I_init),
+                                        sylva_func_item("not", &SYLVA_Number_I_not),
+                                        sylva_func_item("add", &SYLVA_Number_I_add),
+                                        sylva_func_item("sub", &SYLVA_Number_I_sub),
+                                        sylva_func_item("mul", &SYLVA_Number_I_mul),
+                                        sylva_func_item("div", &SYLVA_Number_I_div),
+                                        sylva_func_item("mod", &SYLVA_Number_I_mod),
+                                        sylva_func_item("compare", &SYLVA_Number_I_compare),
+                                        sylva_func_item("lt", &SYLVA_Number_I_lt),
+                                        sylva_func_item("lt_eq", &SYLVA_Number_I_lt_eq),
+                                        sylva_func_item("gt", &SYLVA_Number_I_gt),
+                                        sylva_func_item("gt_eq", &SYLVA_Number_I_gt_eq),
+                                        sylva_func_item("eq", &SYLVA_Number_I_eq),
+                                        sylva_func_item("not_eq", &SYLVA_Number_I_not_eq),
+                                        sylva_func_item("or", &SYLVA_Number_I_or),
+                                        sylva_func_item("and", &SYLVA_Number_I_and),
+                                        sylva_func_item("or", &SYLVA_Number_I_or),
+                                        sylva_func_item("bit_or", &SYLVA_Number_I_bit_or),
+                                        sylva_func_item("bit_and", &SYLVA_Number_I_bit_and),
+                                        sylva_func_item("bit_xor", &SYLVA_Number_I_bit_xor),
+                                        sylva_func_item("rshift", &SYLVA_Number_I_rshift),
+                                        sylva_func_item("lshift", &SYLVA_Number_I_lshift),
+                                        sylva_func_item("to_i", &SYLVA_Number_I_to_i),
+                                        sylva_func_item("to_f", &SYLVA_Number_I_to_f),
+                                        sylva_func_item("to_b", &SYLVA_Number_I_to_b),
+                                        sylva_func_item("abs", &SYLVA_Number_I_abs),
+    ),
+    .static_member_defs = NULL,
+    .instance_member_defs = NULL,
+    .members = NULL,
+    .deinitializor = NULL,
+};
+
+SYLVA_WEAK sylva_class SYLVA_Object = {
     .name = "Object",
     .super = NULL,
     .static_funcs = NULL,
@@ -365,12 +412,3 @@ sylva_class SYLVA_Object = {
     .members = NULL,
     .deinitializor = NULL,
 };
-
-sylva_value SYLVA_Object_I_init(sylva_value self, sylva_args arguments) {
-  return self;
-}
-
-sylva_value SYLVA_Object_I_class(sylva_value self, sylva_args arguments) {
-  assert_is_object(self);
-  return sylva_class_value(self.object_value->class);
-}

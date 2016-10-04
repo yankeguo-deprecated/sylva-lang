@@ -39,9 +39,6 @@
  * */
 
 #include <sylva/runtime.h>
-#include <sylva/foundation.h>
-
-#include <stdio.h>
 
 sylva_class SYLVA_C_Dog;
 
@@ -63,7 +60,7 @@ sylva_value SYLVA_C_Dog_I_init(sylva_value self, sylva_args args) {
   sylva_value name = sylva_args_get(args, 0);
   sylva_set(self, "name", name);
   sylva_value total_count = sylva_static_get(self, "count");
-  sylva_value new_total_count = SYLVA_Number_I_add(total_count, sylva_args_make(1, sylva_integer_value(1)));
+  sylva_value new_total_count = sylva_call(total_count, "add", 1, sylva_integer_value(1));
   sylva_static_set(self, "count", new_total_count);
   return self;
 }

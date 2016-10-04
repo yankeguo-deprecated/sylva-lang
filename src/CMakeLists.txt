@@ -20,7 +20,7 @@ SET(SYLVA_RT_SRCS
     runtime/args.c
     runtime/func.c
     runtime/member.c
-    runtime/foundation.c)
+    ../foundation/foundation.c)
 
 # libsylva-runtime (static/shared)
 ADD_LIBRARY(sylva-runtime-static STATIC ${SYLVA_RT_SRCS})

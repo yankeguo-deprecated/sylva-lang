@@ -28,7 +28,7 @@ typedef enum {
       STokenComment,
 
   /**
-   * #! started line will be considered as inline C code
+   * '`' started line will be considered as inline C code
    */
       STokenInlineC,
 

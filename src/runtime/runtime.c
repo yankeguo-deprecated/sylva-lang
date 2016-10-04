@@ -5,10 +5,8 @@
 #define __SYLVA_SOURCE__
 
 #include <stdlib.h>
-#include <string.h>
 #include <stdarg.h>
 #include <sylva/runtime.h>
-#include <sylva/foundation.h>
 
 sylva_class_ref sylva_get_class(sylva_value value) {
   if (value.type == sylva_type_boolean ||

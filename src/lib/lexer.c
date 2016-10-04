@@ -66,25 +66,31 @@ STokenRef SLexerGetNextToken(SLexerRef lexer, SLexerError *err, SIndex *errIndex
     }
   }
 
-  //  Sharp started (comment)
-  if (first == '#') {
+  if (first == '`') {
     if (err) {
       *err = SLexerErrorOK;
     }
-    STokenType tokenType;
-    if (lexer->source->length > idx + 1 && lexer->source->string[idx + 1] == '!') {
-      tokenType = STokenInlineC;
-      idx++;
-    } else {
-      tokenType = STokenComment;
-    }
-    //  Find endIdx
+    //  Find endIndex
     SIndex endIdx = SStringSeekNewLine(lexer->source, idx);
     if (endIdx == SIndexNotFound) {
       endIdx = lexer->source->length;
     }
     lexer->index = endIdx;
-    return STokenCreateStringIL(tokenType, lexer->source->string, idx + 1, endIdx - idx - 1);
+    return STokenCreateStringIL(STokenInlineC, lexer->source->string, idx + 1, endIdx - idx - 1);
+  }
+
+  //  Sharp started (comment)
+  if (first == '#') {
+    if (err) {
+      *err = SLexerErrorOK;
+    }
+    //  Find endIndex
+    SIndex endIdx = SStringSeekNewLine(lexer->source, idx);
+    if (endIdx == SIndexNotFound) {
+      endIdx = lexer->source->length;
+    }
+    lexer->index = endIdx;
+    return STokenCreateStringIL(STokenComment, lexer->source->string, idx + 1, endIdx - idx - 1);
   }
 
   //  Alphabet started

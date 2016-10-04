@@ -8,11 +8,12 @@
 #include "sylva/platform.h"
 
 #include <assert.h>
-#include <signal.h>
 #include <stdarg.h>
-#include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <string.h>
 
 __CPP_DECL_START
 
@@ -711,7 +712,6 @@ SYLVA_EXTERN void sylva_members_destroy(sylva_members_ref members);
  * Object-Oriented
  **********************************************************************************************************************/
 
-
 /**
  * Get the corresponding class value from a value, also resolves virtual class for primitive values
  *
@@ -848,6 +848,14 @@ SYLVA_EXTERN sylva_boolean sylva_object_members_set(sylva_object object, sylva_s
 SYLVA_EXTERN sylva_boolean sylva_class_members_set(sylva_class class, sylva_symbol name, sylva_value value);
 SYLVA_EXTERN sylva_boolean sylva_set(sylva_value target_value, sylva_symbol name, sylva_value value);
 SYLVA_EXTERN sylva_boolean sylva_static_set(sylva_value target_value, sylva_symbol name, sylva_value value);
+
+/***********************************************************************************************************************
+ * Pre-declaration for Foundation
+ **********************************************************************************************************************/
+
+extern sylva_class SYLVA_Number;
+extern sylva_class SYLVA_Object;
+extern sylva_class SYLVA_String;
 
 __CPP_DECL_END
 

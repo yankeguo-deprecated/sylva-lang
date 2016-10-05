@@ -90,10 +90,10 @@ class Number
     ` } else {
     `   //  arguments count != 0, i.e infix `-` operator
     `   for (sl_index i = 0; i < arguments.length; i++) {
-    `     //  get the reverted value by recursively invoke SYLVA_Number_I_sub
-    `     sl_value reverted = SYLVA_Number_I_sub(arguments.values[i], sl_args_empty);
+    `     //  get the reverted value by recursively invoke SYLVA_C_Number_I_sub
+    `     sl_value reverted = sl_func_name_class_instance(Number, sub)(arguments.values[i], sl_args_empty);
     `     //  add the reverted value
-    `     self = SYLVA_Number_I_add(self, sl_args_make(1, reverted));
+    `     self = sl_func_name_class_instance(Number, add)(self, sl_args_make(1, reverted));
     `   }
     `   return self;
     ` }
@@ -431,4 +431,3 @@ class Number
   end
 
 end
-

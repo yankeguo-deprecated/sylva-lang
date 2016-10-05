@@ -13,18 +13,16 @@
  * Number
  **********************************************************************************************************************/
 
-sl_value SYLVA_Number_I_init(sl_value self, __unused sl_args arguments) {
+sl_func_decl_class_instance(Number, init) {
   return self;
 }
 
-sl_value SYLVA_Number_I_not(sl_value self, sl_args arguments) {
-  sl_assert(arguments.length == 0,
-            "wrong number of arguments for operator !, expecting 0, got %ld",
-            arguments.length);
+sl_func_decl_class_instance(Number, not) {
+  sl_assert(arguments.length == 0, "wrong number of arguments for operator !, expecting 0, got %ld", arguments.length);
   return sl_boolean_value(!sl_to_boolean(self));
 }
 
-sl_value SYLVA_Number_I_add(sl_value self, sl_args arguments) {
+sl_func_decl_class_instance(Number, add) {
   sl_assert(arguments.length > 0, "wrong number of arguments for operator +, expecting >= 1, got 0");
   sl_trans_to_numeric(&self);
   //  Iterate over arguments
@@ -54,7 +52,7 @@ sl_value SYLVA_Number_I_add(sl_value self, sl_args arguments) {
   return self;
 }
 
-sl_value SYLVA_Number_I_sub(sl_value self, sl_args arguments) {
+sl_func_decl_class_instance(Number, sub) {
   sl_trans_to_numeric(&self);
   //  arguments count == 0, i.e prefix `-` operator
   if (arguments.length == 0) {
@@ -76,15 +74,15 @@ sl_value SYLVA_Number_I_sub(sl_value self, sl_args arguments) {
     //  arguments count != 0, i.e infix `-` operator
     for (sl_index i = 0; i < arguments.length; i++) {
       //  get the reverted value by recursively invoke SYLVA_Number_I_sub
-      sl_value reverted = SYLVA_Number_I_sub(arguments.values[i], sl_args_empty);
+      sl_value reverted = sl_func_name_class_instance(Number, sub)(arguments.values[i], sl_args_empty);
       //  add the reverted value
-      self = SYLVA_Number_I_add(self, sl_args_make(1, reverted));
+      self = sl_func_name_class_instance(Number, add)(self, sl_args_make(1, reverted));
     }
     return self;
   }
 }
 
-sl_value SYLVA_Number_I_mul(sl_value self, sl_args arguments) {
+sl_func_decl_class_instance(Number, mul) {
   sl_assert(arguments.length > 0, "wrong number of arguments for operator *, expecting >= 1, got 0");
   sl_trans_to_numeric(&self);
   for (sl_index i = 0; i < arguments.length; i++) {
@@ -117,7 +115,7 @@ sl_value SYLVA_Number_I_mul(sl_value self, sl_args arguments) {
   return self;
 }
 
-sl_value SYLVA_Number_I_div(sl_value self, sl_args arguments) {
+sl_func_decl_class_instance(Number, div) {
   sl_assert(arguments.length > 0, "wrong number of arguments for operator /, expecting >= 1, got 0");
   sl_trans_to_numeric(&self);
   for (sl_index i = 0; i < arguments.length; i++) {
@@ -150,11 +148,9 @@ sl_value SYLVA_Number_I_div(sl_value self, sl_args arguments) {
   return self;
 }
 
-sl_value SYLVA_Number_I_mod(sl_value self, sl_args arguments) {
+sl_func_decl_class_instance(Number, mod) {
   sl_trans_to_numeric(&self);
-  sl_assert(arguments.length == 1,
-            "wrong number of arguments for operator %%, expecting 1, got %ld",
-            arguments.length);
+  sl_assert(arguments.length == 1, "wrong number of arguments for operator %%, expecting 1, got %ld", arguments.length);
   sl_value value = arguments.values[0];
   sl_trans_to_numeric(&value);
   if (value.type == sl_type_integer) {
@@ -172,7 +168,7 @@ sl_value SYLVA_Number_I_mod(sl_value self, sl_args arguments) {
   }
 }
 
-sl_value SYLVA_Number_I_compare(sl_value self, sl_args arguments) {
+sl_func_decl_class_instance(Number, compare) {
   sl_trans_to_numeric(&self);
   sl_assert(arguments.length == 1,
             "wrong number of arguments for operator <>, expecting 1, got %ld",
@@ -194,121 +190,105 @@ sl_value SYLVA_Number_I_compare(sl_value self, sl_args arguments) {
   }
 }
 
-sl_value SYLVA_Number_I_lt(sl_value self, sl_args arguments) {
+sl_func_decl_class_instance(Number, lt) {
   sl_assert(arguments.length == 1,
             "wrong number of arguments for operator <, expecting 1, got %ld",
             arguments.length);
-  sl_value result = SYLVA_Number_I_compare(self, arguments);
+  sl_value result = sl_func_name_class_instance(Number, compare(self, arguments));
   return sl_boolean_value(result.value.as_integer == sl_ascending);
 }
 
-sl_value SYLVA_Number_I_lt_eq(sl_value self, sl_args arguments) {
+sl_func_decl_class_instance(Number, lt_eq) {
   sl_assert(arguments.length == 1,
             "wrong number of arguments for operator <=, expecting 1, got %ld",
             arguments.length);
-  sl_value result = SYLVA_Number_I_compare(self, arguments);
+  sl_value result = sl_func_name_class_instance(Number, compare(self, arguments));
   return sl_boolean_value(result.value.as_integer == sl_ascending || result.value.as_integer == sl_same);
 }
 
-sl_value SYLVA_Number_I_gt(sl_value self, sl_args arguments) {
+sl_func_decl_class_instance(Number, gt) {
   sl_assert(arguments.length == 1,
             "wrong number of arguments for operator >, expecting 1, got %ld",
             arguments.length);
-  sl_value result = SYLVA_Number_I_compare(self, arguments);
+  sl_value result = sl_func_name_class_instance(Number, compare(self, arguments));
   return sl_boolean_value(result.value.as_integer == sl_descending);
 }
 
-sl_value SYLVA_Number_I_gt_eq(sl_value self, sl_args arguments) {
+sl_func_decl_class_instance(Number, gt_eq) {
   sl_assert(arguments.length == 1,
             "wrong number of arguments for operator >=, expecting 1, got %ld",
             arguments.length);
-  sl_value result = SYLVA_Number_I_compare(self, arguments);
+  sl_value result = sl_func_name_class_instance(Number, compare(self, arguments));
   return sl_boolean_value(result.value.as_integer == sl_descending || result.value.as_integer == sl_same);
 }
 
-sl_value SYLVA_Number_I_eq(sl_value self, sl_args arguments) {
+sl_func_decl_class_instance(Number, eq) {
   sl_assert(arguments.length == 1,
             "wrong number of arguments for operator ==, expecting 1, got %ld",
             arguments.length);
-  sl_value result = SYLVA_Number_I_compare(self, arguments);
+  sl_value result = sl_func_name_class_instance(Number, compare(self, arguments));
   return sl_boolean_value(result.value.as_integer == sl_same);
 }
 
-sl_value SYLVA_Number_I_not_eq(sl_value self, sl_args arguments) {
-  sl_assert(arguments.length == 1,
-            "wrong number of arguments for operator !=, expecting 1, got %ld",
-            arguments.length);
-  sl_value result = SYLVA_Number_I_compare(self, arguments);
+sl_func_decl_class_instance(Number, not_eq) {
+  sl_assert(arguments.length == 1, "wrong number of arguments for operator !=, expecting 1, got %ld", arguments.length);
+  sl_value result = sl_func_name_class_instance(Number, compare(self, arguments));
   return sl_boolean_value(result.value.as_integer != sl_same);
 }
 
-sl_value SYLVA_Number_I_or(sl_value self, sl_args arguments) {
-  sl_assert(arguments.length == 1,
-            "wrong number of arguments for operator ||, expecting 1, got %ld",
-            arguments.length);
+sl_func_decl_class_instance(Number, or) {
+  sl_assert(arguments.length == 1, "wrong number of arguments for operator ||, expecting 1, got %ld", arguments.length);
   sl_value value = arguments.values[0];
   return sl_boolean_value(sl_to_boolean(self) || sl_to_boolean(value));
 }
 
-sl_value SYLVA_Number_I_and(sl_value self, sl_args arguments) {
-  sl_assert(arguments.length == 1,
-            "wrong number of arguments for operator &&, expecting 1, got %ld",
-            arguments.length);
+sl_func_decl_class_instance(Number, and) {
+  sl_assert(arguments.length == 1, "wrong number of arguments for operator &&, expecting 1, got %ld", arguments.length);
   sl_value value = arguments.values[0];
   return sl_boolean_value(sl_to_boolean(self) && sl_to_boolean(value));
 }
 
-sl_value SYLVA_Number_I_bit_or(sl_value self, sl_args arguments) {
-  sl_assert(arguments.length == 1,
-            "wrong number of arguments for operator |, expecting 1, got %ld",
-            arguments.length);
+sl_func_decl_class_instance(Number, bit_or) {
+  sl_assert(arguments.length == 1, "wrong number of arguments for operator |, expecting 1, got %ld", arguments.length);
   sl_value value = arguments.values[0];
   sl_trans_to_integer(&self);
   sl_trans_to_integer(&value);
   return sl_integer_value(self.value.as_integer | value.value.as_integer);
 }
 
-sl_value SYLVA_Number_I_bit_and(sl_value self, sl_args arguments) {
-  sl_assert(arguments.length == 1,
-            "wrong number of arguments for operator &, expecting 1, got %ld",
-            arguments.length);
+sl_func_decl_class_instance(Number, bit_and) {
+  sl_assert(arguments.length == 1, "wrong number of arguments for operator &, expecting 1, got %ld", arguments.length);
   sl_value value = arguments.values[0];
   sl_trans_to_integer(&self);
   sl_trans_to_integer(&value);
   return sl_integer_value(self.value.as_integer & value.value.as_integer);
 }
 
-sl_value SYLVA_Number_I_bit_xor(sl_value self, sl_args arguments) {
-  sl_assert(arguments.length == 1,
-            "wrong number of arguments for operator ^, expecting 1, got %ld",
-            arguments.length);
+sl_func_decl_class_instance(Number, bit_xor) {
+  sl_assert(arguments.length == 1, "wrong number of arguments for operator ^, expecting 1, got %ld", arguments.length);
   sl_value value = arguments.values[0];
   sl_trans_to_integer(&self);
   sl_trans_to_integer(&value);
   return sl_integer_value(self.value.as_integer ^ value.value.as_integer);
 }
 
-sl_value SYLVA_Number_I_rshift(sl_value self, sl_args arguments) {
-  sl_assert(arguments.length == 1,
-            "wrong number of arguments for operator >>, expecting 1, got %ld",
-            arguments.length);
+sl_func_decl_class_instance(Number, rshift) {
+  sl_assert(arguments.length == 1, "wrong number of arguments for operator >>, expecting 1, got %ld", arguments.length);
   sl_value value = arguments.values[0];
   sl_trans_to_integer(&self);
   sl_trans_to_integer(&value);
   return sl_integer_value(self.value.as_integer >> value.value.as_integer);
 }
 
-sl_value SYLVA_Number_I_lshift(sl_value self, sl_args arguments) {
-  sl_assert(arguments.length == 1,
-            "wrong number of arguments for operator <<, expecting 1, got %ld",
-            arguments.length);
+sl_func_decl_class_instance(Number, lshift) {
+  sl_assert(arguments.length == 1, "wrong number of arguments for operator <<, expecting 1, got %ld", arguments.length);
   sl_value value = arguments.values[0];
   sl_trans_to_integer(&self);
   sl_trans_to_integer(&value);
   return sl_integer_value(self.value.as_integer << value.value.as_integer);
 }
 
-sl_value SYLVA_Number_I_abs(sl_value self, __unused sl_args arguments) {
+sl_func_decl_class_instance(Number, abs) {
   if (self.type == sl_type_float) {
     return sl_float_value(fabs(self.value.as_float));
   } else if (self.type == sl_type_integer) {
@@ -318,7 +298,7 @@ sl_value SYLVA_Number_I_abs(sl_value self, __unused sl_args arguments) {
   }
 }
 
-sl_value SYLVA_Number_I_to_i(sl_value self, sl_args arguments) {
+sl_func_decl_class_instance(Number, to_i) {
   sl_assert(arguments.length == 0,
             "wrong number of arguments for function 'to_i', expecting 0, got %ld",
             arguments.length);
@@ -326,7 +306,7 @@ sl_value SYLVA_Number_I_to_i(sl_value self, sl_args arguments) {
   return self;
 }
 
-sl_value SYLVA_Number_I_to_f(sl_value self, sl_args arguments) {
+sl_func_decl_class_instance(Number, to_f) {
   sl_assert(arguments.length == 0,
             "wrong number of arguments for function 'to_f', expecting 0, got %ld",
             arguments.length);
@@ -334,7 +314,7 @@ sl_value SYLVA_Number_I_to_f(sl_value self, sl_args arguments) {
   return self;
 }
 
-sl_value SYLVA_Number_I_to_b(sl_value self, sl_args arguments) {
+sl_func_decl_class_instance(Number, to_b) {
   sl_assert(arguments.length == 0,
             "wrong number of arguments for function 'to_b', expecting 0, got %ld",
             arguments.length);
@@ -346,15 +326,15 @@ sl_value SYLVA_Number_I_to_b(sl_value self, sl_args arguments) {
  * Object
  **********************************************************************************************************************/
 
-sl_value SYLVA_Object_I_init(sl_value self, __unused sl_args arguments) {
+sl_func_decl_class_instance(Object, init) {
   return self;
 }
 
-sl_value SYLVA_Object_I_class(sl_value self, __unused sl_args arguments) {
+sl_func_decl_class_instance(Object, class) {
   return sl_class_value(self.value.as_object->class);
 }
 
-sl_value SYLVA_Object_I_eq(sl_value self, sl_args arguments) {
+sl_func_decl_class_instance(Object, eq) {
   sl_assert(arguments.length == 1,
             "wrong number of arguments for function '==', expecting 1, got %ld",
             arguments.length);
@@ -366,53 +346,50 @@ sl_value SYLVA_Object_I_eq(sl_value self, sl_args arguments) {
  * Class Declarations
  **********************************************************************************************************************/
 
-sl_class SYLVA_C_Number = {
-    .name = "Number",
-    .super = NULL,
-    .static_funcs = NULL,
-    .instance_funcs = &sl_funcs_make(26,
-                                     sl_func_item("init", &SYLVA_Number_I_init),
-                                     sl_func_item("not", &SYLVA_Number_I_not),
-                                     sl_func_item("add", &SYLVA_Number_I_add),
-                                     sl_func_item("sub", &SYLVA_Number_I_sub),
-                                     sl_func_item("mul", &SYLVA_Number_I_mul),
-                                     sl_func_item("div", &SYLVA_Number_I_div),
-                                     sl_func_item("mod", &SYLVA_Number_I_mod),
-                                     sl_func_item("compare", &SYLVA_Number_I_compare),
-                                     sl_func_item("lt", &SYLVA_Number_I_lt),
-                                     sl_func_item("lt_eq", &SYLVA_Number_I_lt_eq),
-                                     sl_func_item("gt", &SYLVA_Number_I_gt),
-                                     sl_func_item("gt_eq", &SYLVA_Number_I_gt_eq),
-                                     sl_func_item("eq", &SYLVA_Number_I_eq),
-                                     sl_func_item("not_eq", &SYLVA_Number_I_not_eq),
-                                     sl_func_item("or", &SYLVA_Number_I_or),
-                                     sl_func_item("and", &SYLVA_Number_I_and),
-                                     sl_func_item("or", &SYLVA_Number_I_or),
-                                     sl_func_item("bit_or", &SYLVA_Number_I_bit_or),
-                                     sl_func_item("bit_and", &SYLVA_Number_I_bit_and),
-                                     sl_func_item("bit_xor", &SYLVA_Number_I_bit_xor),
-                                     sl_func_item("rshift", &SYLVA_Number_I_rshift),
-                                     sl_func_item("lshift", &SYLVA_Number_I_lshift),
-                                     sl_func_item("to_i", &SYLVA_Number_I_to_i),
-                                     sl_func_item("to_f", &SYLVA_Number_I_to_f),
-                                     sl_func_item("to_b", &SYLVA_Number_I_to_b),
-                                     sl_func_item("abs", &SYLVA_Number_I_abs),
-    ),
-    .static_member_defs = NULL,
-    .instance_member_defs = NULL,
-    .members = NULL,
-};
+sl_class_decl_start(Number)
+        sl_class_decl_super_null
+        sl_class_decl_static_funcs_null
+        sl_class_decl_instance_funcs_start(26)
+                            sl_class_decl_instance_class_func(Number, init)
+                            sl_class_decl_instance_class_func(Number, not)
+                            sl_class_decl_instance_class_func(Number, add)
+                            sl_class_decl_instance_class_func(Number, sub)
+                            sl_class_decl_instance_class_func(Number, mul)
+                            sl_class_decl_instance_class_func(Number, div)
+                            sl_class_decl_instance_class_func(Number, mod)
+                            sl_class_decl_instance_class_func(Number, compare)
+                            sl_class_decl_instance_class_func(Number, lt)
+                            sl_class_decl_instance_class_func(Number, lt_eq)
+                            sl_class_decl_instance_class_func(Number, gt)
+                            sl_class_decl_instance_class_func(Number, gt_eq)
+                            sl_class_decl_instance_class_func(Number, eq)
+                            sl_class_decl_instance_class_func(Number, not_eq)
+                            sl_class_decl_instance_class_func(Number, or)
+                            sl_class_decl_instance_class_func(Number, and)
+                            sl_class_decl_instance_class_func(Number, bit_or)
+                            sl_class_decl_instance_class_func(Number, bit_and)
+                            sl_class_decl_instance_class_func(Number, bit_xor)
+                            sl_class_decl_instance_class_func(Number, rshift)
+                            sl_class_decl_instance_class_func(Number, lshift)
+                            sl_class_decl_instance_class_func(Number, to_i)
+                            sl_class_decl_instance_class_func(Number, to_f)
+                            sl_class_decl_instance_class_func(Number, to_b)
+                            sl_class_decl_instance_class_func(Number, abs)
+        sl_class_decl_instance_funcs_end
+        sl_class_decl_static_member_defs_null
+        sl_class_decl_instance_member_defs_null
+        sl_class_decl_members_null
+sl_class_decl_end
 
-sl_class SYLVA_C_Object = {
-    .name = "Object",
-    .super = NULL,
-    .static_funcs = NULL,
-    .instance_funcs = &sl_funcs_make(3,
-                                     sl_func_item("init", &SYLVA_Object_I_init),
-                                     sl_func_item("class", &SYLVA_Object_I_class),
-                                     sl_func_item("eq", &SYLVA_Object_I_eq),
-    ),
-    .static_member_defs = NULL,
-    .instance_member_defs = NULL,
-    .members = NULL,
-};
+sl_class_decl_start(Object)
+        sl_class_decl_super_null
+        sl_class_decl_static_funcs_null
+        sl_class_decl_instance_funcs_start(3)
+                            sl_class_decl_instance_class_func(Object, init)
+                            sl_class_decl_instance_class_func(Object, class)
+                            sl_class_decl_instance_class_func(Object, eq)
+        sl_class_decl_instance_funcs_end
+        sl_class_decl_static_member_defs_null
+        sl_class_decl_instance_member_defs_null
+        sl_class_decl_members_null
+sl_class_decl_end

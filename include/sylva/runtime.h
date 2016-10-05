@@ -10,6 +10,25 @@
 _BEGIN_STD_C
 
 /***********************************************************************************************************************
+ * Sylva Runtime Naming
+ **********************************************************************************************************************/
+
+#define sl_class_name(CLASS) SYLVA_C_##CLASS
+#define sl_class_decl(CLASS) sl_class sl_class_name(CLASS)
+
+#define sl_func_name_class_instance(CLASS, NAME) SYLVA_C_##CLASS##_I_##NAME
+#define sl_func_name_class_static(CLASS, NAME) SYLVA_C_##CLASS##_S_##NAME
+
+#define sl_func_decl_class_instance(CLASS, NAME) sl_value sl_func_name_class_instance(CLASS, NAME)(__unused sl_value self, __unused sl_args arguments)
+#define sl_func_decl_class_static(CLASS, NAME) sl_value sl_func_name_class_static(CLASS, NAME)(__unused sl_value self, __unused sl_args arguments)
+
+#define sl_func_name_module_instance(MODULE, NAME) SYLVA_M_##MODULE##_I_##NAME
+#define sl_func_name_module_static(MODULE, NAME) SYLVA_M_##MODULE##_S_##NAME
+
+#define sl_func_decl_module_instance(MODULE, NAME) sl_value sl_func_name_module_instance(MODULE, NAME)(__unused sl_value self, __unused sl_args arguments)
+#define sl_func_decl_module_static(MODULE, NAME) sl_value sl_func_name_module_static(MODULE, NAME)(__unused sl_value self, __unused sl_args arguments)
+
+/***********************************************************************************************************************
  * Assert
  **********************************************************************************************************************/
 
@@ -87,6 +106,57 @@ struct sl_class_t {
    */
   sl_members_ref members;
 };
+
+#define sl_class_decl_start(CLASS) \
+  sl_class_decl(CLASS) = {\
+    .name = #CLASS,
+
+#define sl_class_decl_super(SUPER) .super = &sl_class_name(SUPER),
+#define sl_class_decl_super_null .super = NULL,
+
+#define sl_class_decl_static_funcs_null .static_funcs = NULL,
+#define sl_class_decl_static_funcs_start(LENGTH)\
+  .static_funcs = &(sl_funcs) {\
+    .length = LENGTH,\
+    .entries = (sl_func[]) {
+#define sl_class_decl_static_class_func(CLASS, NAME) sl_func_item(#NAME, &sl_func_name_class_static(CLASS, NAME)),
+#define sl_class_decl_static_module_func(MODULE, NAME) sl_func_item(#NAME, &sl_func_name_module_static(MODULE, NAME)),
+#define sl_class_decl_static_funcs_end }},
+
+#define sl_class_decl_instance_funcs_null .instance_funcs = NULL,
+#define sl_class_decl_instance_funcs_start(LENGTH)\
+  .instance_funcs = &(sl_funcs) {\
+    .length = LENGTH,\
+    .entries = (sl_func[]) {
+#define sl_class_decl_instance_class_func(CLASS, NAME) sl_func_item(#NAME, &sl_func_name_class_instance(CLASS, NAME)),
+#define sl_class_decl_instance_module_func(MODULE, NAME) sl_func_item(#NAME, &sl_func_name_module_instance(MODULE, NAME)),
+#define sl_class_decl_instance_funcs_end }},
+
+#define sl_class_decl_member_def(NAME, OPTION) sl_member_def_item(#NAME, sl_member_##OPTION),
+
+#define sl_class_decl_static_member_defs_null .static_member_defs = NULL,
+#define sl_class_decl_static_member_defs_start(LENGTH)\
+  .static_member_defs = &(sl_member_defs) {\
+    .length = LENGTH,\
+    .entries = (sl_member_def[]){
+#define sl_class_decl_static_member_defs_end }},
+
+#define sl_class_decl_instance_member_defs_null .instance_member_defs = NULL,
+#define sl_class_decl_instance_member_defs_start(LENGTH)\
+  .instance_member_defs = &(sl_member_defs) {\
+    .length = LENGTH,\
+    .entries = (sl_member_def[]){
+#define sl_class_decl_instance_member_defs_end }},
+
+#define sl_class_decl_members_null .members = NULL,
+#define sl_class_decl_members_start(LENGTH)\
+  .members = &(sl_members) {\
+    .length = LENGTH,\
+    .entries = (sl_member[]){
+#define sl_class_decl_member(NAME, OPTION) sl_member_item(#NAME, sl_member_##OPTION),
+#define sl_class_decl_members_end }},
+
+#define sl_class_decl_end };
 
 /**
  * Object in sylva-lang
@@ -248,7 +318,7 @@ typedef sl_value *sl_value_ref;
 /**
  * sl_value initializer macros
  */
-#define sl_pointer_value(X)  ((sl_value) sl_bare_pointer_value(X))
+#define sl_pointer_value(X) ((sl_value) sl_bare_pointer_value(X))
 #define sl_nil_value ((sl_value) sl_bare_nil_value)
 #define sl_boolean_value(X) ((sl_value) sl_bare_boolean_value(X))
 #define sl_true_value sl_boolean_value(sl_true)
@@ -257,6 +327,7 @@ typedef sl_value *sl_value_ref;
 #define sl_float_value(X) ((sl_value) sl_bare_float_value(X))
 #define sl_object_value(X) ((sl_value) sl_bare_object_value(X))
 #define sl_class_value(X) ((sl_value) sl_bare_class_value(X))
+#define sl_class_rel(CLASS) sl_class_value(&sl_class_name(CLASS))
 
 /**
  * turns any sl_value to a resonable boolean value
@@ -749,11 +820,11 @@ sl_boolean sl_static_set(sl_value target_value, sl_symbol name, sl_value value);
  * Pre-declaration for Foundation
  **********************************************************************************************************************/
 
-sl_class SYLVA_C_Number;
-sl_class SYLVA_C_Object;
-sl_class SYLVA_C_String;
-sl_class SYLVA_C_Hash;
-sl_class SYLVA_C_Array;
+sl_class_decl(Number);
+sl_class_decl(Object);
+sl_class_decl(String);
+sl_class_decl(Hash);
+sl_class_decl(Array);
 
 _END_STD_C
 

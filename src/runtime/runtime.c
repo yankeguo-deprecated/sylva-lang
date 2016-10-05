@@ -10,7 +10,7 @@ sl_class_ref sl_get_class(sl_value value) {
       value.type == sl_type_integer ||
       value.type == sl_type_float ||
       value.type == sl_type_nil) {
-    return &SYLVA_C_Number;
+    return &sl_class_name(Number);
   }
   if (value.type == sl_type_object) {
     return value.value.as_object->class;
@@ -158,13 +158,13 @@ sl_value sl_create(sl_class_ref class, sl_symbol name, sl_index length, ...) {
 }
 
 sl_value sl_v_create(sl_class_ref class, sl_symbol name, sl_index length, va_list list) {
-  if (class == &SYLVA_C_Number) {
+  if (class == &sl_class_name(Number)) {
     sl_value result = sl_integer_value(0);
     return sl_v_call(result, name, length, list);
   }
   sl_object_ref object = sl_object_create(class);
   sl_value result = sl_v_call(sl_object_value(object), name, length, list);
-  //  check result, if changed, destroy orignal object
+  //  check result, if changed, destroy original object
   if (result.type != sl_type_object || result.value.as_object != object) {
     sl_object_destroy(object);
   }

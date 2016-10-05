@@ -42,56 +42,55 @@
 
 _BEGIN_STD_C
 
-sl_value SYLVA_C_Dog_S_main(sl_value self, sl_args args);
-sl_value SYLVA_C_Dog_I_name(sl_value self, sl_args args);
-sl_value SYLVA_C_Dog_I_init(sl_value self, sl_args args);
-sl_value SYLVA_C_Dog_I_bark(sl_value self, sl_args args);
-sl_value SYLVA_M_Printer_I_print(sl_value self, sl_args args);
+sl_func_decl_class_static(Dog, main);
+sl_func_decl_class_instance(Dog, name);
+sl_func_decl_class_instance(Dog, init);
+sl_func_decl_class_instance(Dog, bark);
+sl_func_decl_module_instance(Printer, print);
 
-sl_class SYLVA_C_Dog = {
-    .name = "Dog",
-    .super = &SYLVA_C_Object,
-    .static_funcs =
-    &sl_funcs_make(1,
-                   sl_func_item("main", &SYLVA_C_Dog_S_main)
-    ),
-    .instance_funcs =
-    &sl_funcs_make(4,
-                   sl_func_item("name", &SYLVA_C_Dog_I_name),
-                   sl_func_item("bark", &SYLVA_C_Dog_I_bark),
-                   sl_func_item("print", &SYLVA_M_Printer_I_print),
-                   sl_func_item("init", &SYLVA_C_Dog_I_init),
-    ),
-    .static_member_defs =
-    &sl_member_defs_make(1,
-                         sl_member_def_item("count", sl_member_normal)
-    ),
-    .instance_member_defs =
-    &sl_member_defs_make(1,
-                         sl_member_def_item("name", sl_member_normal)
-    ),
-    .members =
-    &sl_members_make(1,
-                     sl_member_item("count", sl_member_normal)
-    ),
-};
+sl_class_decl_start(Dog)
+        sl_class_decl_super(Object)
+
+        sl_class_decl_static_funcs_start(1)
+                            sl_class_decl_static_class_func(Dog, main)
+        sl_class_decl_static_funcs_end
+
+        sl_class_decl_instance_funcs_start(4)
+                            sl_class_decl_instance_class_func(Dog, name)
+                            sl_class_decl_instance_class_func(Dog, bark)
+                            sl_class_decl_instance_class_func(Dog, init)
+                            sl_class_decl_instance_module_func(Printer, print)
+        sl_class_decl_instance_funcs_end
+
+        sl_class_decl_static_member_defs_start(1)
+                            sl_class_decl_member_def(count, normal)
+        sl_class_decl_static_member_defs_end
+
+        sl_class_decl_instance_member_defs_start(1)
+                            sl_class_decl_member_def(name, normal)
+        sl_class_decl_instance_member_defs_end
+
+        sl_class_decl_members_start(1)
+                            sl_class_decl_member(count, normal)
+        sl_class_decl_members_end
+sl_class_decl_end
 
 /////////////////////   Function Declarations   ///////////////////////
 
-sl_value SYLVA_C_Dog_S_main(__unused sl_value self, __unused sl_args args) {
-  sl_value dog = sl_create(&SYLVA_C_Dog, "init", 1, sl_pointer_value("woff"));
+sl_func_decl_class_static(Dog, main) {
+  sl_value dog = sl_create(&sl_class_name(Dog), "init", 1, sl_pointer_value("woff"));
   sl_retain(&dog);
   sl_call(dog, "bark", 0);
   sl_release(&dog);
   return sl_integer_value(0);
 }
 
-sl_value SYLVA_C_Dog_I_name(sl_value self, __unused sl_args args) {
+sl_func_decl_class_instance(Dog, name) {
   return sl_get(self, "name");
 }
 
-sl_value SYLVA_C_Dog_I_init(sl_value self, sl_args args) {
-  sl_value name = sl_args_get(args, 0);
+sl_func_decl_class_instance(Dog, init) {
+  sl_value name = sl_args_get(arguments, 0);
   sl_set(self, "name", name);
   sl_value total_count = sl_static_get(self, "count");
   sl_value new_total_count = sl_call(total_count, "add", 1, sl_integer_value(1));
@@ -99,14 +98,14 @@ sl_value SYLVA_C_Dog_I_init(sl_value self, sl_args args) {
   return self;
 }
 
-sl_value SYLVA_C_Dog_I_bark(sl_value self, __unused sl_args args) {
+sl_func_decl_class_instance(Dog, bark) {
   sl_value name = sl_call(self, "name", 0);
   sl_call(self, "print", 1, name);
   return sl_nil_value;
 }
 
-sl_value SYLVA_M_Printer_I_print(sl_value self, sl_args args) {
-  sl_value content = sl_args_get(args, 0);
+sl_func_decl_module_instance(Printer, print) {
+  sl_value content = sl_args_get(arguments, 0);
   printf("%s:%s, I'm the number %ld dog\n",
          sl_get_class(self)->name,
          (char *) content.value.as_pointer,
@@ -117,7 +116,7 @@ sl_value SYLVA_M_Printer_I_print(sl_value self, sl_args args) {
 ////////////////////// Main Entry  //////////////////////////////
 
 int main(__unused int argc, __unused char **argv) {
-  return (int) sl_call(sl_class_value(&SYLVA_C_Dog), "main", 0).value.as_integer;
+  return (int) sl_call(sl_class_rel(Dog), "main", 0).value.as_integer;
 }
 
 _END_STD_C

@@ -7,8 +7,7 @@
 //
 
 #include <sylva/define.h>
-#include <sylva/token.h>
-#include <sylva/lexer.h>
+#include <sylva/parser.h>
 
 typedef enum {
   SCLIExitCommon = 1,
@@ -32,49 +31,12 @@ static void SCLIPrintUsageAndExit(char *binName, SCLIExitCode code) {
   exit(code);
 }
 
-static void SCLIScanFile(char *fileName) {
-  FILE *file = fopen(fileName, "r");
-  if (file == NULL) {
-    fprintf(stderr, "Can not open file %s", fileName);
+static void SCLIScanFile(char *file_name) {
+  sl_parser_ref parser = sl_parser_create(file_name);
+  if (parser == NULL)
     return;
-  }
-  char lineBuf[500];
-  int lineNo = 1;
-  while (fgets(lineBuf, sizeof(lineBuf), file) != NULL) {
-    sl_lexer_ref lexer = sl_lexer_create(sl_string_create(lineBuf));
-    int lexerFailed = 0;
-    for (;;) {
-      sl_lexer_error err = sl_lexer_error_ok;
-      sl_index errIndex = 0;
-      sl_token_ref token = sl_lexer_next_token(lexer, &err, &errIndex);
-      int lexerFinished = (token == NULL) || (token->type == sl_token_eof);
-      if (token == NULL) {
-        fprintf(stderr, "ERROR: %s at %d:%ld\n", sl_lexer_error_get_name(err), lineNo, errIndex);
-        lexerFailed = 1;
-      }
-      if (lexerFinished) {
-        break;
-      } else {
-        sl_token_print(stdout, token);
-        fprintf(stdout, "\n");
-        sl_token_destroy(token);
-      }
-    }
-    sl_lexer_destroy(lexer);
-    if (lexerFailed) {
-      break;
-    }
-    lineNo++;
-  }
-
-  if (feof(file)) {
-  } else if (ferror(file)) {
-    perror("fgets()");
-    fprintf(stderr, "can not read file %s at line %d\n", fileName, lineNo);
-    exit(EXIT_FAILURE);
-  }
-
-  fclose(file);
+  sl_parser_print_scan_result(parser, stdout);
+  sl_parser_destroy(parser);
 }
 
 int main(int argc, char **argv) {

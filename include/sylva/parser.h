@@ -7,16 +7,27 @@
 
 #include "sylva/define.h"
 #include "sylva/string.h"
+#include "token.h"
+
+#include <yaml.h>
+
+#include <stdio.h>
+#include <stdlib.h>
 
 __CPP_DECL_START
 
 typedef struct {
-  sl_string *source;
+  char *file_name;
+  FILE *file;
+  char *line_buf;
+  int line_buf_size;
 } sl_parser;
 
 typedef sl_parser *sl_parser_ref;
 
-SYLVA_EXTERN sl_parser_ref sl_parser_create(char *src);
+SYLVA_EXTERN sl_parser_ref sl_parser_create(char * file_name);
+
+SYLVA_EXTERN void sl_parser_print_scan_result(sl_parser_ref parser, FILE *output);
 
 SYLVA_EXTERN void sl_parser_destroy(sl_parser_ref parser);
 

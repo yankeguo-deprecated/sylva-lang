@@ -5,15 +5,75 @@
 #define __SYLVA_SOURCE__
 #include "sylva/parser.h"
 
-#include <stdlib.h>
+#include <sylva/sylva.h>
 
-sl_parser_ref sl_parser_create(char *src) {
+sl_parser_ref sl_parser_create(char *file_name) {
+  FILE *file = fopen(file_name, "r");
+  if (file == NULL) {
+    fprintf(stderr, "Can not open file %s", file_name);
+    return NULL;
+  }
   sl_parser_ref parser = malloc(sizeof(sl_parser));
-  parser->source = sl_string_create(src);
+  parser->file_name = file_name;
+  parser->file = file;
+  parser->line_buf_size = 500;
+  parser->line_buf = malloc(sizeof(char) * parser->line_buf_size);
   return parser;
 }
 
+void sl_parser_print_scan_result(sl_parser_ref parser, FILE *output) {
+  int line_no = 1;
+
+  while (fgets(parser->line_buf, parser->line_buf_size, parser->file) != NULL) {
+    // iterate each line
+    bool lexer_failed = false;
+    sl_lexer_ref lexer = sl_lexer_create(sl_string_create(parser->line_buf));
+
+    for (;;) {
+      //  iterate each token
+      sl_lexer_error err = sl_lexer_error_ok;
+      sl_index errIndex = 0;
+      sl_token_ref token = sl_lexer_next_token(lexer, &err, &errIndex);
+
+      bool lexer_finished = (token == NULL) || (token->type == sl_token_eof);
+
+      if (err != sl_lexer_error_ok) {
+        //  mark lexer failed
+        fprintf(stderr, "ERROR: %s at %d:%ld\n", sl_lexer_error_get_name(err), line_no, errIndex);
+        lexer_failed = true;
+      }
+
+      if (lexer_finished) {
+        if (token != NULL)
+          sl_token_destroy(token);
+        break;
+      } else {
+        sl_token_print(output, token);
+        fprintf(output, "\n");
+        sl_token_destroy(token);
+      }
+    }
+
+    sl_lexer_destroy(lexer);
+
+    //  break if lexer failed
+    if (lexer_failed)
+      break;
+    //  increase line_no
+    line_no++;
+  }
+
+  if (ferror(parser->file)) {
+    //  exit if file read failed
+    perror("fgets()");
+    fprintf(stderr, "can not read file %s at line %d\n", parser->file_name, line_no);
+    exit(EXIT_FAILURE);
+  }
+}
+
 void sl_parser_destroy(sl_parser_ref parser) {
-  sl_string_destroy(parser->source);
+  fclose(parser->file);
+  free(parser->line_buf);
+  parser->line_buf_size = 0;
   free(parser);
 }

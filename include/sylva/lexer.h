@@ -21,10 +21,26 @@ typedef enum {
   sl_lexer_error_found_new_line, // new line (\r or \n) should be handled by sl_parser not sl_lexer
 } sl_lexer_error;
 
+/**
+ * get the name of sl_lexer_error, for debug purpose
+ *
+ * @param error error type
+ *
+ * @return name of the error
+ */
 SYLVA_EXTERN char *const sl_lexer_error_get_name(sl_lexer_error error);
 
+/**
+ * structure for lexer
+ */
 typedef struct {
+  /**
+   * source code in sl_string
+   */
   sl_string_ref source;
+  /**
+   * current lexer position
+   */
   sl_index index;
 } sl_lexer;
 

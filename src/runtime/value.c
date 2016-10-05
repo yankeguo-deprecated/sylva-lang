@@ -7,17 +7,17 @@
 
 void sl_retain(sl_value_ref value) {
   if (value->type == sl_type_object) {
-    sl_object_retain(value->object_value);
+    sl_object_retain(value->value.as_object);
   }
 }
 
 void sl_release(sl_value_ref value) {
   if (value->type == sl_type_object) {
-    sl_object_ref result = sl_object_release(value->object_value);
+    sl_object_ref result = sl_object_release(value->value.as_object);
     //  set the sl_value to nil if object destroyed
     if (result == NULL) {
       value->type = sl_type_nil;
-      value->integer_value = 0;
+      value->value.as_integer = 0;
     }
   }
 }
@@ -27,32 +27,32 @@ sl_boolean sl_to_boolean(sl_value value) {
     //  pointer
   case sl_type_object:
   case sl_type_class:
-  case sl_type_pointer: return value.pointer_value != NULL;
+  case sl_type_pointer: return value.value.as_pointer != NULL;
     //  primitive values
-  case sl_type_integer:return value.integer_value != 0;
-  case sl_type_float: return value.float_value != 0;
+  case sl_type_integer:return value.value.as_integer != 0;
+  case sl_type_float: return value.value.as_float != 0;
   case sl_type_nil: return sl_false;
-  case sl_type_boolean:return value.boolean_value;
+  case sl_type_boolean:return value.value.as_boolean;
   default:return sl_false;
   }
 }
 
 sl_integer sl_to_integer(sl_value value) {
   switch (value.type) {
-  case sl_type_integer:return value.integer_value;
-  case sl_type_float: return (sl_integer) value.float_value;
+  case sl_type_integer:return value.value.as_integer;
+  case sl_type_float: return (sl_integer) value.value.as_float;
   case sl_type_nil: return 0;
-  case sl_type_boolean:return value.boolean_value ? 1 : 0;
+  case sl_type_boolean:return value.value.as_boolean ? 1 : 0;
   default:return 0;
   }
 }
 
 sl_float sl_to_float(sl_value value) {
   switch (value.type) {
-  case sl_type_integer:return (sl_float) value.integer_value;
-  case sl_type_float: return value.float_value;
+  case sl_type_integer:return (sl_float) value.value.as_integer;
+  case sl_type_float: return value.value.as_float;
   case sl_type_nil: return 0;
-  case sl_type_boolean:return value.boolean_value ? 1 : 0;
+  case sl_type_boolean:return value.value.as_boolean ? 1 : 0;
   default:return 0;
   }
 }
@@ -61,12 +61,12 @@ void sl_trans_to_numeric(sl_value_ref value) {
   switch (value->type) {
   case sl_type_nil: {
     value->type = sl_type_integer;
-    value->integer_value = 0;
+    value->value.as_integer = 0;
     break;
   }
   case sl_type_boolean: {
     value->type = sl_type_integer;
-    value->integer_value = value->boolean_value ? 1 : 0;
+    value->value.as_integer = value->value.as_boolean ? 1 : 0;
     break;
   }
   case sl_type_integer:
@@ -75,22 +75,22 @@ void sl_trans_to_numeric(sl_value_ref value) {
   }
   default: {
     value->type = sl_type_integer;
-    value->integer_value = 0;
+    value->value.as_integer = 0;
   }
   }
 }
 
 void sl_trans_to_float(sl_value_ref value) {
-  value->float_value = sl_to_float(*value);
+  value->value.as_float = sl_to_float(*value);
   value->type = sl_type_float;
 }
 
 void sl_trans_to_integer(sl_value_ref value) {
-  value->integer_value = sl_to_integer(*value);
+  value->value.as_integer = sl_to_integer(*value);
   value->type = sl_type_integer;
 }
 
 void sl_trans_to_boolean(sl_value_ref value) {
-  value->boolean_value = sl_to_boolean(*value);
+  value->value.as_boolean = sl_to_boolean(*value);
   value->type = sl_type_boolean;
 }

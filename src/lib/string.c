@@ -16,7 +16,6 @@
 #include <sylva/string.h>
 
 sl_string_ref sl_string_create_il(char *string, sl_index index, sl_index length) {
-  assert(index >= 0);
   assert(index + length <= strlen(string));
   sl_string_ref ref = malloc(sizeof(sl_string));
   ref->length = length;

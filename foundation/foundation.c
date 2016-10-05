@@ -13,8 +13,7 @@
  * Number
  **********************************************************************************************************************/
 
-
-sl_value SYLVA_Number_I_init(sl_value self, sl_args arguments) {
+sl_value SYLVA_Number_I_init(sl_value self, __unused sl_args arguments) {
   return self;
 }
 
@@ -36,9 +35,9 @@ sl_value SYLVA_Number_I_add(sl_value self, sl_args arguments) {
     case sl_type_integer: {
       //  float + integer, integer + integer
       if (self.type == sl_type_float) {
-        self.float_value += arg.integer_value;
+        self.value.as_float += arg.value.as_integer;
       } else {
-        self.integer_value += arg.integer_value;
+        self.value.as_integer += arg.value.as_integer;
       }
     }
       break;
@@ -46,7 +45,7 @@ sl_value SYLVA_Number_I_add(sl_value self, sl_args arguments) {
       //  integer + float, convert self to float and continue
       sl_trans_to_float(&self);
       //  float + float
-      self.float_value += arg.float_value;
+      self.value.as_float += arg.value.as_float;
     }
       break;
     default:break;
@@ -62,12 +61,12 @@ sl_value SYLVA_Number_I_sub(sl_value self, sl_args arguments) {
     switch (self.type) {
       //  integer
     case sl_type_integer: {
-      self.integer_value = -self.integer_value;
+      self.value.as_integer = -self.value.as_integer;
     }
       break;
       //  float
     case sl_type_float: {
-      self.float_value = -self.float_value;
+      self.value.as_float = -self.value.as_float;
     }
       break;
     default:break;
@@ -95,11 +94,11 @@ sl_value SYLVA_Number_I_mul(sl_value self, sl_args arguments) {
     case sl_type_integer: {
       //  float * integer
       if (self.type == sl_type_float) {
-        self.float_value *= arg.integer_value;
+        self.value.as_float *= arg.value.as_integer;
       }
       // integer * integer
       if (self.type == sl_type_integer) {
-        self.integer_value *= arg.integer_value;
+        self.value.as_integer *= arg.value.as_integer;
       }
     }
       break;
@@ -108,7 +107,7 @@ sl_value SYLVA_Number_I_mul(sl_value self, sl_args arguments) {
       sl_trans_to_float(&self);
       //  float * float
       if (self.type == sl_type_float) {
-        self.float_value *= arg.float_value;
+        self.value.as_float *= arg.value.as_float;
       }
     }
       break;
@@ -128,11 +127,11 @@ sl_value SYLVA_Number_I_div(sl_value self, sl_args arguments) {
     case sl_type_integer: {
       //  float * integer
       if (self.type == sl_type_float) {
-        self.float_value /= arg.integer_value;
+        self.value.as_float /= arg.value.as_integer;
       }
       // integer * integer
       if (self.type == sl_type_integer) {
-        self.integer_value /= arg.integer_value;
+        self.value.as_integer /= arg.value.as_integer;
       }
     }
       break;
@@ -141,7 +140,7 @@ sl_value SYLVA_Number_I_div(sl_value self, sl_args arguments) {
       sl_trans_to_float(&self);
       //  float * float
       if (self.type == sl_type_float) {
-        self.float_value /= arg.float_value;
+        self.value.as_float /= arg.value.as_float;
       }
     }
       break;
@@ -160,15 +159,15 @@ sl_value SYLVA_Number_I_mod(sl_value self, sl_args arguments) {
   sl_trans_to_numeric(&value);
   if (value.type == sl_type_integer) {
     if (self.type == sl_type_float) {
-      return sl_float_value(fmod(self.float_value, (sl_float) value.integer_value));
+      return sl_float_value(fmod(self.value.as_float, (sl_float) value.value.as_integer));
     } else {
-      return sl_integer_value(self.integer_value % value.integer_value);
+      return sl_integer_value(self.value.as_integer % value.value.as_integer);
     }
   } else {
     if (self.type == sl_type_float) {
-      return sl_float_value(fmod(self.float_value, value.float_value));
+      return sl_float_value(fmod(self.value.as_float, value.value.as_float));
     } else {
-      return sl_integer_value(self.integer_value % (sl_integer) value.float_value);
+      return sl_integer_value(self.value.as_integer % (sl_integer) value.value.as_float);
     }
   }
 }
@@ -182,15 +181,15 @@ sl_value SYLVA_Number_I_compare(sl_value self, sl_args arguments) {
   sl_trans_to_numeric(&value);
   if (value.type == sl_type_integer) {
     if (self.type == sl_type_float) {
-      return sl_integer_value(sl_compare(self.float_value, value.integer_value));
+      return sl_integer_value(sl_compare(self.value.as_float, value.value.as_integer));
     } else {
-      return sl_integer_value(sl_compare(self.integer_value, value.integer_value));
+      return sl_integer_value(sl_compare(self.value.as_integer, value.value.as_integer));
     }
   } else {
     if (self.type == sl_type_float) {
-      return sl_integer_value(sl_compare(self.float_value, value.float_value));
+      return sl_integer_value(sl_compare(self.value.as_float, value.value.as_float));
     } else {
-      return sl_integer_value(sl_compare(self.integer_value, value.float_value));
+      return sl_integer_value(sl_compare(self.value.as_integer, value.value.as_float));
     }
   }
 }
@@ -200,7 +199,7 @@ sl_value SYLVA_Number_I_lt(sl_value self, sl_args arguments) {
             "wrong number of arguments for operator <, expecting 1, got %ld",
             arguments.length);
   sl_value result = SYLVA_Number_I_compare(self, arguments);
-  return sl_boolean_value(result.integer_value == sl_ascending);
+  return sl_boolean_value(result.value.as_integer == sl_ascending);
 }
 
 sl_value SYLVA_Number_I_lt_eq(sl_value self, sl_args arguments) {
@@ -208,7 +207,7 @@ sl_value SYLVA_Number_I_lt_eq(sl_value self, sl_args arguments) {
             "wrong number of arguments for operator <=, expecting 1, got %ld",
             arguments.length);
   sl_value result = SYLVA_Number_I_compare(self, arguments);
-  return sl_boolean_value(result.integer_value == sl_ascending || result.integer_value == sl_same);
+  return sl_boolean_value(result.value.as_integer == sl_ascending || result.value.as_integer == sl_same);
 }
 
 sl_value SYLVA_Number_I_gt(sl_value self, sl_args arguments) {
@@ -216,7 +215,7 @@ sl_value SYLVA_Number_I_gt(sl_value self, sl_args arguments) {
             "wrong number of arguments for operator >, expecting 1, got %ld",
             arguments.length);
   sl_value result = SYLVA_Number_I_compare(self, arguments);
-  return sl_boolean_value(result.integer_value == sl_descending);
+  return sl_boolean_value(result.value.as_integer == sl_descending);
 }
 
 sl_value SYLVA_Number_I_gt_eq(sl_value self, sl_args arguments) {
@@ -224,7 +223,7 @@ sl_value SYLVA_Number_I_gt_eq(sl_value self, sl_args arguments) {
             "wrong number of arguments for operator >=, expecting 1, got %ld",
             arguments.length);
   sl_value result = SYLVA_Number_I_compare(self, arguments);
-  return sl_boolean_value(result.integer_value == sl_descending || result.integer_value == sl_same);
+  return sl_boolean_value(result.value.as_integer == sl_descending || result.value.as_integer == sl_same);
 }
 
 sl_value SYLVA_Number_I_eq(sl_value self, sl_args arguments) {
@@ -232,7 +231,7 @@ sl_value SYLVA_Number_I_eq(sl_value self, sl_args arguments) {
             "wrong number of arguments for operator ==, expecting 1, got %ld",
             arguments.length);
   sl_value result = SYLVA_Number_I_compare(self, arguments);
-  return sl_boolean_value(result.integer_value == sl_same);
+  return sl_boolean_value(result.value.as_integer == sl_same);
 }
 
 sl_value SYLVA_Number_I_not_eq(sl_value self, sl_args arguments) {
@@ -240,7 +239,7 @@ sl_value SYLVA_Number_I_not_eq(sl_value self, sl_args arguments) {
             "wrong number of arguments for operator !=, expecting 1, got %ld",
             arguments.length);
   sl_value result = SYLVA_Number_I_compare(self, arguments);
-  return sl_boolean_value(result.integer_value != sl_same);
+  return sl_boolean_value(result.value.as_integer != sl_same);
 }
 
 sl_value SYLVA_Number_I_or(sl_value self, sl_args arguments) {
@@ -266,7 +265,7 @@ sl_value SYLVA_Number_I_bit_or(sl_value self, sl_args arguments) {
   sl_value value = arguments.values[0];
   sl_trans_to_integer(&self);
   sl_trans_to_integer(&value);
-  return sl_integer_value(self.integer_value | value.integer_value);
+  return sl_integer_value(self.value.as_integer | value.value.as_integer);
 }
 
 sl_value SYLVA_Number_I_bit_and(sl_value self, sl_args arguments) {
@@ -276,7 +275,7 @@ sl_value SYLVA_Number_I_bit_and(sl_value self, sl_args arguments) {
   sl_value value = arguments.values[0];
   sl_trans_to_integer(&self);
   sl_trans_to_integer(&value);
-  return sl_integer_value(self.integer_value & value.integer_value);
+  return sl_integer_value(self.value.as_integer & value.value.as_integer);
 }
 
 sl_value SYLVA_Number_I_bit_xor(sl_value self, sl_args arguments) {
@@ -286,7 +285,7 @@ sl_value SYLVA_Number_I_bit_xor(sl_value self, sl_args arguments) {
   sl_value value = arguments.values[0];
   sl_trans_to_integer(&self);
   sl_trans_to_integer(&value);
-  return sl_integer_value(self.integer_value ^ value.integer_value);
+  return sl_integer_value(self.value.as_integer ^ value.value.as_integer);
 }
 
 sl_value SYLVA_Number_I_rshift(sl_value self, sl_args arguments) {
@@ -296,7 +295,7 @@ sl_value SYLVA_Number_I_rshift(sl_value self, sl_args arguments) {
   sl_value value = arguments.values[0];
   sl_trans_to_integer(&self);
   sl_trans_to_integer(&value);
-  return sl_integer_value(self.integer_value >> value.integer_value);
+  return sl_integer_value(self.value.as_integer >> value.value.as_integer);
 }
 
 sl_value SYLVA_Number_I_lshift(sl_value self, sl_args arguments) {
@@ -306,14 +305,14 @@ sl_value SYLVA_Number_I_lshift(sl_value self, sl_args arguments) {
   sl_value value = arguments.values[0];
   sl_trans_to_integer(&self);
   sl_trans_to_integer(&value);
-  return sl_integer_value(self.integer_value << value.integer_value);
+  return sl_integer_value(self.value.as_integer << value.value.as_integer);
 }
 
-sl_value SYLVA_Number_I_abs(sl_value self, sl_args arguments) {
+sl_value SYLVA_Number_I_abs(sl_value self, __unused sl_args arguments) {
   if (self.type == sl_type_float) {
-    return sl_float_value(fabs(self.float_value));
+    return sl_float_value(fabs(self.value.as_float));
   } else if (self.type == sl_type_integer) {
-    return sl_integer_value(labs(self.integer_value));
+    return sl_integer_value(labs(self.value.as_integer));
   } else {
     return self;
   }
@@ -347,12 +346,12 @@ sl_value SYLVA_Number_I_to_b(sl_value self, sl_args arguments) {
  * Object
  **********************************************************************************************************************/
 
-sl_value SYLVA_Object_I_init(sl_value self, sl_args arguments) {
+sl_value SYLVA_Object_I_init(sl_value self, __unused sl_args arguments) {
   return self;
 }
 
-sl_value SYLVA_Object_I_class(sl_value self, sl_args arguments) {
-  return sl_class_value(self.object_value->class);
+sl_value SYLVA_Object_I_class(sl_value self, __unused sl_args arguments) {
+  return sl_class_value(self.value.as_object->class);
 }
 
 sl_value SYLVA_Object_I_eq(sl_value self, sl_args arguments) {
@@ -360,7 +359,7 @@ sl_value SYLVA_Object_I_eq(sl_value self, sl_args arguments) {
             "wrong number of arguments for function '==', expecting 1, got %ld",
             arguments.length);
   sl_value b = sl_args_get(arguments, 0);
-  return sl_boolean_value(self.pointer_value == b.pointer_value);
+  return sl_boolean_value(self.value.as_pointer == b.value.as_pointer);
 }
 
 /***********************************************************************************************************************
@@ -402,7 +401,6 @@ sl_class SYLVA_C_Number = {
     .static_member_defs = NULL,
     .instance_member_defs = NULL,
     .members = NULL,
-    .deinitializor = NULL,
 };
 
 sl_class SYLVA_C_Object = {
@@ -417,5 +415,4 @@ sl_class SYLVA_C_Object = {
     .static_member_defs = NULL,
     .instance_member_defs = NULL,
     .members = NULL,
-    .deinitializor = NULL,
 };

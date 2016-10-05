@@ -30,7 +30,7 @@ sl_sema_type sl_sema_type_from_token_type(sl_token_type token_type) {
   return sl_sema_none;
 }
 
-SYLVA_RUNTIME_EXTERN char *const sl_token_get_name(sl_token_type token_type) {
+char *sl_token_get_name(sl_token_type token_type) {
   switch (token_type) {
   case sl_token_comment:return "COMMENT";
   case sl_token_inline_c:return "INLINE_C";
@@ -102,13 +102,13 @@ SYLVA_RUNTIME_EXTERN char *const sl_token_get_name(sl_token_type token_type) {
   }
 }
 
-SYLVA_RUNTIME_EXTERN void sl_token_print(FILE *stream, sl_token_ref token) {
-  switch (token->semaType) {
+void sl_token_print(FILE *stream, sl_token_ref token) {
+  switch (token->sema_type) {
   case sl_sema_none:fprintf(stream, "<%s>", sl_token_get_name(token->type));
     break;
-  case sl_sema_integer:fprintf(stream, "<%s,%ld>", sl_token_get_name(token->type), token->integerValue);
-  case sl_sema_float:fprintf(stream, "<%s,%lf>", sl_token_get_name(token->type), token->floatValue);
-  case sl_sema_string:fprintf(stream, "<%s,%s>", sl_token_get_name(token->type), token->stringValue->string);
+  case sl_sema_integer:fprintf(stream, "<%s,%ld>", sl_token_get_name(token->type), token->value.as_integer);
+  case sl_sema_float:fprintf(stream, "<%s,%lf>", sl_token_get_name(token->type), token->value.as_float);
+  case sl_sema_string:fprintf(stream, "<%s,%s>", sl_token_get_name(token->type), token->value.as_string->string);
   default:break;
   }
 }
@@ -118,8 +118,8 @@ sl_token_ref sl_token_create(sl_token_type type) {
 
   sl_token_ref token = malloc(sizeof(sl_token));
   token->type = type;
-  token->semaType = sl_sema_none;
-  token->integerValue = 0;
+  token->sema_type = sl_sema_none;
+  token->value.as_integer = 0;
   return token;
 }
 
@@ -128,8 +128,8 @@ sl_token_ref sl_token_create_integer(sl_token_type type, sl_integer integer) {
 
   sl_token_ref token = malloc(sizeof(sl_token));
   token->type = type;
-  token->semaType = sl_sema_integer;
-  token->integerValue = integer;
+  token->sema_type = sl_sema_integer;
+  token->value.as_integer = integer;
   return token;
 }
 
@@ -138,8 +138,8 @@ sl_token_ref sl_token_create_float(sl_token_type type, sl_float f) {
 
   sl_token_ref token = malloc(sizeof(sl_token));
   token->type = type;
-  token->semaType = sl_sema_float;
-  token->floatValue = f;
+  token->sema_type = sl_sema_float;
+  token->value.as_float = f;
   return token;
 }
 
@@ -148,8 +148,8 @@ sl_token_ref sl_token_create_string_il(sl_token_type type, char *string, sl_inde
 
   sl_token_ref token = malloc(sizeof(sl_token));
   token->type = type;
-  token->semaType = sl_sema_string;
-  token->stringValue = sl_string_create_il(string, start, length);
+  token->sema_type = sl_sema_string;
+  token->value.as_string = sl_string_create_il(string, start, length);
   return token;
 }
 
@@ -162,8 +162,8 @@ sl_token_ref sl_token_create_string(sl_token_type type, char *string) {
 }
 
 void sl_token_destroy(sl_token_ref token) {
-  if (token->semaType == sl_sema_string) {
-    sl_string_destroy(token->stringValue);
+  if (token->sema_type == sl_sema_string) {
+    sl_string_destroy(token->value.as_string);
   }
   free(token);
 }

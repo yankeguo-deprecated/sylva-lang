@@ -13,10 +13,10 @@ sl_class_ref sl_get_class(sl_value value) {
     return &SYLVA_C_Number;
   }
   if (value.type == sl_type_object) {
-    return value.object_value->class;
+    return value.value.as_object->class;
   }
   if (value.type == sl_type_class) {
-    return value.class_value;
+    return value.value.as_class;
   }
   return NULL;
 }
@@ -91,7 +91,7 @@ sl_value sl_call(sl_value context, sl_symbol name, sl_index length, ...) {
   return result;
 }
 
-SYLVA_RUNTIME_EXTERN sl_value sl_v_call(sl_value context, sl_symbol name, sl_index length, va_list list) {
+sl_value sl_v_call(sl_value context, sl_symbol name, sl_index length, va_list list) {
   sl_imp func = sl_func_resolve(context, name);
   if (func != NULL) {
     return sl_imp_v_call(func, context, length, list);
@@ -141,10 +141,10 @@ sl_boolean sl_object_members_set(sl_object object, sl_symbol name, sl_value valu
 
 sl_value sl_get(sl_value value, sl_symbol name) {
   if (value.type == sl_type_object) {
-    return sl_object_members_get(*value.object_value, name);
+    return sl_object_members_get(*value.value.as_object, name);
   }
   if (value.type == sl_type_class) {
-    return sl_class_members_get(*value.class_value, name);
+    return sl_class_members_get(*value.value.as_class, name);
   }
   return sl_nil_value;
 }
@@ -165,7 +165,7 @@ sl_value sl_v_create(sl_class_ref class, sl_symbol name, sl_index length, va_lis
   sl_object_ref object = sl_object_create(class);
   sl_value result = sl_v_call(sl_object_value(object), name, length, list);
   //  check result, if changed, destroy orignal object
-  if (result.type != sl_type_object || result.object_value != object) {
+  if (result.type != sl_type_object || result.value.as_object != object) {
     sl_object_destroy(object);
   }
   return result;
@@ -173,24 +173,24 @@ sl_value sl_v_create(sl_class_ref class, sl_symbol name, sl_index length, va_lis
 
 sl_value sl_static_get(sl_value value, sl_symbol name) {
   if (value.type == sl_type_object) {
-    value = sl_class_value(value.object_value->class);
+    value = sl_class_value(value.value.as_object->class);
   }
   return sl_get(value, name);
 }
 
 sl_boolean sl_set(sl_value target_value, sl_symbol name, sl_value value) {
   if (target_value.type == sl_type_object) {
-    return sl_object_members_set(*target_value.object_value, name, value);
+    return sl_object_members_set(*target_value.value.as_object, name, value);
   }
   if (target_value.type == sl_type_class) {
-    return sl_class_members_set(*target_value.class_value, name, value);
+    return sl_class_members_set(*target_value.value.as_class, name, value);
   }
   return sl_false;
 }
 
 sl_boolean sl_static_set(sl_value target_value, sl_symbol name, sl_value value) {
   if (target_value.type == sl_type_object) {
-    target_value = sl_class_value(target_value.object_value->class);
+    target_value = sl_class_value(target_value.value.as_object->class);
   }
   return sl_set(target_value, name, value);
 }

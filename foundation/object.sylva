@@ -15,7 +15,7 @@ class Object
 
   # Get the class
   func class
-    ` return sl_class_value(self.object_value->class);
+    ` return sl_class_value(self.value.as_object->class);
   end
 
   # Compare two object, default implement compares pointer
@@ -26,6 +26,6 @@ class Object
     `           "wrong number of arguments for function '==', expecting 1, got %ld",
     `           arguments.length);
     ` sl_value b = sl_args_get(arguments, 0);
-    ` return sl_boolean_value(self.pointer_value == b.pointer_value);
+    ` return sl_boolean_value(self.value.as_pointer == b.value.as_pointer);
   end
 end

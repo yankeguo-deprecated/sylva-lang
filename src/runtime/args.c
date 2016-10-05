@@ -34,7 +34,7 @@ sl_value sl_args_get(sl_args args, sl_index index) {
   }
   return (sl_value) {
       .type = sl_type_nil,
-      .integer_value = 0,
+      .value.as_integer = 0,
   };
 }
 

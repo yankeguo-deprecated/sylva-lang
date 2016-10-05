@@ -1,3 +1,20 @@
+# name of this project
 name: foundation
+#
+# source files, accept common bash file patterns, relative with the manifest.yaml file
 source_files:
   - *.sylva
+#
+# entry class, if existed, use the static 'main' function for this class as entry function
+# entry_class: SomeClass
+#
+# dependencies of this project, will search in system library path and relative 'vendor' folder
+# dependencies:
+#  - some_dependency
+#
+# build command, use with 'link' to build a static library and link it
+# build_command: cmake . && make
+#
+# link extra static library
+# link:
+#  - libsomestatic.a

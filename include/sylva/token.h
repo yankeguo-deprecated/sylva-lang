@@ -14,7 +14,7 @@
 
 #include <stdio.h>
 
-__CPP_DECL_START
+_BEGIN_STD_C
 
 typedef enum {
 
@@ -357,7 +357,7 @@ typedef enum {
  @param tokenType STokenType
  @return SSemaType
  */
-SYLVA_EXTERN sl_sema_type sl_sema_type_from_token_type(sl_token_type token_type);
+sl_sema_type sl_sema_type_from_token_type(sl_token_type token_type);
 
 /**
  * Get the name of a STokenType
@@ -365,51 +365,51 @@ SYLVA_EXTERN sl_sema_type sl_sema_type_from_token_type(sl_token_type token_type)
  * @param tokenType STokenType
  * @return name
  */
-SYLVA_EXTERN char *const sl_token_get_name(sl_token_type token_type);
+char *sl_token_get_name(sl_token_type token_type);
 
 typedef struct {
   union {
-    sl_integer integerValue;
-    sl_float floatValue;
-    sl_string_ref stringValue;
-  };
-  sl_sema_type semaType;
+    sl_integer as_integer;
+    sl_float as_float;
+    sl_string_ref as_string;
+  } value;
+  sl_sema_type sema_type;
   sl_token_type type;
 } sl_token;
 
 typedef sl_token *sl_token_ref;
 
-SYLVA_EXTERN void sl_token_print(FILE *stream, sl_token_ref token);
+void sl_token_print(FILE *stream, sl_token_ref token);
 
 /**
  Create a STokenRef with None sema
  */
-SYLVA_EXTERN sl_token_ref sl_token_create(sl_token_type type);
+sl_token_ref sl_token_create(sl_token_type type);
 
 /**
  Create a STokenRef with Integer sema
  */
-SYLVA_EXTERN sl_token_ref sl_token_create_integer(sl_token_type type, sl_integer integer);
+sl_token_ref sl_token_create_integer(sl_token_type type, sl_integer integer);
 
 /**
  Create a STokenRef with Float sema
  */
-SYLVA_EXTERN sl_token_ref sl_token_create_float(sl_token_type type, sl_float f);
+sl_token_ref sl_token_create_float(sl_token_type type, sl_float f);
 
 /**
  Create a STokenRef with SString sema
  */
-SYLVA_EXTERN sl_token_ref sl_token_create_string(sl_token_type type, char *string);
+sl_token_ref sl_token_create_string(sl_token_type type, char *string);
 
-SYLVA_EXTERN sl_token_ref sl_token_create_string_l(sl_token_type type, char *string, sl_index length);
+sl_token_ref sl_token_create_string_l(sl_token_type type, char *string, sl_index length);
 
-SYLVA_EXTERN sl_token_ref sl_token_create_string_il(sl_token_type type, char *string, sl_index start, sl_index length);
+sl_token_ref sl_token_create_string_il(sl_token_type type, char *string, sl_index start, sl_index length);
 
 /**
  Destroy a STokenRef, free SString if existed
  */
-SYLVA_EXTERN void sl_token_destroy(sl_token_ref token);
+void sl_token_destroy(sl_token_ref token);
 
-__CPP_DECL_END
+_END_STD_C
 
 #endif // _SYLVA_TOKEN_H_

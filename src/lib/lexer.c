@@ -10,13 +10,12 @@
 #include "sylva/string.h"
 #include "sylva/lexer.h"
 
-#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sylva/lexer.h>
 #include <sylva/string.h>
 
-char *const sl_lexer_error_get_name(sl_lexer_error error) {
+char *sl_lexer_error_get_name(sl_lexer_error error) {
   switch (error) {
   case sl_lexer_error_invalid_id:return "invalid identifier";
   case sl_lexer_error_invalid_sequence: return "invalid sequence";
@@ -30,7 +29,7 @@ sl_lexer_ref sl_lexer_create(sl_string_ref source) {
   lexer->source = source;
   lexer->index = 0;
   return lexer;
-};
+}
 
 sl_token_ref sl_lexer_next_token(sl_lexer_ref lexer, sl_lexer_error *err, sl_index *errIndex) {
   sl_index idx = lexer->index;

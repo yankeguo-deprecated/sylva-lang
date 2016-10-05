@@ -17,6 +17,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 /***********************************************************************************************************************
  * OS
@@ -31,40 +32,10 @@
 #endif
 
 /***********************************************************************************************************************
- * CPP
- **********************************************************************************************************************/
-
-#ifdef __cplusplus
-#define __CPP_DECL_START  extern "C" {
-#define __CPP_DECL_END }
-#else
-#define __CPP_DECL_START
-#define __CPP_DECL_END
-#endif
-
-/***********************************************************************************************************************
- * Extern Magic
- **********************************************************************************************************************/
-
-#ifdef __SYLVA_SOURCE__
-#define SYLVA_EXTERN
-#else
-#define SYLVA_EXTERN extern
-#endif
-
-#ifdef __SYLVA_RUNTIME_SOURCE__
-#define SYLVA_RUNTIME_EXTERN
-#else
-#define SYLVA_RUNTIME_EXTERN extern
-#endif
-
-#define SYLVA_WEAK __attribute__ ((weak))
-
-/***********************************************************************************************************************
  * Primitive Types
  **********************************************************************************************************************/
 
-__CPP_DECL_START
+_BEGIN_STD_C
 
 /**
  * boolean type in sylva runtime, alias to C `bool`
@@ -145,6 +116,6 @@ typedef char *const sl_symbol;
  */
 #define sl_symbol_equals(A, B) (strcmp((A), (B)) == 0)
 
-__CPP_DECL_END
+_END_STD_C
 
 #endif // _SYLVA_DEFINE_H_

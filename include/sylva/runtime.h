@@ -7,7 +7,7 @@
 
 #include "sylva/define.h"
 
-__CPP_DECL_START
+_BEGIN_STD_C
 
 /***********************************************************************************************************************
  * Assert
@@ -86,11 +86,6 @@ struct sl_class_t {
    * storage for all static member variables
    */
   sl_members_ref members;
-
-  /**
-   * deinitializer (sl_func)
-   */
-  void *deinitializor;
 };
 
 /**
@@ -122,21 +117,21 @@ struct sl_object_t {
  *
  * @return pointer to created object
  */
-SYLVA_RUNTIME_EXTERN sl_object_ref sl_object_create(sl_class_ref class);
+sl_object_ref sl_object_create(sl_class_ref class);
 
 /**
  * increase reference counter of a object
  *
  * @param object pointer to target object
  */
-SYLVA_RUNTIME_EXTERN sl_object_ref sl_object_retain(sl_object_ref object);
+sl_object_ref sl_object_retain(sl_object_ref object);
 
 /**
  * decrease reference counter of a object, if reaches 0, destroy it
  *
  * @param object pointer to target object
  */
-SYLVA_RUNTIME_EXTERN sl_object_ref sl_object_release(sl_object_ref object);
+sl_object_ref sl_object_release(sl_object_ref object);
 
 /**
  * destroy a object
@@ -145,7 +140,7 @@ SYLVA_RUNTIME_EXTERN sl_object_ref sl_object_release(sl_object_ref object);
  *
  * @param object pointer to target object
  */
-SYLVA_RUNTIME_EXTERN void sl_object_destroy(sl_object_ref object);
+void sl_object_destroy(sl_object_ref object);
 
 /***********************************************************************************************************************
  * Mixin Value
@@ -207,28 +202,29 @@ typedef struct {
     /**
      * value as sl_integer
      */
-    sl_integer integer_value;
+    sl_integer as_integer;
     /**
      * value for sl_float
      */
-    sl_float float_value;
+    sl_float as_float;
     /**
      * value for sl_boolean
      */
-    sl_boolean boolean_value;
+    sl_boolean as_boolean;
     /**
      * value for sl_class pointer
      */
-    sl_class_ref class_value;
+    sl_class_ref as_class;
     /**
      * value for sl_object pointer
      */
-    sl_object_ref object_value;
+    sl_object_ref as_object;
     /**
      * value for C pointer, will be same as class_value and object_value
      */
-    void *pointer_value;
-  };
+    void *as_pointer;
+  } value;
+
 } sl_value;
 
 /**
@@ -239,15 +235,15 @@ typedef sl_value *sl_value_ref;
 /**
  * bare sl_value initializer macros, used for statically init
  */
-#define sl_bare_pointer_value(X) {.type = sl_type_pointer, .pointer_value = (X)}
-#define sl_bare_nil_value {.type = sl_type_nil, .integer_value = 0}
-#define sl_bare_boolean_value(X) {.type = sl_type_boolean, .boolean_value = (X)}
-#define sl_bare_true_value {.type = sl_type_boolean, .boolean_value = sl_true}
-#define sl_bare_false_value {.type = sl_type_boolean, .boolean_value = sl_false}
-#define sl_bare_integer_value(X) {.type = sl_type_integer, .integer_value = (X)}
-#define sl_bare_float_value(X) {.type = sl_type_float, .float_value = (X)}
-#define sl_bare_object_value(X) {.type = sl_type_object, .object_value = (X)}
-#define sl_bare_class_value(X) {.type = sl_type_class, .class_value = (X)}
+#define sl_bare_pointer_value(X) {.type = sl_type_pointer, .value.as_pointer = (void *)(X)}
+#define sl_bare_nil_value {.type = sl_type_nil, .value.as_integer = 0}
+#define sl_bare_boolean_value(X) {.type = sl_type_boolean, .value.as_boolean = (X)}
+#define sl_bare_true_value {.type = sl_type_boolean, .value.as_boolean = sl_true}
+#define sl_bare_false_value {.type = sl_type_boolean, .value.as_boolean = sl_false}
+#define sl_bare_integer_value(X) {.type = sl_type_integer, .value.as_integer = (X)}
+#define sl_bare_float_value(X) {.type = sl_type_float, .value.as_float = (X)}
+#define sl_bare_object_value(X) {.type = sl_type_object, .value.as_object = (X)}
+#define sl_bare_class_value(X) {.type = sl_type_class, .value.as_class = (X)}
 
 /**
  * sl_value initializer macros
@@ -269,7 +265,7 @@ typedef sl_value *sl_value_ref;
  *
  * @return sl_true or sl_false
  */
-SYLVA_RUNTIME_EXTERN sl_boolean sl_to_boolean(sl_value value);
+sl_boolean sl_to_boolean(sl_value value);
 
 /**
  * turns any sl_value to a resonable integer value
@@ -278,7 +274,7 @@ SYLVA_RUNTIME_EXTERN sl_boolean sl_to_boolean(sl_value value);
  *
  * @return sl_value with integer value type
  */
-SYLVA_RUNTIME_EXTERN sl_integer sl_to_integer(sl_value value);
+sl_integer sl_to_integer(sl_value value);
 
 /**
  * turns any sl_value to a resonable integer value
@@ -287,35 +283,35 @@ SYLVA_RUNTIME_EXTERN sl_integer sl_to_integer(sl_value value);
  *
  * @return sl_value with integer value type
  */
-SYLVA_RUNTIME_EXTERN sl_float sl_to_float(sl_value value);
+sl_float sl_to_float(sl_value value);
 
 /**
  * turns to number values
  *
  * @param value pointer to value to convert
  */
-SYLVA_RUNTIME_EXTERN void sl_trans_to_numeric(sl_value_ref value);
+void sl_trans_to_numeric(sl_value_ref value);
 
 /**
  * turns to float
  *
  * @param value pointer to value to convert
  */
-SYLVA_RUNTIME_EXTERN void sl_trans_to_float(sl_value_ref value);
+void sl_trans_to_float(sl_value_ref value);
 
 /**
  * turns to integer
  *
  * @param value pointer to value to convert
  */
-SYLVA_RUNTIME_EXTERN void sl_trans_to_integer(sl_value_ref value);
+void sl_trans_to_integer(sl_value_ref value);
 
 /**
  * turns to boolean
  *
  * @param value pointer to value to convert
  */
-SYLVA_RUNTIME_EXTERN void sl_trans_to_boolean(sl_value_ref value);
+void sl_trans_to_boolean(sl_value_ref value);
 
 /***********************************************************************************************************************
  * Function Arguments
@@ -354,8 +350,8 @@ typedef sl_args *sl_args_ref;
  *
  * @return sl_args
  */
-SYLVA_RUNTIME_EXTERN sl_args sl_args_create(sl_index length, ...);
-SYLVA_RUNTIME_EXTERN sl_args sl_args_v_create(sl_index length, va_list list);
+sl_args sl_args_create(sl_index length, ...);
+sl_args sl_args_v_create(sl_index length, va_list list);
 
 /**
  * get a value at index from sl_args
@@ -365,14 +361,14 @@ SYLVA_RUNTIME_EXTERN sl_args sl_args_v_create(sl_index length, va_list list);
  *
  * @return sl_value at index
  */
-SYLVA_RUNTIME_EXTERN sl_value sl_args_get(sl_args args, sl_index index);
+sl_value sl_args_get(sl_args args, sl_index index);
 
 /**
  * destroy a previousely created sl_args
  *
  * @param sl_args to destroy
  */
-SYLVA_RUNTIME_EXTERN void sl_args_destroy(sl_args args);
+void sl_args_destroy(sl_args args);
 
 /***********************************************************************************************************************
  * Function
@@ -398,8 +394,8 @@ typedef sl_value (*sl_imp)(sl_value context, sl_args args);
  *
  * @return result of function invocation
  */
-SYLVA_RUNTIME_EXTERN sl_value sl_imp_call(sl_imp imp, sl_value context, sl_index length, ...);
-SYLVA_RUNTIME_EXTERN sl_value sl_imp_v_call(sl_imp imp, sl_value context, sl_index length, va_list list);
+sl_value sl_imp_call(sl_imp imp, sl_value context, sl_index length, ...);
+sl_value sl_imp_v_call(sl_imp imp, sl_value context, sl_index length, va_list list);
 
 /***********************************************************************************************************************
  * Function Storage
@@ -456,7 +452,7 @@ struct sl_funcs_t {
  *
  * @return pointer to function
  */
-SYLVA_RUNTIME_EXTERN sl_imp sl_funcs_get(sl_funcs list, sl_symbol name);
+sl_imp sl_funcs_get(sl_funcs list, sl_symbol name);
 
 /**
  * set a sl_func to a function id, a NULL sl_func will not remove function id from sl_funcs
@@ -467,7 +463,7 @@ SYLVA_RUNTIME_EXTERN sl_imp sl_funcs_get(sl_funcs list, sl_symbol name);
  *
  * @return NULL if out of length, func if succeeded
  */
-SYLVA_RUNTIME_EXTERN sl_imp sl_funcs_set(sl_funcs list, sl_symbol name, sl_imp func);
+sl_imp sl_funcs_set(sl_funcs list, sl_symbol name, sl_imp func);
 
 /***********************************************************************************************************************
  * Member Viarable Declarations & Storage
@@ -576,7 +572,7 @@ struct sl_members_t {
  *
  * @return pointer of allocated member storage
  */
-SYLVA_RUNTIME_EXTERN sl_members_ref sl_members_create(sl_index length);
+sl_members_ref sl_members_create(sl_index length);
 
 /**
  * init a members storage with members declared in a member list
@@ -587,7 +583,7 @@ SYLVA_RUNTIME_EXTERN sl_members_ref sl_members_create(sl_index length);
  *
  * @return number of members inited
  */
-SYLVA_RUNTIME_EXTERN sl_index sl_members_init(sl_members_ref members, sl_index start_idx, sl_member_defs defs);
+sl_index sl_members_init(sl_members_ref members, sl_index start_idx, sl_member_defs defs);
 
 /**
  * get a value from member storage with member id
@@ -597,7 +593,7 @@ SYLVA_RUNTIME_EXTERN sl_index sl_members_init(sl_members_ref members, sl_index s
  *
  * @return member value, sl_value_nil if not found
  */
-SYLVA_RUNTIME_EXTERN sl_value sl_members_get(sl_members members, sl_symbol name);
+sl_value sl_members_get(sl_members members, sl_symbol name);
 
 /**
  * set a value to member storage with member id
@@ -610,12 +606,12 @@ SYLVA_RUNTIME_EXTERN sl_value sl_members_get(sl_members members, sl_symbol name)
  *
  * @param sl_true if set, sl_false if member id not found
  */
-SYLVA_RUNTIME_EXTERN sl_boolean sl_members_set(sl_members members, sl_symbol name, sl_value value);
+sl_boolean sl_members_set(sl_members members, sl_symbol name, sl_value value);
 
 /**
  * destroy a member storage, will free everything and release all members
  */
-SYLVA_RUNTIME_EXTERN void sl_members_destroy(sl_members_ref members);
+void sl_members_destroy(sl_members_ref members);
 
 /***********************************************************************************************************************
  * Object-Oriented
@@ -627,7 +623,7 @@ SYLVA_RUNTIME_EXTERN void sl_members_destroy(sl_members_ref members);
  * @param value incoming value
  * @return class associated
  */
-SYLVA_RUNTIME_EXTERN sl_class_ref sl_get_class(sl_value value);
+sl_class_ref sl_get_class(sl_value value);
 
 /**
  * resolve a function id to instance function from a Class, including superclass
@@ -637,7 +633,7 @@ SYLVA_RUNTIME_EXTERN sl_class_ref sl_get_class(sl_value value);
  *
  * @return pointer to function if resolved, NULL or not
  */
-SYLVA_RUNTIME_EXTERN sl_imp sl_class_instance_func_resolve(sl_class class, sl_symbol name);
+sl_imp sl_class_instance_func_resolve(sl_class class, sl_symbol name);
 
 /**
  * resolve a function id to static function from a Class, including superclass
@@ -647,7 +643,7 @@ SYLVA_RUNTIME_EXTERN sl_imp sl_class_instance_func_resolve(sl_class class, sl_sy
  *
  * @return pointer to function if resolved, NULL or not
  */
-SYLVA_RUNTIME_EXTERN sl_imp sl_class_static_func_resolve(sl_class class, sl_symbol name);
+sl_imp sl_class_static_func_resolve(sl_class class, sl_symbol name);
 
 /**
  * resolve a function id to function from a Class or an Object, including superclass
@@ -659,7 +655,7 @@ SYLVA_RUNTIME_EXTERN sl_imp sl_class_static_func_resolve(sl_class class, sl_symb
  *
  * @return pointer to function if resolved, NULL or not
  */
-SYLVA_RUNTIME_EXTERN sl_imp sl_func_resolve(sl_value context, sl_symbol name);
+sl_imp sl_func_resolve(sl_value context, sl_symbol name);
 
 /**
  * resolve a function id to function from superclass of a Class or an Object's class, including superclass
@@ -672,7 +668,7 @@ SYLVA_RUNTIME_EXTERN sl_imp sl_func_resolve(sl_value context, sl_symbol name);
  *
  * @return pointer to function if resolved, NULL or not
  */
-SYLVA_RUNTIME_EXTERN sl_imp sl_func_resolve_super(sl_value context, sl_class_ref class, sl_symbol name);
+sl_imp sl_func_resolve_super(sl_value context, sl_class_ref class, sl_symbol name);
 
 /**
  * resolve a function with a Class or an Object, and invoke it
@@ -684,8 +680,8 @@ SYLVA_RUNTIME_EXTERN sl_imp sl_func_resolve_super(sl_value context, sl_class_ref
  *
  * @return function invocation result
  */
-SYLVA_RUNTIME_EXTERN sl_value sl_call(sl_value context, sl_symbol name, sl_index length, ...);
-SYLVA_RUNTIME_EXTERN sl_value sl_v_call(sl_value context, sl_symbol name, sl_index length, va_list list);
+sl_value sl_call(sl_value context, sl_symbol name, sl_index length, ...);
+sl_value sl_v_call(sl_value context, sl_symbol name, sl_index length, va_list list);
 
 /**
  * resolve a function with superclass of a Class or an Object, and invoke it
@@ -697,16 +693,8 @@ SYLVA_RUNTIME_EXTERN sl_value sl_v_call(sl_value context, sl_symbol name, sl_ind
  *
  * @return function invocation result
  */
-SYLVA_RUNTIME_EXTERN sl_value sl_call_super(sl_value context,
-                                            sl_class_ref class,
-                                            sl_symbol name,
-                                            sl_index length,
-                                            ...);
-SYLVA_RUNTIME_EXTERN sl_value sl_v_call_super(sl_value context,
-                                              sl_class_ref class,
-                                              sl_symbol name,
-                                              sl_index length,
-                                              va_list list);
+sl_value sl_call_super(sl_value context, sl_class_ref class, sl_symbol name, sl_index length, ...);
+sl_value sl_v_call_super(sl_value context, sl_class_ref class, sl_symbol name, sl_index length, va_list list);
 
 /**
  * create a instance of a class and initialize with specifed initializer
@@ -716,9 +704,8 @@ SYLVA_RUNTIME_EXTERN sl_value sl_v_call_super(sl_value context,
  * @param length number of arguments
  * @param list arguments in va_list
  */
-SYLVA_RUNTIME_EXTERN sl_value sl_create(sl_class_ref class, sl_symbol name, sl_index length, ...);
-
-SYLVA_RUNTIME_EXTERN sl_value sl_v_create(sl_class_ref class, sl_symbol name, sl_index length, va_list list);
+sl_value sl_create(sl_class_ref class, sl_symbol name, sl_index length, ...);
+sl_value sl_v_create(sl_class_ref class, sl_symbol name, sl_index length, va_list list);
 
 /**
  * invoke sl_object_retain if value is an object
@@ -727,7 +714,7 @@ SYLVA_RUNTIME_EXTERN sl_value sl_v_create(sl_class_ref class, sl_symbol name, sl
  *
  * @param value sl_value to ratain
  */
-SYLVA_RUNTIME_EXTERN void sl_retain(sl_value_ref value);
+void sl_retain(sl_value_ref value);
 
 /**
  * invoke sl_object_release if value is an object
@@ -736,27 +723,27 @@ SYLVA_RUNTIME_EXTERN void sl_retain(sl_value_ref value);
  *
  * @param value sl_value to ratain
  */
-SYLVA_RUNTIME_EXTERN void sl_release(sl_value_ref value);
+void sl_release(sl_value_ref value);
 
 /**
  * get member from object, class and value(object/class type)
  *
  * @see sl_members_get
  */
-SYLVA_RUNTIME_EXTERN sl_value sl_object_members_get(sl_object object, sl_symbol name);
-SYLVA_RUNTIME_EXTERN sl_value sl_class_members_get(sl_class class, sl_symbol name);
-SYLVA_RUNTIME_EXTERN sl_value sl_get(sl_value value, sl_symbol name);
-SYLVA_RUNTIME_EXTERN sl_value sl_static_get(sl_value value, sl_symbol name);
+sl_value sl_object_members_get(sl_object object, sl_symbol name);
+sl_value sl_class_members_get(sl_class class, sl_symbol name);
+sl_value sl_get(sl_value value, sl_symbol name);
+sl_value sl_static_get(sl_value value, sl_symbol name);
 
 /**
  * set member to object, class and value(object/class type)
  *
  * @see sl_members_set
  */
-SYLVA_RUNTIME_EXTERN sl_boolean sl_object_members_set(sl_object object, sl_symbol name, sl_value value);
-SYLVA_RUNTIME_EXTERN sl_boolean sl_class_members_set(sl_class class, sl_symbol name, sl_value value);
-SYLVA_RUNTIME_EXTERN sl_boolean sl_set(sl_value target_value, sl_symbol name, sl_value value);
-SYLVA_RUNTIME_EXTERN sl_boolean sl_static_set(sl_value target_value, sl_symbol name, sl_value value);
+sl_boolean sl_object_members_set(sl_object object, sl_symbol name, sl_value value);
+sl_boolean sl_class_members_set(sl_class class, sl_symbol name, sl_value value);
+sl_boolean sl_set(sl_value target_value, sl_symbol name, sl_value value);
+sl_boolean sl_static_set(sl_value target_value, sl_symbol name, sl_value value);
 
 /***********************************************************************************************************************
  * Pre-declaration for Foundation
@@ -768,6 +755,6 @@ sl_class SYLVA_C_String;
 sl_class SYLVA_C_Hash;
 sl_class SYLVA_C_Array;
 
-__CPP_DECL_END
+_END_STD_C
 
 #endif // _SYLVA_RUNTIME_H_

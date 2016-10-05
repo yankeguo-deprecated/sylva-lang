@@ -79,15 +79,7 @@ void sl_object_destroy(sl_object_ref object) {
     return;
   object->deinitializing = sl_true;
   //  call custom deinitializer
-  sl_class_ref class = object->class;
-  while (class != NULL) {
-    if (class->deinitializor != NULL) {
-      //  call custom deinitializer
-      ((sl_imp) class->deinitializor)(sl_object_value(object), sl_args_empty);
-    }
-    //  iterate to superclass
-    class = class->super;
-  }
+  sl_call(sl_object_value(object), "deinit", 0);
   //  destroy members
   sl_members_destroy(object->members);
   //  free the object it self

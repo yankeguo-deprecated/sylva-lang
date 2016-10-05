@@ -12,7 +12,7 @@
 #include "sylva/define.h"
 #include "sylva/token.h"
 
-__CPP_DECL_START
+_BEGIN_STD_C
 
 typedef enum {
   sl_lexer_error_ok,
@@ -28,7 +28,7 @@ typedef enum {
  *
  * @return name of the error
  */
-SYLVA_EXTERN char *const sl_lexer_error_get_name(sl_lexer_error error);
+char *sl_lexer_error_get_name(sl_lexer_error error);
 
 /**
  * structure for lexer
@@ -51,7 +51,7 @@ typedef sl_lexer *sl_lexer_ref;
 
  @param source the source code will be parsed
  */
-SYLVA_EXTERN sl_lexer_ref sl_lexer_create(sl_string_ref source);
+sl_lexer_ref sl_lexer_create(sl_string_ref source);
 
 /**
  Get the next token from source
@@ -59,20 +59,20 @@ SYLVA_EXTERN sl_lexer_ref sl_lexer_create(sl_string_ref source);
  @param lexer the lexer in use
  @return token next token
  */
-SYLVA_EXTERN sl_token_ref sl_lexer_next_token(sl_lexer_ref lexer, sl_lexer_error *err, sl_index *errIndex);
+sl_token_ref sl_lexer_next_token(sl_lexer_ref lexer, sl_lexer_error *err, sl_index *errIndex);
 
 /**
  Reset the SLexer to initial state
  */
-SYLVA_EXTERN void sl_lexer_reset(sl_lexer_ref lexer);
+void sl_lexer_reset(sl_lexer_ref lexer);
 
 /**
  Destroy the SLexer
 
  @param lexer the lexer to destroy
  */
-SYLVA_EXTERN void sl_lexer_destroy(sl_lexer_ref lexer);
+void sl_lexer_destroy(sl_lexer_ref lexer);
 
-__CPP_DECL_END
+_END_STD_C
 
 #endif // _SYLVA_LEXER_H_

@@ -11,7 +11,7 @@
 
 #include "sylva/define.h"
 
-__CPP_DECL_START
+_BEGIN_STD_C
 
 typedef struct {
   char *string;
@@ -20,22 +20,22 @@ typedef struct {
 
 typedef sl_string *sl_string_ref;
 
-SYLVA_EXTERN sl_string_ref sl_string_create(char *string);
+sl_string_ref sl_string_create(char *string);
 
-SYLVA_EXTERN sl_string_ref sl_string_create_il(char *string, sl_index index, sl_index length);
+sl_string_ref sl_string_create_il(char *string, sl_index index, sl_index length);
 
-SYLVA_EXTERN sl_string_ref sl_string_create_l(char *string, sl_index length);
+sl_string_ref sl_string_create_l(char *string, sl_index length);
 
-SYLVA_EXTERN sl_index sl_string_seek_no_blank(sl_string_ref string, sl_index start);
+sl_index sl_string_seek_no_blank(sl_string_ref string, sl_index start);
 
-SYLVA_EXTERN sl_index sl_string_seek_blank(sl_string_ref string, sl_index start);
+sl_index sl_string_seek_blank(sl_string_ref string, sl_index start);
 
-SYLVA_EXTERN sl_index sl_string_seek_new_line(sl_string_ref string, sl_index start);
+sl_index sl_string_seek_new_line(sl_string_ref string, sl_index start);
 
-SYLVA_EXTERN sl_index sl_string_seek_id(sl_string_ref string, sl_index start);
+sl_index sl_string_seek_id(sl_string_ref string, sl_index start);
 
-SYLVA_EXTERN void sl_string_destroy(sl_string_ref string);
+void sl_string_destroy(sl_string_ref string);
 
-__CPP_DECL_END
+_END_STD_C
 
 #endif // _SYLVA_STRING_H_

@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <sys/cdefs.h>
 
 /***********************************************************************************************************************
  * OS
@@ -28,6 +29,26 @@
 
 #if !TARGET_OS_OSX
 #error sylva is currently available on macOS only
+#endif
+#endif
+
+/***********************************************************************************************************************
+ * CPP
+ **********************************************************************************************************************/
+
+#ifdef __cplusplus
+#ifndef _BEGIN_STD_C
+#define _BEGIN_STD_C extern "C" {
+#endif
+#ifndef _END_STD_C
+#define _END_STD_C }
+#endif
+#else
+#ifndef _BEGIN_STD_C
+#define _BEGIN_STD_C
+#endif
+#ifndef _END_STD_C
+#define _END_STD_C
 #endif
 #endif
 

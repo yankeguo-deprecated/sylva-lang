@@ -9,7 +9,7 @@
 #define _SYLVA_PARSER_H_
 
 #include <sylva/define.h>
-#include <sylva/string.h>
+#include <sylva/util.h>
 #include <sylva/token.h>
 
 #include <yaml.h>

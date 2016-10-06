@@ -7,13 +7,13 @@
 //
 
 #define __SYLVA_SOURCE__
-#include "sylva/string.h"
+#include "sylva/util.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
-#include <sylva/string.h>
+#include <sylva/util.h>
 
 sl_string_ref sl_string_create_il(char *string, sl_index index, sl_index length) {
   assert(index + length <= strlen(string));
@@ -74,4 +74,32 @@ void sl_string_destroy(sl_string_ref string) {
     return;
   free(string->string);
   free(string);
+}
+
+sl_array_ref sl_array_create(sl_index capacity) {
+  sl_array_ref array = malloc(sizeof(sl_array));
+  array->capacity = capacity;
+  array->count = 0;
+  array->values = malloc(sizeof(void *) * capacity);
+  return array;
+}
+
+void sl_array_add(sl_array_ref array, void *value) {
+  //  expand array by 2 if needed
+  if (array->count >= array->capacity) {
+    realloc(array->values, array->capacity * sizeof(void *) * 2);
+    array->capacity *= 2;
+  }
+  array->values[array->count] = value;
+  array->count++;
+}
+
+void sl_array_destroy(sl_array_ref array, bool free_values) {
+  if (free_values) {
+    for (sl_index i = 0; i < array->count; i++) {
+      free(array->values[i]);
+    }
+  }
+  free(array->values);
+  free(array);
 }

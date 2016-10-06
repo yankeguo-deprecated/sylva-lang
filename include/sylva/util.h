@@ -1,12 +1,12 @@
 //
-//  string.h
+//  util.h
 //  sylva
 //
 //  Created by Ryan Guo<ryan@islandzero.net> on 2016/9/21.
 //
 
-#ifndef _SYLVA_STRING_H_
-#define _SYLVA_STRING_H_
+#ifndef _SYLVA_UTIL_H_
+#define _SYLVA_UTIL_H_
 
 #include "sylva/define.h"
 
@@ -100,6 +100,26 @@ sl_index sl_string_seek_id(sl_string_ref string, sl_index start);
  */
 void sl_string_destroy(sl_string_ref string);
 
+/**
+ * sl_array provides auto-expand array facility for pointers
+ *
+ * sl_array is used for sylva compiler only, Array in sylva-lang is provided by sl_class SYLVA_C_Array
+ */
+
+typedef struct sl_array_t {
+  void **values;
+  sl_index capacity;
+  sl_index count;
+} sl_array;
+
+typedef sl_array *sl_array_ref;
+
+sl_array_ref sl_array_create(sl_index capacity);
+
+void sl_array_add(sl_array_ref array, void *value);
+
+void sl_array_destroy(sl_array_ref array, bool free_values);
+
 __END_STD_C
 
-#endif // _SYLVA_STRING_H_
+#endif // _SYLVA_UTIL_H_

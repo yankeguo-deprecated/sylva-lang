@@ -9,8 +9,8 @@ SET(SYLVA_LIB_SRCS
 
     lib/lexer.c
     lib/token.c
-    lib/string.c
-    lib/parser.c)
+    lib/util.c
+    lib/parser.c lib/project.c)
 
 SET(SYLVA_RT_SRCS
 

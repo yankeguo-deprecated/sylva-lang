@@ -7,13 +7,13 @@
 //
 
 #define __SYLVA_SOURCE__
-#include "sylva/string.h"
+#include "sylva/util.h"
 #include "sylva/lexer.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <sylva/lexer.h>
-#include <sylva/string.h>
+#include <sylva/util.h>
 
 char *sl_lexer_error_get_name(sl_lexer_error error) {
   switch (error) {

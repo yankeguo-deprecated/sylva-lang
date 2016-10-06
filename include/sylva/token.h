@@ -9,7 +9,7 @@
 #define _SYLVA_TOKEN_H_
 
 #include <sylva/define.h>
-#include <sylva/string.h>
+#include <sylva/util.h>
 
 __BEGIN_STD_C
 

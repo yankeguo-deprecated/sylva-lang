@@ -106,10 +106,13 @@ void sl_string_destroy(sl_string_ref string);
  * sl_array is used for sylva compiler only, Array in sylva-lang is provided by sl_class SYLVA_C_Array
  */
 
+typedef void(*sl_array_value_deallocator)(void* value);
+
 typedef struct sl_array_t {
   void **values;
   sl_index capacity;
   sl_index count;
+  sl_array_value_deallocator value_deallocator;
 } sl_array;
 
 typedef sl_array *sl_array_ref;
@@ -118,7 +121,7 @@ sl_array_ref sl_array_create(sl_index capacity);
 
 void sl_array_add(sl_array_ref array, void *value);
 
-void sl_array_destroy(sl_array_ref array, bool free_values);
+void sl_array_destroy(sl_array_ref array);
 
 __END_STD_C
 

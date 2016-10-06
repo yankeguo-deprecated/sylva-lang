@@ -22,17 +22,9 @@ typedef struct sl_func_schema_t {
    */
   char *name;
   /**
-   * name of the class or module this function belonged to
-   */
-  char *class_name;
-  /**
    * static function
    */
   bool is_static;
-  /**
-   * module function
-   */
-  bool is_module;
   /**
    * required function for module
    */
@@ -77,14 +69,6 @@ typedef struct sl_member_schema_t {
    */
   char *name;
   /**
-   * module name or class name this member belongs_to
-   */
-  char *class_name;
-  /**
-   * this member belongs to a module
-   */
-  bool is_module;
-  /**
    * static member
    */
   bool is_static;
@@ -92,10 +76,18 @@ typedef struct sl_member_schema_t {
    * required member in module, do not declared
    */
   bool is_required;
+  /**
+   * weather this member variable is weak
+   */
+  bool is_weak;
 
 } sl_member_schema;
 
 typedef sl_member_schema *sl_member_schema_ref;
+
+sl_member_schema_ref sl_member_schema_create();
+
+void sl_member_schema_destroy(sl_member_schema_ref schema);
 
 /**
  * schema for module declaration
@@ -106,9 +98,24 @@ typedef struct sl_module_schema_t {
    */
   char *name;
   /**
+   * included modules
+   */
+  sl_array_ref included_module_names;
+  /**
    * member variables
    */
+  sl_array_ref members;
+  /**
+   * functions
+   */
+  sl_array_ref functions;
 } sl_module_schema;
+
+typedef sl_module_schema *sl_module_schema_ref;
+
+sl_module_schema_ref sl_module_schema_create();
+
+void sl_module_schema_destroy(sl_module_schema_ref schema);
 
 typedef struct sl_class_schema_t {
   char *name;

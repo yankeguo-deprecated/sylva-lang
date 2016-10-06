@@ -77,6 +77,7 @@ void sl_string_destroy(sl_string_ref string) {
 }
 
 sl_array_ref sl_array_create(sl_index capacity) {
+  assert(capacity > 0);
   sl_array_ref array = malloc(sizeof(sl_array));
   array->capacity = capacity;
   array->count = 0;
@@ -94,10 +95,10 @@ void sl_array_add(sl_array_ref array, void *value) {
   array->count++;
 }
 
-void sl_array_destroy(sl_array_ref array, bool free_values) {
-  if (free_values) {
+void sl_array_destroy(sl_array_ref array) {
+  if (array->value_deallocator) {
     for (sl_index i = 0; i < array->count; i++) {
-      free(array->values[i]);
+      array->value_deallocator(array->values[i]);
     }
   }
   free(array->values);

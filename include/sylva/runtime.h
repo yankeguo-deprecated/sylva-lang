@@ -7,7 +7,7 @@
 
 #include "sylva/define.h"
 
-_BEGIN_STD_C
+__BEGIN_STD_C
 
 /***********************************************************************************************************************
  * Sylva Runtime Naming
@@ -826,6 +826,6 @@ sl_class_decl(String);
 sl_class_decl(Hash);
 sl_class_decl(Array);
 
-_END_STD_C
+__END_STD_C
 
 #endif // _SYLVA_RUNTIME_H_

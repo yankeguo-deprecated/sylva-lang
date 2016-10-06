@@ -11,7 +11,7 @@
 
 #include "sylva/define.h"
 
-_BEGIN_STD_C
+__BEGIN_STD_C
 
 typedef struct {
   char *string;
@@ -36,6 +36,6 @@ sl_index sl_string_seek_id(sl_string_ref string, sl_index start);
 
 void sl_string_destroy(sl_string_ref string);
 
-_END_STD_C
+__END_STD_C
 
 #endif // _SYLVA_STRING_H_

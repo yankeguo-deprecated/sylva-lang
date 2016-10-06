@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-_BEGIN_STD_C
+__BEGIN_STD_C
 
 typedef struct {
   char *file_name;
@@ -31,6 +31,6 @@ void sl_parser_print_scan_result(sl_parser_ref parser, FILE *output);
 
 void sl_parser_destroy(sl_parser_ref parser);
 
-_END_STD_C
+__END_STD_C
 
 #endif // _SYLVA_PARSER_H_

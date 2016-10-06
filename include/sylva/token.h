@@ -14,7 +14,7 @@
 
 #include <stdio.h>
 
-_BEGIN_STD_C
+__BEGIN_STD_C
 
 typedef enum {
 
@@ -410,6 +410,6 @@ sl_token_ref sl_token_create_string_il(sl_token_type type, char *string, sl_inde
  */
 void sl_token_destroy(sl_token_ref token);
 
-_END_STD_C
+__END_STD_C
 
 #endif // _SYLVA_TOKEN_H_

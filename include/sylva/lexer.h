@@ -12,7 +12,7 @@
 #include "sylva/define.h"
 #include "sylva/token.h"
 
-_BEGIN_STD_C
+__BEGIN_STD_C
 
 typedef enum {
   sl_lexer_error_ok,
@@ -73,6 +73,6 @@ void sl_lexer_reset(sl_lexer_ref lexer);
  */
 void sl_lexer_destroy(sl_lexer_ref lexer);
 
-_END_STD_C
+__END_STD_C
 
 #endif // _SYLVA_LEXER_H_

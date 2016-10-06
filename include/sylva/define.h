@@ -18,7 +18,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <sys/cdefs.h>
 
 /***********************************************************************************************************************
  * OS
@@ -37,26 +36,24 @@
  **********************************************************************************************************************/
 
 #ifdef __cplusplus
-#ifndef _BEGIN_STD_C
-#define _BEGIN_STD_C extern "C" {
-#endif
-#ifndef _END_STD_C
-#define _END_STD_C }
-#endif
+#define __BEGIN_STD_C extern "C" {
+#define __END_STD_C }
 #else
-#ifndef _BEGIN_STD_C
-#define _BEGIN_STD_C
+#define __BEGIN_STD_C
+#define __END_STD_C
 #endif
-#ifndef _END_STD_C
-#define _END_STD_C
-#endif
-#endif
+
+/***********************************************************************************************************************
+ * unused attribute
+ **********************************************************************************************************************/
+
+#define __unused __attribute__((unused))
 
 /***********************************************************************************************************************
  * Primitive Types
  **********************************************************************************************************************/
 
-_BEGIN_STD_C
+__BEGIN_STD_C
 
 /**
  * boolean type in sylva runtime, alias to C `bool`
@@ -137,6 +134,6 @@ typedef char *const sl_symbol;
  */
 #define sl_symbol_equals(A, B) (strcmp((A), (B)) == 0)
 
-_END_STD_C
+__END_STD_C
 
 #endif // _SYLVA_DEFINE_H_

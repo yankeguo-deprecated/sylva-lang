@@ -1,18 +1,15 @@
 //
-//  sylva-token.h
+//  token.h
 //  sylva
 //
-//  Created by Yanke Guo on 2016/9/21.
-//  Copyright © 2016年 IslandZERO. All rights reserved.
+//  Created by Ryan Guo<ryan@islandzero.net> on 2016/9/21.
 //
 
 #ifndef _SYLVA_TOKEN_H_
 #define _SYLVA_TOKEN_H_
 
-#include "sylva/define.h"
-#include "sylva/string.h"
-
-#include <stdio.h>
+#include <sylva/define.h>
+#include <sylva/string.h>
 
 __BEGIN_STD_C
 
@@ -344,69 +341,100 @@ typedef enum {
 
 } sl_token_type;
 
+/**
+ * sematic category of sl_token_type
+ */
 typedef enum {
-  sl_sema_none,
-  sl_sema_integer,
-  sl_sema_float,
-  sl_sema_string
+  /**
+   * sl_token_type with no associated sematic
+   */
+      sl_sema_none,
+  /**
+   * sl_token_type with associated integer sematic
+   */
+      sl_sema_integer,
+  /**
+   * sl_token_type with associated float sematic
+   */
+      sl_sema_float,
+  /**
+   * sl_token_type with associated string sematic
+   */
+      sl_sema_string
 } sl_sema_type;
 
 /**
- Get SSemaType from STokenType
+ Get sl_sema_type from sl_token_type
 
- @param tokenType STokenType
- @return SSemaType
+ @param token_type sl_token_type
+ @return sl_sema_type
  */
 sl_sema_type sl_sema_type_from_token_type(sl_token_type token_type);
 
 /**
- * Get the name of a STokenType
+ * Get the name of a sl_token_type
  *
- * @param tokenType STokenType
+ * @param token_type sl_token_type
  * @return name
  */
 char *sl_token_get_name(sl_token_type token_type);
 
+/**
+ * sl_token represent a token in sylva lexer
+ */
 typedef struct {
+  /**
+   * sematic value
+   */
   union {
     sl_integer as_integer;
     sl_float as_float;
     sl_string_ref as_string;
   } value;
+  /**
+   * sematic type
+   */
   sl_sema_type sema_type;
+  /**
+   * token type
+   */
   sl_token_type type;
 } sl_token;
 
 typedef sl_token *sl_token_ref;
 
+/**
+ * print a token to a stream
+ *
+ * @param stream
+ * @param token
+ */
 void sl_token_print(FILE *stream, sl_token_ref token);
 
 /**
- Create a STokenRef with None sema
+ Create a sl_token_ref with none sematic
  */
 sl_token_ref sl_token_create(sl_token_type type);
 
 /**
- Create a STokenRef with Integer sema
+ Create a sl_token_ref with integer sematic
  */
 sl_token_ref sl_token_create_integer(sl_token_type type, sl_integer integer);
 
 /**
- Create a STokenRef with Float sema
+ Create a sl_token_ref with float sematic
  */
 sl_token_ref sl_token_create_float(sl_token_type type, sl_float f);
 
 /**
- Create a STokenRef with SString sema
+ Create a sl_token_ref with sl_string sematic
  */
 sl_token_ref sl_token_create_string(sl_token_type type, char *string);
-
 sl_token_ref sl_token_create_string_l(sl_token_type type, char *string, sl_index length);
-
 sl_token_ref sl_token_create_string_il(sl_token_type type, char *string, sl_index start, sl_index length);
 
 /**
- Destroy a STokenRef, free SString if existed
+ Destroy a sl_token_ref, free sl_string if existed
  */
 void sl_token_destroy(sl_token_ref token);
 

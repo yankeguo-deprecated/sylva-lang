@@ -2,8 +2,7 @@
 //  define.h
 //  sylva
 //
-//  Created by Yanke Guo on 2016/9/20.
-//  Copyright © 2016年 IslandZERO. All rights reserved.
+//  Created by Ryan Guo<ryan@islandzero.net> on 2016/9/20.
 //
 
 #ifndef _SYLVA_DEFINE_H_

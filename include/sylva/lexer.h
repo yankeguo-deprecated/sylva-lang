@@ -1,9 +1,8 @@
 //
-//  sylva-lexer.h
+//  lexer.h
 //  sylva
 //
-//  Created by Yanke Guo on 2016/9/20.
-//  Copyright © 2016年 IslandZERO. All rights reserved.
+//  Created by Ryan Guo<ryan@islandzero.net> on 2016/9/20.
 //
 
 #ifndef _SYLVA_LEXER_H_
@@ -32,6 +31,8 @@ char *sl_lexer_error_get_name(sl_lexer_error error);
 
 /**
  * structure for lexer
+ *
+ * lexer works in line-level, it tokenize a line of sylva-lang source code
  */
 typedef struct {
   /**
@@ -47,14 +48,14 @@ typedef struct {
 typedef sl_lexer *sl_lexer_ref;
 
 /**
- Create a SLexer from source
+ create a sl_lexer from source
 
  @param source the source code will be parsed
  */
 sl_lexer_ref sl_lexer_create(sl_string_ref source);
 
 /**
- Get the next token from source
+ get the next token from source
 
  @param lexer the lexer in use
  @return token next token
@@ -62,12 +63,12 @@ sl_lexer_ref sl_lexer_create(sl_string_ref source);
 sl_token_ref sl_lexer_next_token(sl_lexer_ref lexer, sl_lexer_error *err, sl_index *errIndex);
 
 /**
- Reset the SLexer to initial state
+ reset the sl_lexer to initial state
  */
 void sl_lexer_reset(sl_lexer_ref lexer);
 
 /**
- Destroy the SLexer
+ destroy the sl_lexer
 
  @param lexer the lexer to destroy
  */

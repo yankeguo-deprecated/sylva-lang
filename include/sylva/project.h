@@ -117,21 +117,52 @@ sl_module_schema_ref sl_module_schema_create();
 
 void sl_module_schema_destroy(sl_module_schema_ref schema);
 
+/**
+ * sl_class_schema stores all information of a sylva class, sl_class is used at runtime
+ */
 typedef struct sl_class_schema_t {
+  /**
+   * name of the class
+   */
   char *name;
+  /**
+   * superclass name
+   */
+  char *super_class_name;
+  /**
+   * included module names
+   */
+  sl_array_ref included_module_names;
+  /**
+   * members
+   */
+  sl_array_ref members;
+  /**
+   * functions
+   */
+  sl_array_ref functions;
 } sl_class_schema;
+
+typedef sl_class_schema *sl_class_schema_ref;
+
+sl_class_schema_ref sl_class_schema_create();
+
+void sl_class_schema_destroy(sl_class_schema_ref schema);
 
 typedef struct sl_project_t {
   char *name;
   char *main_class;
   char *base_directory;
-  char **source_files;
-  sl_index source_files_length;
+  sl_array_ref source_files;
+  sl_array_ref modules;
+  sl_array_ref classes;
 } sl_project;
 
 typedef sl_project *sl_project_ref;
 
-void sl_project_init(sl_project_ref project);
+sl_project_ref sl_project_create();
+
+void sl_project_destroy(sl_project_ref project);
 
 __END_STD_C
 

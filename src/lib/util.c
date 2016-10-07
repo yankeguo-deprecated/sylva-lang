@@ -88,7 +88,8 @@ sl_array_ref sl_array_create(sl_index capacity) {
 void sl_array_add(sl_array_ref array, void *value) {
   //  expand array by 2 if needed
   if (array->count >= array->capacity) {
-    realloc(array->values, array->capacity * sizeof(void *) * 2);
+    array->values = realloc(array->values, array->capacity * sizeof(void *) * 2);
+    assert(array->values != NULL);
     array->capacity *= 2;
   }
   array->values[array->count] = value;

@@ -45,7 +45,47 @@ sl_module_schema_ref sl_module_schema_create() {
 }
 
 void sl_module_schema_destroy(sl_module_schema_ref schema) {
+  sl_array_destroy(schema->included_module_names);
   sl_array_destroy(schema->members);
   sl_array_destroy(schema->functions);
   free(schema);
+}
+
+sl_class_schema_ref sl_class_schema_create() {
+  sl_class_schema_ref schema = malloc(sizeof(sl_class_schema));
+  schema->name = NULL;
+  schema->super_class_name = NULL;
+  schema->included_module_names = sl_array_create(1);
+  schema->members = sl_array_create(5);
+  schema->members->value_deallocator = (sl_array_value_deallocator) &sl_member_schema_destroy;
+  schema->functions = sl_array_create(5);
+  schema->functions->value_deallocator = (sl_array_value_deallocator) &sl_func_schema_destroy;
+  return schema;
+}
+
+void sl_class_schema_destroy(sl_class_schema_ref schema) {
+  sl_array_destroy(schema->included_module_names);
+  sl_array_destroy(schema->members);
+  sl_array_destroy(schema->functions);
+  free(schema);
+}
+
+sl_project_ref sl_project_create() {
+  sl_project_ref project = malloc(sizeof(sl_project));
+  project->name = NULL;
+  project->main_class = NULL;
+  project->base_directory = NULL;
+  project->source_files = sl_array_create(20);
+  project->modules = sl_array_create(10);
+  project->modules->value_deallocator = (sl_array_value_deallocator) &sl_module_schema_destroy;
+  project->classes = sl_array_create(20);
+  project->classes->value_deallocator = (sl_array_value_deallocator) &sl_class_schema_destroy;
+  return project;
+}
+
+void sl_project_destroy(sl_project_ref project) {
+  sl_array_destroy(project->source_files);
+  sl_array_destroy(project->modules);
+  sl_array_destroy(project->classes);
+  free(project);
 }

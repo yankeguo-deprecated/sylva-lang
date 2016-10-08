@@ -13,7 +13,6 @@ sl_func_schema_ref sl_func_schema_create() {
   schema->is_static = false;
   schema->is_required = false;
   schema->is_native = false;
-  schema->implementation = NULL;
   schema->argument_names = sl_array_create(5);
   return schema;
 }

@@ -7,6 +7,11 @@
 
 #include <sylva/sylva.h>
 
+sl_scan_context_ref sl_parser_context_create() {
+  sl_scan_context_ref context = malloc(sizeof(sl_scan_context));
+  return context;
+}
+
 sl_parser_ref sl_parser_create(char *file_name) {
   FILE *file = fopen(file_name, "r");
   if (file == NULL) {
@@ -21,7 +26,7 @@ sl_parser_ref sl_parser_create(char *file_name) {
   return parser;
 }
 
-void sl_parser_print_scan_result(sl_parser_ref parser, FILE *output) {
+void sl_parser_iterate_over_tokens(sl_parser_ref parser, sl_parser_iterator iterator, void *context) {
   int line_no = 1;
 
   while (fgets(parser->line_buf, parser->line_buf_size, parser->file) != NULL) {
@@ -48,8 +53,7 @@ void sl_parser_print_scan_result(sl_parser_ref parser, FILE *output) {
           sl_token_destroy(token);
         break;
       } else {
-        sl_token_print(output, token);
-        fprintf(output, "\n");
+        iterator(context, token, parser);
         sl_token_destroy(token);
       }
     }
@@ -71,7 +75,16 @@ void sl_parser_print_scan_result(sl_parser_ref parser, FILE *output) {
   }
 }
 
-void sl_parser_scan_to_project(sl_parser_ref parser, sl_project_ref project) {
+void __sl_parser_printer_iterator(FILE *stream, sl_token_ref token, __unused sl_parser_ref parser) {
+  sl_token_print(stream, token);
+  fprintf(stream, "\n");
+}
+
+void sl_parser_print_scan_result(sl_parser_ref parser, FILE *output) {
+  sl_parser_iterate_over_tokens(parser, (sl_parser_iterator) &__sl_parser_printer_iterator, output);
+}
+
+void sl_parser_scan_to_project(__unused sl_parser_ref parser, __unused sl_project_ref project) {
 }
 
 void sl_parser_destroy(sl_parser_ref parser) {

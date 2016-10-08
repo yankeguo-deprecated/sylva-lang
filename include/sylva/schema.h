@@ -34,10 +34,6 @@ typedef struct sl_func_schema_t {
    */
   bool is_native;
   /**
-   * impelmentation source code
-   */
-  char *implementation;
-  /**
    * argument names, array of char*
    */
   sl_array_ref argument_names;

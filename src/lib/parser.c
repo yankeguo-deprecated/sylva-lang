@@ -71,6 +71,9 @@ void sl_parser_print_scan_result(sl_parser_ref parser, FILE *output) {
   }
 }
 
+void sl_parser_scan_to_project(sl_parser_ref parser, sl_project_ref project) {
+}
+
 void sl_parser_destroy(sl_parser_ref parser) {
   fclose(parser->file);
   free(parser->line_buf);

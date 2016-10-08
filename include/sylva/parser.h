@@ -11,8 +11,7 @@
 #include <sylva/define.h>
 #include <sylva/util.h>
 #include <sylva/token.h>
-
-#include <yaml.h>
+#include <sylva/project.h>
 
 __BEGIN_STD_C
 
@@ -57,6 +56,14 @@ sl_parser_ref sl_parser_create(char *file_name);
  * @param output
  */
 void sl_parser_print_scan_result(sl_parser_ref parser, FILE *output);
+
+/**
+ * scan the source files, create schemas and write to project
+ *
+ * @param parser
+ * @param project
+ */
+void sl_parser_scan_to_project(sl_parser_ref parser, sl_project_ref project);
 
 /**
  * destroy a parser and close file

@@ -82,3 +82,6 @@ CTestTestfile.cmake
 
 # --> macOS
 .DS_Store
+
+# --> sylva build
+foundation/build/

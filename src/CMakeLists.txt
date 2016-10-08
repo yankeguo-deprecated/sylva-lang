@@ -10,7 +10,7 @@ SET(SYLVA_LIB_SRCS
     lib/lexer.c
     lib/token.c
     lib/util.c
-    lib/parser.c lib/project.c)
+    lib/parser.c lib/project.c lib/schema.c)
 
 SET(SYLVA_RT_SRCS
 

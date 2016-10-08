@@ -13,7 +13,7 @@ class Number
   # initializer for 'Number.new', does nothing
   # TODO: add init from string
   func init
-    return self
+    ` return self;
   end
 
   ####################################################

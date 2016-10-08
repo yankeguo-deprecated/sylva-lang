@@ -94,6 +94,15 @@ sl_index sl_string_seek_new_line(sl_string_ref string, sl_index start);
  */
 sl_index sl_string_seek_id(sl_string_ref string, sl_index start);
 
+char sl_string_get_last(sl_string_ref string);
+
+/**
+ * append string
+ * @param string
+ * @param src
+ */
+void sl_string_append(sl_string_ref string, char *src);
+
 /**
  * destroy a previously created sl_string_ref
  * @param string
@@ -106,7 +115,7 @@ void sl_string_destroy(sl_string_ref string);
  * sl_array is used for sylva compiler only, Array in sylva-lang is provided by sl_class SYLVA_C_Array
  */
 
-typedef void(*sl_array_value_deallocator)(void* value);
+typedef void(*sl_array_value_deallocator)(void *value);
 
 typedef struct sl_array_t {
   void **values;
@@ -119,7 +128,7 @@ typedef sl_array *sl_array_ref;
 
 sl_array_ref sl_array_create(sl_index capacity);
 
-void sl_array_add(sl_array_ref array, void *value);
+void sl_array_append(sl_array_ref array, void *value);
 
 void sl_array_destroy(sl_array_ref array);
 

@@ -10,149 +10,16 @@
 
 #include <sylva/define.h>
 #include <sylva/util.h>
+#include <sylva/schema.h>
 
 __BEGIN_STD_C
 
-/**
- * sl_func_schema contains all definitions for a sylva function
- */
-typedef struct sl_func_schema_t {
-  /**
-   * name of the function
-   */
-  char *name;
-  /**
-   * static function
-   */
-  bool is_static;
-  /**
-   * required function for module
-   */
-  bool is_required;
-  /**
-   * native function, no implementation
-   */
-  bool is_native;
-  /**
-   * impelmentation source code
-   */
-  char *implementation;
-  /**
-   * argument names, array of char*
-   */
-  sl_array_ref argument_names;
-
-} sl_func_schema;
-
-typedef sl_func_schema *sl_func_schema_ref;
-
-/**
- * create a pointer to sl_func_schema
- *
- * @return
- */
-sl_func_schema_ref sl_func_schema_create();
-
-/**
- * destroy a pointer of sl_func_schema
- *
- * @param func_schema
- */
-void sl_func_schema_destroy(sl_func_schema_ref func_schema);
-
-/**
- * sl_member_schema contains all definitions for a member variable
- */
-typedef struct sl_member_schema_t {
-  /**
-   * member name
-   */
-  char *name;
-  /**
-   * static member
-   */
-  bool is_static;
-  /**
-   * required member in module, do not declared
-   */
-  bool is_required;
-  /**
-   * weather this member variable is weak
-   */
-  bool is_weak;
-
-} sl_member_schema;
-
-typedef sl_member_schema *sl_member_schema_ref;
-
-sl_member_schema_ref sl_member_schema_create();
-
-void sl_member_schema_destroy(sl_member_schema_ref schema);
-
-/**
- * schema for module declaration
- */
-typedef struct sl_module_schema_t {
-  /**
-   * name of the module
-   */
-  char *name;
-  /**
-   * included modules
-   */
-  sl_array_ref included_module_names;
-  /**
-   * member variables
-   */
-  sl_array_ref members;
-  /**
-   * functions
-   */
-  sl_array_ref functions;
-} sl_module_schema;
-
-typedef sl_module_schema *sl_module_schema_ref;
-
-sl_module_schema_ref sl_module_schema_create();
-
-void sl_module_schema_destroy(sl_module_schema_ref schema);
-
-/**
- * sl_class_schema stores all information of a sylva class, sl_class is used at runtime
- */
-typedef struct sl_class_schema_t {
-  /**
-   * name of the class
-   */
-  char *name;
-  /**
-   * superclass name
-   */
-  char *super_class_name;
-  /**
-   * included module names
-   */
-  sl_array_ref included_module_names;
-  /**
-   * members
-   */
-  sl_array_ref members;
-  /**
-   * functions
-   */
-  sl_array_ref functions;
-} sl_class_schema;
-
-typedef sl_class_schema *sl_class_schema_ref;
-
-sl_class_schema_ref sl_class_schema_create();
-
-void sl_class_schema_destroy(sl_class_schema_ref schema);
-
 typedef struct sl_project_t {
-  char *name;
-  char *main_class;
-  char *base_directory;
+  sl_string_ref name;
+  sl_string_ref main_class;
+  sl_string_ref base_directory;
+  sl_string_ref manifest_file_path;
+  sl_string_ref build_directory;
   sl_array_ref source_files;
   sl_array_ref modules;
   sl_array_ref classes;
@@ -160,8 +27,39 @@ typedef struct sl_project_t {
 
 typedef sl_project *sl_project_ref;
 
-sl_project_ref sl_project_create();
+/**
+ * create a project data
+ *
+ * @param base_directory
+ * @return
+ */
+sl_project_ref sl_project_create(char *base_directory);
 
+/**
+ * load the project manifest file
+ *
+ * @param project
+ */
+void sl_project_load_manifest(sl_project_ref project);
+
+/**
+ * ensure the build directory
+ *
+ * @param project
+ */
+void sl_project_ensure_build_directory(sl_project_ref project);
+
+/**
+ * first stage, scan source files
+ *
+ * @param project
+ */
+void sl_project_scan_source_files(sl_project_ref project);
+
+/**
+ * destroy a project data pointer
+ * @param project
+ */
 void sl_project_destroy(sl_project_ref project);
 
 __END_STD_C

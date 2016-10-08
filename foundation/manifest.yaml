@@ -3,7 +3,11 @@ name: foundation
 #
 # source files, accept common bash file patterns, relative with the manifest.yaml file
 source_files:
-  - *.sylva
+  - "array.sylva"
+  - "hash.sylva"
+  - "number.sylva"
+  - "object.sylva"
+  - "string.sylva"
 #
 # entry class, if existed, use the static 'main' function for this class as entry function
 # entry_class: SomeClass

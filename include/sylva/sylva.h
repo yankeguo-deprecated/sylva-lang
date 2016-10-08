@@ -13,5 +13,6 @@
 #include <sylva/token.h>
 #include <sylva/lexer.h>
 #include <sylva/parser.h>
+#include <sylva/project.h>
 
 #endif // _SYLVA_SYLVA_H_

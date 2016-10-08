@@ -69,6 +69,20 @@ sl_index sl_string_seek_id(sl_string_ref string, sl_index start) {
   return sl_index_not_found;
 }
 
+char sl_string_get_last(sl_string_ref string) {
+  if (string->length > 0) {
+    return string->string[string->length - 1];
+  }
+  return '\0';
+}
+
+void sl_string_append(sl_string_ref string, char *src) {
+  size_t src_len = strlen(src);
+  string->length += src_len;
+  string->string = realloc(string->string, sizeof(char) * string->length);
+  strncat(string->string, src, 200);
+}
+
 void sl_string_destroy(sl_string_ref string) {
   if (string == NULL)
     return;
@@ -85,7 +99,7 @@ sl_array_ref sl_array_create(sl_index capacity) {
   return array;
 }
 
-void sl_array_add(sl_array_ref array, void *value) {
+void sl_array_append(sl_array_ref array, void *value) {
   //  expand array by 2 if needed
   if (array->count >= array->capacity) {
     array->values = realloc(array->values, array->capacity * sizeof(void *) * 2);
@@ -97,6 +111,8 @@ void sl_array_add(sl_array_ref array, void *value) {
 }
 
 void sl_array_destroy(sl_array_ref array) {
+  if (array == NULL)
+    return;
   if (array->value_deallocator) {
     for (sl_index i = 0; i < array->count; i++) {
       array->value_deallocator(array->values[i]);

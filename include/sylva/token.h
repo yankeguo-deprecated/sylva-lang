@@ -11,7 +11,7 @@
 #include <sylva/define.h>
 #include <sylva/util.h>
 
-__BEGIN_STD_C
+_SL_BEGIN_STD_C
 
 /**
  * at where a token may show
@@ -477,6 +477,6 @@ sl_token_ref sl_token_create_string_il(sl_token_type type, char *string, sl_inde
  */
 void sl_token_destroy(sl_token_ref token);
 
-__END_STD_C
+_SL_END_STD_C
 
 #endif // _SYLVA_TOKEN_H_

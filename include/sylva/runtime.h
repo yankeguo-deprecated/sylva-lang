@@ -10,7 +10,7 @@
 
 #include <sylva/define.h>
 
-__BEGIN_STD_C
+_SL_BEGIN_STD_C
 
 /***********************************************************************************************************************
  * Sylva Runtime Naming
@@ -22,14 +22,14 @@ __BEGIN_STD_C
 #define sl_func_name_class_instance(CLASS, NAME) SYLVA_C_##CLASS##_I_##NAME
 #define sl_func_name_class_static(CLASS, NAME) SYLVA_C_##CLASS##_S_##NAME
 
-#define sl_func_decl_class_instance(CLASS, NAME) sl_value sl_func_name_class_instance(CLASS, NAME)(__unused sl_value self, __unused sl_args arguments)
-#define sl_func_decl_class_static(CLASS, NAME) sl_value sl_func_name_class_static(CLASS, NAME)(__unused sl_value self, __unused sl_args arguments)
+#define sl_func_decl_class_instance(CLASS, NAME) sl_value sl_func_name_class_instance(CLASS, NAME)(_sl_unused sl_value self, _sl_unused sl_args arguments)
+#define sl_func_decl_class_static(CLASS, NAME) sl_value sl_func_name_class_static(CLASS, NAME)(_sl_unused sl_value self, _sl_unused sl_args arguments)
 
 #define sl_func_name_module_instance(MODULE, NAME) SYLVA_M_##MODULE##_I_##NAME
 #define sl_func_name_module_static(MODULE, NAME) SYLVA_M_##MODULE##_S_##NAME
 
-#define sl_func_decl_module_instance(MODULE, NAME) sl_value sl_func_name_module_instance(MODULE, NAME)(__unused sl_value self, __unused sl_args arguments)
-#define sl_func_decl_module_static(MODULE, NAME) sl_value sl_func_name_module_static(MODULE, NAME)(__unused sl_value self, __unused sl_args arguments)
+#define sl_func_decl_module_instance(MODULE, NAME) sl_value sl_func_name_module_instance(MODULE, NAME)(_sl_unused sl_value self, _sl_unused sl_args arguments)
+#define sl_func_decl_module_static(MODULE, NAME) sl_value sl_func_name_module_static(MODULE, NAME)(_sl_unused sl_value self, _sl_unused sl_args arguments)
 
 /***********************************************************************************************************************
  * Forward Declarations
@@ -823,6 +823,6 @@ sl_class_decl(String);
 sl_class_decl(Hash);
 sl_class_decl(Array);
 
-__END_STD_C
+_SL_END_STD_C
 
 #endif // _SYLVA_RUNTIME_H_

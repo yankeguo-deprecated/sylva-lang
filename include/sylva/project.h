@@ -12,7 +12,7 @@
 #include <sylva/util.h>
 #include <sylva/schema.h>
 
-__BEGIN_STD_C
+_SL_BEGIN_STD_C
 
 typedef struct sl_project_t {
   sl_string_ref name;
@@ -62,6 +62,6 @@ void sl_project_scan_source_files(sl_project_ref project);
  */
 void sl_project_destroy(sl_project_ref project);
 
-__END_STD_C
+_SL_END_STD_C
 
 #endif //SYLVA_PROJECT_H

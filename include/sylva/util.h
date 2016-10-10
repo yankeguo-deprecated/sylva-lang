@@ -10,7 +10,7 @@
 
 #include "sylva/define.h"
 
-__BEGIN_STD_C
+_SL_BEGIN_STD_C
 
 /**
  * sl_string preserves a copy of char* and its length, provide methods for char searching
@@ -134,6 +134,6 @@ void sl_array_clear(sl_array_ref array);
 
 void sl_array_destroy(sl_array_ref array);
 
-__END_STD_C
+_SL_END_STD_C
 
 #endif // _SYLVA_UTIL_H_

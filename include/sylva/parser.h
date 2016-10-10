@@ -14,7 +14,7 @@
 #include <sylva/schema.h>
 #include <sylva/project.h>
 
-__BEGIN_STD_C
+_SL_BEGIN_STD_C
 
 /**
  * sl_parser_context stores currently status of parsing
@@ -148,6 +148,6 @@ void sl_parser_scan_to_project(sl_parser_ref parser, sl_project_ref project);
  */
 void sl_parser_destroy(sl_parser_ref parser);
 
-__END_STD_C
+_SL_END_STD_C
 
 #endif // _SYLVA_PARSER_H_

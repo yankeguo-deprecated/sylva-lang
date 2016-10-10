@@ -40,7 +40,7 @@
 
 #include <sylva/runtime.h>
 
-__BEGIN_STD_C
+_SL_BEGIN_STD_C
 
 sl_func_decl_class_static(Dog, main);
 sl_func_decl_class_instance(Dog, name);
@@ -115,8 +115,8 @@ sl_func_decl_module_instance(Printer, print) {
 
 ////////////////////// Main Entry  //////////////////////////////
 
-int main(__unused int argc, __unused char **argv) {
+int main(_sl_unused int argc, _sl_unused char **argv) {
   return (int) sl_call(sl_class_rel(Dog), "main", 0).value.as_integer;
 }
 
-__END_STD_C
+_SL_END_STD_C

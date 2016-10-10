@@ -23,10 +23,10 @@ void sl_scan_context_destroy(sl_scan_context_ref context) {
   free(context);
 }
 
-void sl_scan_context_start_consuming(__unused sl_scan_context_ref context) {
+void sl_scan_context_start_consuming(_sl_unused sl_scan_context_ref context) {
 }
 
-void sl_scan_context_consume_token(__unused sl_scan_context_ref context, __unused sl_token_ref token) {
+void sl_scan_context_consume_token(_sl_unused sl_scan_context_ref context, _sl_unused sl_token_ref token) {
   //  ignore comment and inline_c, because in scanning stage, they are not important
   if (token->type == sl_token_comment || token->type == sl_token_inline_c) {
     return;
@@ -57,7 +57,7 @@ void sl_scan_context_consume_token(__unused sl_scan_context_ref context, __unuse
   }
 }
 
-void sl_scan_context_end_consuming(__unused sl_scan_context_ref context) {
+void sl_scan_context_end_consuming(_sl_unused sl_scan_context_ref context) {
 }
 
 sl_parser_ref sl_parser_create(char *file_name) {
@@ -128,7 +128,7 @@ void sl_parser_iterate_over_tokens(sl_parser_ref parser, sl_parser_iterator iter
   }
 }
 
-void __sl_parser_printer_iterator(FILE *stream, sl_token_ref token, __unused sl_parser_ref parser) {
+void __sl_parser_printer_iterator(FILE *stream, sl_token_ref token, _sl_unused sl_parser_ref parser) {
   sl_token_print(stream, token);
   fprintf(stream, "\n");
 }
@@ -139,11 +139,11 @@ void sl_parser_print_scan_result(sl_parser_ref parser, FILE *output) {
 
 void __sl_parser_scan_to_project_iterator(sl_scan_context_ref context,
                                           sl_token_ref token,
-                                          __unused sl_parser_ref parser) {
+                                          _sl_unused sl_parser_ref parser) {
   sl_scan_context_consume_token(context, token);
 }
 
-void sl_parser_scan_to_project(__unused sl_parser_ref parser, __unused sl_project_ref project) {
+void sl_parser_scan_to_project(_sl_unused sl_parser_ref parser, _sl_unused sl_project_ref project) {
   sl_scan_context_ref context = sl_scan_context_create();
   context->project = project;
   sl_scan_context_start_consuming(context);

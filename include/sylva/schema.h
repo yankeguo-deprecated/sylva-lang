@@ -11,7 +11,7 @@
 #include <sylva/define.h>
 #include <sylva/util.h>
 
-__BEGIN_STD_C
+_SL_BEGIN_STD_C
 
 /**
  * sl_func_schema contains all definitions for a sylva function
@@ -145,6 +145,6 @@ sl_class_schema_ref sl_class_schema_create();
 
 void sl_class_schema_destroy(sl_class_schema_ref schema);
 
-__END_STD_C
+_SL_END_STD_C
 
 #endif //_SYLVA_SCHEMA_H_

@@ -34,19 +34,15 @@
  * Common Macros
  **********************************************************************************************************************/
 
-#if !defined(__BEGIN_STD_C) || !defined(__END_STD_C)
 #ifdef __cplusplus
-#define __BEGIN_STD_C extern "C" {
-#define __END_STD_C }
+#define _SL_BEGIN_STD_C extern "C" {
+#define _SL_END_STD_C }
 #else
-#define __BEGIN_STD_C
-#define __END_STD_C
-#endif
+#define _SL_BEGIN_STD_C
+#define _SL_END_STD_C
 #endif
 
-#ifndef __unused
-#define __unused __attribute__((unused))
-#endif
+#define _sl_unused __attribute__((unused))
 
 /***********************************************************************************************************************
  * Constants
@@ -59,7 +55,7 @@
  * Primitive Types
  **********************************************************************************************************************/
 
-__BEGIN_STD_C
+_SL_BEGIN_STD_C
 
 /**
  * boolean type in sylva runtime, alias to C `bool`
@@ -163,6 +159,6 @@ typedef char *const sl_symbol;
  */
 #define sl_error(CLAUSE, ...) if (!(CLAUSE)) { fprintf(stderr, __VA_ARGS__); abort(); }
 
-__END_STD_C
+_SL_END_STD_C
 
 #endif // _SYLVA_DEFINE_H_

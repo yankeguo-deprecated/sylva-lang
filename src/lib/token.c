@@ -46,6 +46,8 @@ sl_scope sl_scope_from_token_type(sl_token_type token_type) {
     return sl_scope_global | sl_scope_class | sl_scope_module | sl_scope_statement;
   }
   case sl_token_comma:
+  case sl_token_paren_l:
+  case sl_token_paren_r:
   case sl_token_var: {
     return sl_scope_class | sl_scope_module | sl_scope_statement;
   }
@@ -58,6 +60,28 @@ sl_scope sl_scope_from_token_type(sl_token_type token_type) {
   }
   case sl_token_require: {
     return sl_scope_module;
+  }
+    // operators can be used as function name
+  case sl_token_plus:
+  case sl_token_minus:
+  case sl_token_multiply:
+  case sl_token_divide:
+  case sl_token_mod:
+  case sl_token_eq_to:
+  case sl_token_lt:
+  case sl_token_lt_eq:
+  case sl_token_gt:
+  case sl_token_gt_eq:
+  case sl_token_compare:
+  case sl_token_not:
+  case sl_token_not_eq:
+  case sl_token_bit_or:
+  case sl_token_bit_and:
+  case sl_token_tilde:
+  case sl_token_bit_xor:
+  case sl_token_bit_lshift:
+  case sl_token_bit_rshift: {
+    return sl_scope_module | sl_scope_class | sl_scope_statement;
   }
   default: {
     return sl_scope_statement;

@@ -290,28 +290,6 @@ class Number
     ` return sl_boolean_value(result.value.as_integer != sl_same);
   end
 
-  # or operator, bridged to 'sl_to_boolean'
-  #
-  # alias to function name 'or'
-  func ||
-    ` sl_assert(arguments.length == 1,
-    `           "wrong number of arguments for operator ||, expecting 1, got %ld",
-    `           arguments.length);
-    ` sl_value value = arguments.values[0];
-    ` return sl_boolean_value(sl_to_boolean(self) || sl_to_boolean(value));
-  end
-
-  # and operator, bridged to 'sl_to_boolean'
-  #
-  # alias to function name 'and'
-  func &&
-    ` sl_assert(arguments.length == 1,
-    `           "wrong number of arguments for operator &&, expecting 1, got %ld",
-    `           arguments.length);
-    ` sl_value value = arguments.values[0];
-    ` return sl_boolean_value(sl_to_boolean(self) && sl_to_boolean(value));
-  end
-
   # bit or operator
   #
   # alias to function name 'bit_or'

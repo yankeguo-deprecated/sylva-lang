@@ -14,6 +14,57 @@
 #include <assert.h>
 #include <stdio.h>
 
+int sl_scope_level_change_from_token_type(sl_token_type token_type) {
+  switch (token_type) {
+  case sl_token_module:
+  case sl_token_class:
+  case sl_token_if:
+  case sl_token_for:
+  case sl_token_unless:
+  case sl_token_while:return 1;
+  case sl_token_end:return -1;
+  default:return 0;
+  }
+}
+
+sl_scope sl_scope_from_token_type(sl_token_type token_type) {
+  switch (token_type) {
+  case sl_token_eof:
+  case sl_token_class:
+  case sl_token_module: {
+    return sl_scope_global;
+  }
+  case sl_token_inline_c: {
+    return sl_scope_global | sl_scope_statement;
+  }
+  case sl_token_semicolon:
+  case sl_token_new_line:
+  case sl_token_end:
+  case sl_token_colon:
+  case sl_token_id:
+  case sl_token_comment: {
+    return sl_scope_global | sl_scope_class | sl_scope_module | sl_scope_statement;
+  }
+  case sl_token_comma:
+  case sl_token_var: {
+    return sl_scope_class | sl_scope_module | sl_scope_statement;
+  }
+  case sl_token_function:
+  case sl_token_static:
+  case sl_token_include:
+  case sl_token_native:
+  case sl_token_weak: {
+    return sl_scope_module | sl_scope_class;
+  }
+  case sl_token_require: {
+    return sl_scope_module;
+  }
+  default: {
+    return sl_scope_statement;
+  }
+  }
+}
+
 sl_sema_type sl_sema_type_from_token_type(sl_token_type token_type) {
   if (token_type == sl_token_comment ||
       token_type == sl_token_inline_c ||

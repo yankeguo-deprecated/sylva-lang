@@ -20,10 +20,34 @@ __BEGIN_STD_C
  * sl_parser_context stores currently status of parsing
  */
 typedef struct {
+  /**
+   * schema of current parsing class
+   */
   sl_class_schema_ref class_schema;
+  /**
+   * schema of current parsing module
+   */
   sl_module_schema_ref module_schema;
+  /**
+   * schema of current function
+   */
   sl_func_schema_ref func_schema;
+  /**
+   * tokens parsed, may be cleared periodically
+   */
   sl_array_ref tokens;
+  /**
+   * level of scope, i.e. how many 'end's needed to escape
+   *
+   * scope_level == 1, i.e. class or module definition
+   * scope_level >=2, function definition
+   */
+  int scope_level;
+  /**
+   * target project
+   */
+  sl_project_ref project;
+
 } sl_scan_context;
 
 /**
@@ -35,14 +59,24 @@ typedef sl_scan_context *sl_scan_context_ref;
  * create a scan context
  * @return
  */
-sl_scan_context_ref sl_parser_context_create();
+sl_scan_context_ref sl_scan_context_create();
 
 /**
  * destroy a scan context
  * @param context
  */
-void sl_parser_context_destroy(sl_scan_context_ref context);
+void sl_scan_context_destroy(sl_scan_context_ref context);
 
+/**
+ * consume a token
+ * @param context
+ * @param token
+ */
+void sl_scan_context_start_consuming(sl_scan_context_ref context);
+
+void sl_scan_context_consume_token(sl_scan_context_ref context, sl_token_ref token);
+
+void sl_scan_context_end_consuming(sl_scan_context_ref context);
 /**
  * sl_parser is sylva-lang lexer in file scope, it parse a single file and fill the global table
  */

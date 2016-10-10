@@ -110,6 +110,15 @@ void sl_array_append(sl_array_ref array, void *value) {
   array->count++;
 }
 
+void sl_array_clear(sl_array_ref array) {
+  if (array->value_deallocator) {
+    for (sl_index i = 0; i < array->count; i++) {
+      array->value_deallocator(array->values[i]);
+    }
+  }
+  array->count = 0;
+}
+
 void sl_array_destroy(sl_array_ref array) {
   if (array == NULL)
     return;

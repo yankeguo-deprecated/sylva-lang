@@ -13,6 +13,28 @@
 
 __BEGIN_STD_C
 
+/**
+ * at where a token may show
+ */
+typedef enum {
+  /**
+   * global scope
+   */
+      sl_scope_global = 1 << 0,
+  /**
+   * class definition
+   */
+      sl_scope_class = 1 << 1,
+  /**
+   * module definition
+   */
+      sl_scope_module = 1 << 2,
+  /**
+   * statement
+   */
+      sl_scope_statement = 1 << 3,
+} sl_scope;
+
 typedef enum {
 
   sl_token_eof = -1,
@@ -340,6 +362,23 @@ typedef enum {
       sl_token_return,
 
 } sl_token_type;
+
+/**
+ * return scope level change of a specified token
+ *
+ * !!WARN!! scope change of func will be determined by parser
+ *
+ * @param token_type
+ * @return -1, 0, 1
+ */
+int sl_scope_level_change_from_token_type(sl_token_type token_type);
+
+/**
+ * at which scope a token may appear, global, module/class or statement
+ * @param token_type
+ * @return
+ */
+sl_scope sl_scope_from_token_type(sl_token_type token_type);
 
 /**
  * sematic category of sl_token_type

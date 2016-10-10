@@ -130,6 +130,8 @@ sl_array_ref sl_array_create(sl_index capacity);
 
 void sl_array_append(sl_array_ref array, void *value);
 
+void sl_array_clear(sl_array_ref array);
+
 void sl_array_destroy(sl_array_ref array);
 
 __END_STD_C

@@ -6,10 +6,58 @@
 #include "sylva/parser.h"
 
 #include <sylva/sylva.h>
+#include <sylva/token.h>
 
-sl_scan_context_ref sl_parser_context_create() {
+sl_scan_context_ref sl_scan_context_create() {
   sl_scan_context_ref context = malloc(sizeof(sl_scan_context));
+  context->class_schema = NULL;
+  context->module_schema = NULL;
+  context->func_schema = NULL;
+  context->tokens = sl_array_create(10);
+  context->tokens->value_deallocator = (sl_array_value_deallocator) &sl_token_destroy;
   return context;
+}
+
+void sl_scan_context_destroy(sl_scan_context_ref context) {
+  sl_array_destroy(context->tokens);
+  free(context);
+}
+
+void sl_scan_context_start_consuming(__unused sl_scan_context_ref context) {
+}
+
+void sl_scan_context_consume_token(__unused sl_scan_context_ref context, __unused sl_token_ref token) {
+  //  ignore comment and inline_c, because in scanning stage, they are not important
+  if (token->type == sl_token_comment || token->type == sl_token_inline_c) {
+    return;
+  }
+  //  if got new_line, parse the tokens
+  if (token->type == sl_token_new_line) {
+    if (context->tokens->count > 0) {
+      //  get the first token
+      sl_token_ref first_token = context->tokens->values[0];
+
+      //  ensure not in class or module scope
+      switch (first_token->type) {
+      case sl_token_class: {
+        sl_error(context->module_schema == NULL && context->class_schema == NULL, "unexpected class definition");
+      }
+        break;
+      case sl_token_module: {
+        sl_error(context->module_schema == NULL && context->class_schema == NULL, "unexpected module definition");
+      }
+        break;
+      default: {
+        break;
+      }
+      }
+    }
+  } else {
+    sl_array_append(context->tokens, token);
+  }
+}
+
+void sl_scan_context_end_consuming(__unused sl_scan_context_ref context) {
 }
 
 sl_parser_ref sl_parser_create(char *file_name) {
@@ -67,6 +115,11 @@ void sl_parser_iterate_over_tokens(sl_parser_ref parser, sl_parser_iterator iter
     line_no++;
   }
 
+  //  append final EOF
+  sl_token_ref eof = sl_token_create(sl_token_eof);
+  iterator(context, eof, parser);
+  sl_token_destroy(eof);
+
   if (ferror(parser->file)) {
     //  exit if file read failed
     perror("fgets()");
@@ -84,7 +137,19 @@ void sl_parser_print_scan_result(sl_parser_ref parser, FILE *output) {
   sl_parser_iterate_over_tokens(parser, (sl_parser_iterator) &__sl_parser_printer_iterator, output);
 }
 
+void __sl_parser_scan_to_project_iterator(sl_scan_context_ref context,
+                                          sl_token_ref token,
+                                          __unused sl_parser_ref parser) {
+  sl_scan_context_consume_token(context, token);
+}
+
 void sl_parser_scan_to_project(__unused sl_parser_ref parser, __unused sl_project_ref project) {
+  sl_scan_context_ref context = sl_scan_context_create();
+  context->project = project;
+  sl_scan_context_start_consuming(context);
+  sl_parser_iterate_over_tokens(parser, (sl_parser_iterator) &__sl_parser_scan_to_project_iterator, context);
+  sl_scan_context_end_consuming(context);
+  sl_scan_context_destroy(context);
 }
 
 void sl_parser_destroy(sl_parser_ref parser) {

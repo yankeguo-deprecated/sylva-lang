@@ -146,10 +146,22 @@ typedef char *const sl_symbol;
 #define sl_symbol_equals(A, B) (strcmp((A), (B)) == 0)
 
 /***********************************************************************************************************************
- * Assert
+ * Assert & Error
  **********************************************************************************************************************/
 
+/**
+ * sl_assert is used for debug only
+ */
+#ifdef DEBUG
 #define sl_assert(CLAUSE, ...) if (!(CLAUSE)) { fprintf(stderr, __VA_ARGS__); abort(); }
+#else
+#define sl_assert(CLAUSE, ...)
+#endif
+
+/**
+ * sl_error is used for raising errors and exit quickly
+ */
+#define sl_error(CLAUSE, ...) if (!(CLAUSE)) { fprintf(stderr, __VA_ARGS__); abort(); }
 
 __END_STD_C
 

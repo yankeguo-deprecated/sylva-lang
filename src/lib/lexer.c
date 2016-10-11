@@ -14,15 +14,8 @@
 #include <string.h>
 #include <sylva/lexer.h>
 #include <sylva/util.h>
-
-char *sl_lexer_error_get_name(sl_lexer_error error) {
-  switch (error) {
-  case sl_lexer_error_invalid_id:return "invalid identifier";
-  case sl_lexer_error_invalid_sequence: return "invalid sequence";
-  case sl_lexer_error_ok:
-  default:return "ok";
-  }
-}
+#include <sylva/token.h>
+#include <sylva/sylva.h>
 
 sl_lexer_ref sl_lexer_create(sl_string_ref source) {
   sl_lexer_ref lexer = malloc(sizeof(sl_lexer));
@@ -31,75 +24,81 @@ sl_lexer_ref sl_lexer_create(sl_string_ref source) {
   return lexer;
 }
 
-sl_token_ref sl_lexer_next_token(sl_lexer_ref lexer, sl_lexer_error *err, sl_index *errIndex) {
+sl_token_ref sl_lexer_next_token(sl_lexer_ref lexer) {
   sl_index idx = lexer->index;
 
-  //  Check EOF
+  //  check index boundary
   if (idx >= lexer->source->length) {
-    return sl_token_create(sl_token_eof);
+    sl_token_ref token = sl_token_create(sl_token_eof);
+    token->mark.column = lexer->source->length;
+    return token;
   }
 
-  //  Seek first non blank
+  //  seek first no blank char
   idx = sl_string_seek_no_blank(lexer->source, lexer->index);
+
+  //  check index boundary
   if (idx == sl_index_not_found) {
-    if (err) {
-      *err = sl_lexer_error_ok;
-    }
     lexer->index = lexer->source->length;
-    return sl_token_create(sl_token_eof);
+    sl_token_ref token = sl_token_create(sl_token_eof);
+    token->mark.column = lexer->source->length;
+    return token;
   }
 
-  //  Get first letter
+  //  get first char
   char first = lexer->source->string[idx];
 
-  //  Check New Line
+  //  check new line, \n or \r\n
   if (first == '\n') {
     lexer->index = idx + 1;
-    return sl_token_create(sl_token_new_line);
+    sl_token_ref token = sl_token_create(sl_token_new_line);
+    token->mark.column = idx;
+    return token;
   }
 
   if (first == '\r') {
     if (lexer->source->length > idx + 1 && lexer->source->string[idx + 1] == '\n') {
       lexer->index = idx + 2;
-      return sl_token_create(sl_token_new_line);
+      sl_token_ref token = sl_token_create(sl_token_new_line);
+      token->mark.column = idx;
+      return token;
     }
   }
 
+  //  inline c
   if (first == '`') {
-    if (err) {
-      *err = sl_lexer_error_ok;
-    }
     //  Find endIndex
     sl_index endIdx = sl_string_seek_new_line(lexer->source, idx);
     if (endIdx == sl_index_not_found) {
       endIdx = lexer->source->length;
     }
     lexer->index = endIdx;
-    return sl_token_create_string_il(sl_token_inline_c, lexer->source->string, idx + 1, endIdx - idx - 1);
+    sl_token_ref token = sl_token_create_string_il(sl_token_inline_c, lexer->source->string, idx + 1, endIdx - idx - 1);
+    token->mark.column = idx;
+    return token;
   }
 
-  //  Sharp started (comment)
+  //  sharp started (comment)
   if (first == '#') {
-    if (err) {
-      *err = sl_lexer_error_ok;
-    }
     //  Find endIndex
     sl_index endIdx = sl_string_seek_new_line(lexer->source, idx);
     if (endIdx == sl_index_not_found) {
       endIdx = lexer->source->length;
     }
     lexer->index = endIdx;
-    return sl_token_create_string_il(sl_token_comment, lexer->source->string, idx + 1, endIdx - idx - 1);
+    sl_token_ref token = sl_token_create_string_il(sl_token_comment, lexer->source->string, idx + 1, endIdx - idx - 1);
+    token->mark.column = idx;
+    return token;
   }
 
-  //  Alphabet started
+  //  alphabet or underscore started
   if (isalpha(first) || first == '_') {
     sl_index endIdx = sl_string_seek_id(lexer->source, idx);
     if (endIdx == sl_index_not_found) {
       endIdx = lexer->source->length;
     }
     sl_string_ref sema = sl_string_create_il(lexer->source->string, idx, endIdx - idx);
-    //  Check keywords
+    //  check keywords
     sl_token_ref token = NULL;
     if (strcmp(sema->string, "class") == 0) {
       token = sl_token_create(sl_token_class);
@@ -148,18 +147,16 @@ sl_token_ref sl_lexer_next_token(sl_lexer_ref lexer, sl_lexer_error *err, sl_ind
     } else if (strcmp(sema->string, "return") == 0) {
       token = sl_token_create(sl_token_return);
     } else {
-      //  No keyword found, make it ID
+      //  no keyword found, make it ID
       token = sl_token_create_string(sl_token_id, sema->string);
     }
     sl_string_destroy(sema);
-    if (err) {
-      *err = sl_lexer_error_ok;
-    }
     lexer->index = endIdx;
+    token->mark.column = idx;
     return token;
   }
 
-  //  Marks and operators
+  //  marks and operators
   {
     sl_index nextIdx = 0, endIdx = idx;
     sl_token_ref token = NULL;
@@ -212,9 +209,11 @@ sl_token_ref sl_lexer_next_token(sl_lexer_ref lexer, sl_lexer_error *err, sl_ind
       break;
     case '=': {
       endIdx += 1;
+      //  seek ==
       nextIdx = sl_string_seek_no_blank(lexer->source, endIdx);
       if (nextIdx != sl_index_not_found && lexer->source->string[nextIdx] == '=') {
-        sl_index nextNextIdx = sl_string_seek_no_blank(lexer->source, nextIdx);
+        //  seek ===
+        sl_index nextNextIdx = sl_string_seek_no_blank(lexer->source, nextIdx + 1);
         if (nextNextIdx != sl_index_not_found && lexer->source->string[nextNextIdx] == '=') {
           endIdx = nextNextIdx + 1;
           token = sl_token_create(sl_token_identical_to);
@@ -346,16 +345,14 @@ sl_token_ref sl_lexer_next_token(sl_lexer_ref lexer, sl_lexer_error *err, sl_ind
 
     if (token != NULL) {
       lexer->index = endIdx;
+      token->mark.column = idx;
       return token;
     }
   }
 
-  if (err)
-    *err = sl_lexer_error_invalid_sequence;
-  if (errIndex)
-    *errIndex = idx;
-
-  return NULL;
+  sl_token_ref token = sl_token_create(sl_token_invalid);
+  token->mark.column = idx;
+  return token;
 }
 
 void sl_lexer_reset(sl_lexer_ref lexer) {

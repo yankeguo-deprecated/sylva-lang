@@ -13,22 +13,6 @@
 
 _SL_BEGIN_STD_C
 
-typedef enum {
-  sl_lexer_error_ok,
-  sl_lexer_error_invalid_sequence,
-  sl_lexer_error_invalid_id,
-  sl_lexer_error_found_new_line, // new line (\r or \n) should be handled by sl_parser not sl_lexer
-} sl_lexer_error;
-
-/**
- * get the name of sl_lexer_error, for debug purpose
- *
- * @param error error type
- *
- * @return name of the error
- */
-char *sl_lexer_error_get_name(sl_lexer_error error);
-
 /**
  * structure for lexer
  *
@@ -60,7 +44,7 @@ sl_lexer_ref sl_lexer_create(sl_string_ref source);
  @param lexer the lexer in use
  @return token next token
  */
-sl_token_ref sl_lexer_next_token(sl_lexer_ref lexer, sl_lexer_error *err, sl_index *errIndex);
+sl_token_ref sl_lexer_next_token(sl_lexer_ref lexer);
 
 /**
  reset the sl_lexer to initial state

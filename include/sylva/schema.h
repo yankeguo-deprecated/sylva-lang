@@ -120,11 +120,11 @@ typedef struct sl_class_schema_t {
   /**
    * name of the class
    */
-  char *name;
+  sl_string_ref name;
   /**
    * superclass name
    */
-  char *super_class_name;
+  sl_string_ref super_class_name;
   /**
    * included module names
    */

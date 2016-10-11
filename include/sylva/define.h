@@ -49,7 +49,12 @@
  **********************************************************************************************************************/
 
 #define MANIFEST_FILE "manifest.yaml"
+
 #define BUILD_DIRECTORY "build"
+
+#define ROOT_OBJECT_CLASS "Object"
+
+#define ROOT_NUMBER_CLASS "Number"
 
 /***********************************************************************************************************************
  * Primitive Types

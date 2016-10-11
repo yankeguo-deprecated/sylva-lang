@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
+#include <sylva/token.h>
 
 int sl_scope_level_change_from_token_type(sl_token_type token_type) {
   switch (token_type) {
@@ -21,14 +22,23 @@ int sl_scope_level_change_from_token_type(sl_token_type token_type) {
   case sl_token_if:
   case sl_token_for:
   case sl_token_unless:
-  case sl_token_while:return 1;
-  case sl_token_end:return -1;
-  default:return 0;
+  case sl_token_while: {
+    return 1;
+  }
+  case sl_token_end: {
+    return -1;
+  }
+  default: {
+    return 0;
+  }
   }
 }
 
 sl_scope sl_scope_from_token_type(sl_token_type token_type) {
   switch (token_type) {
+  case sl_token_invalid: {
+    return sl_scope_none;
+  }
   case sl_token_eof:
   case sl_token_class:
   case sl_token_module: {
@@ -43,13 +53,13 @@ sl_scope sl_scope_from_token_type(sl_token_type token_type) {
   case sl_token_colon:
   case sl_token_id:
   case sl_token_comment: {
-    return sl_scope_global | sl_scope_class | sl_scope_module | sl_scope_statement;
+    return sl_scope_all;
   }
   case sl_token_comma:
   case sl_token_paren_l:
   case sl_token_paren_r:
   case sl_token_var: {
-    return sl_scope_class | sl_scope_module | sl_scope_statement;
+    return sl_scope_no_global;
   }
   case sl_token_function:
   case sl_token_static:
@@ -107,6 +117,7 @@ sl_sema_type sl_sema_type_from_token_type(sl_token_type token_type) {
 
 char *sl_token_get_name(sl_token_type token_type) {
   switch (token_type) {
+  case sl_token_invalid:return "INVALID";
   case sl_token_comment:return "COMMENT";
   case sl_token_inline_c:return "INLINE_C";
   case sl_token_eof:return "EOF";
@@ -179,18 +190,43 @@ char *sl_token_get_name(sl_token_type token_type) {
 
 void sl_token_print(FILE *stream, sl_token_ref token) {
   switch (token->sema_type) {
-  case sl_sema_none:fprintf(stream, "<%s>", sl_token_get_name(token->type));
+  case sl_sema_none: {
+    fprintf(stream, "[%ld:%ld]<%s>", token->mark.line, token->mark.column, sl_token_get_name(token->type));
+  }
     break;
-  case sl_sema_integer:fprintf(stream, "<%s,%ld>", sl_token_get_name(token->type), token->value.as_integer);
-  case sl_sema_float:fprintf(stream, "<%s,%lf>", sl_token_get_name(token->type), token->value.as_float);
-  case sl_sema_string:fprintf(stream, "<%s,%s>", sl_token_get_name(token->type), token->value.as_string->string);
+  case sl_sema_integer: {
+    fprintf(stream,
+            "[%ld:%ld]<%s,%ld>",
+            token->mark.line,
+            token->mark.column,
+            sl_token_get_name(token->type),
+            token->value.as_integer);
+  }
+    break;
+  case sl_sema_float: {
+    fprintf(stream,
+            "[%ld:%ld]<%s,%lf>",
+            token->mark.line,
+            token->mark.column,
+            sl_token_get_name(token->type),
+            token->value.as_float);
+  }
+    break;
+  case sl_sema_string: {
+    fprintf(stream,
+            "[%ld:%ld]<%s,%s>",
+            token->mark.line,
+            token->mark.column,
+            sl_token_get_name(token->type),
+            token->value.as_string->string);
+  }
+    break;
   default:break;
   }
 }
 
 sl_token_ref sl_token_create(sl_token_type type) {
   assert(sl_sema_type_from_token_type(type) == sl_sema_none);
-
   sl_token_ref token = malloc(sizeof(sl_token));
   token->type = type;
   token->sema_type = sl_sema_none;
@@ -200,7 +236,6 @@ sl_token_ref sl_token_create(sl_token_type type) {
 
 sl_token_ref sl_token_create_integer(sl_token_type type, sl_integer integer) {
   assert(sl_sema_type_from_token_type(type) == sl_sema_integer);
-
   sl_token_ref token = malloc(sizeof(sl_token));
   token->type = type;
   token->sema_type = sl_sema_integer;
@@ -210,7 +245,6 @@ sl_token_ref sl_token_create_integer(sl_token_type type, sl_integer integer) {
 
 sl_token_ref sl_token_create_float(sl_token_type type, sl_float f) {
   assert(sl_sema_type_from_token_type(type) == sl_sema_float);
-
   sl_token_ref token = malloc(sizeof(sl_token));
   token->type = type;
   token->sema_type = sl_sema_float;
@@ -220,7 +254,6 @@ sl_token_ref sl_token_create_float(sl_token_type type, sl_float f) {
 
 sl_token_ref sl_token_create_string_il(sl_token_type type, char *string, sl_index start, sl_index length) {
   assert(sl_sema_type_from_token_type(type) == sl_sema_string);
-
   sl_token_ref token = malloc(sizeof(sl_token));
   token->type = type;
   token->sema_type = sl_sema_string;

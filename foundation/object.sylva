@@ -10,7 +10,7 @@ class Object
 
   # default initializer, does nothing
   func init
-    return self
+    ` return self;
   end
 
   # Get the class

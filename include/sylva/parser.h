@@ -47,7 +47,10 @@ typedef struct {
    * target project
    */
   sl_project_ref project;
-
+  /**
+   * current parser
+   */
+  char *file_name;
 } sl_scan_context;
 
 /**
@@ -74,7 +77,7 @@ void sl_scan_context_destroy(sl_scan_context_ref context);
  */
 void sl_scan_context_start_consuming(sl_scan_context_ref context);
 
-void sl_scan_context_consume_token(sl_scan_context_ref context, sl_token_ref token);
+void sl_scan_context_consume_token(sl_scan_context_ref context, sl_token_ref income_token);
 
 void sl_scan_context_end_consuming(sl_scan_context_ref context);
 /**

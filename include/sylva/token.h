@@ -18,6 +18,10 @@ _SL_BEGIN_STD_C
  */
 typedef enum {
   /**
+   * none scope
+   */
+      sl_scope_none = 0,
+  /**
    * global scope
    */
       sl_scope_global = 1 << 0,
@@ -33,11 +37,24 @@ typedef enum {
    * statement
    */
       sl_scope_statement = 1 << 3,
+  /**
+   * all
+   */
+      sl_scope_all = sl_scope_global | sl_scope_class | sl_scope_module | sl_scope_statement,
+  /**
+   * all but global
+   */
+      sl_scope_no_global = sl_scope_class | sl_scope_module | sl_scope_statement,
 } sl_scope;
 
 typedef enum {
 
   sl_token_eof = -1,
+
+  /**
+   * invalid token detected
+   */
+      sl_token_invalid = 0,
 
   //////////////// Common ///////////////
 
@@ -419,6 +436,14 @@ sl_sema_type sl_sema_type_from_token_type(sl_token_type token_type);
 char *sl_token_get_name(sl_token_type token_type);
 
 /**
+ * a location in source code
+ */
+typedef struct {
+  sl_index line;
+  sl_index column;
+} sl_mark;
+
+/**
  * sl_token represent a token in sylva lexer
  */
 typedef struct {
@@ -438,6 +463,10 @@ typedef struct {
    * token type
    */
   sl_token_type type;
+  /**
+   * location in source code
+   */
+  sl_mark mark;
 } sl_token;
 
 typedef sl_token *sl_token_ref;

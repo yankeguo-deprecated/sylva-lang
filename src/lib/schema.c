@@ -66,6 +66,7 @@ sl_class_schema_ref sl_class_schema_create() {
 }
 
 void sl_class_schema_destroy(sl_class_schema_ref schema) {
+  sl_string_destroy(schema->name);
   sl_array_destroy(schema->included_module_names);
   sl_array_destroy(schema->members);
   sl_array_destroy(schema->functions);

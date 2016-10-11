@@ -7,9 +7,8 @@
 
 # String
 #
-class String
+class String : Object
   # internal char*
   var internal
   var length
 end
-

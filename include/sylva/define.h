@@ -162,7 +162,7 @@ typedef char *const sl_symbol;
 /**
  * sl_error is used for raising errors and exit quickly
  */
-#define sl_error(CLAUSE, ...) if (!(CLAUSE)) { fprintf(stderr, __VA_ARGS__); abort(); }
+#define sl_check(CLAUSE, ...) if (!(CLAUSE)) { fprintf(stderr, __VA_ARGS__); abort(); }
 
 _SL_END_STD_C
 

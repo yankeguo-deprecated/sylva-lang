@@ -32,6 +32,7 @@ sl_member_schema_ref sl_member_schema_create() {
 }
 
 void sl_member_schema_destroy(sl_member_schema_ref schema) {
+  sl_string_destroy(schema->name);
   free(schema);
 }
 
@@ -47,6 +48,7 @@ sl_module_schema_ref sl_module_schema_create() {
 }
 
 void sl_module_schema_destroy(sl_module_schema_ref schema) {
+  sl_string_destroy(schema->name);
   sl_array_destroy(schema->included_module_names);
   sl_array_destroy(schema->members);
   sl_array_destroy(schema->functions);
@@ -67,6 +69,7 @@ sl_class_schema_ref sl_class_schema_create() {
 
 void sl_class_schema_destroy(sl_class_schema_ref schema) {
   sl_string_destroy(schema->name);
+  sl_string_destroy(schema->super_class_name);
   sl_array_destroy(schema->included_module_names);
   sl_array_destroy(schema->members);
   sl_array_destroy(schema->functions);

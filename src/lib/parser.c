@@ -68,7 +68,7 @@ void sl_scan_context_consume_token(_sl_unused sl_scan_context_ref context, _sl_u
         }
 
         //  check token scope limitation
-        sl_error(sl_scope_from_token_type(token->type) & current_scope,
+        sl_check(sl_scope_from_token_type(token->type) & current_scope,
                  "unexpected token %s in %s at [%ld:%ld]\n",
                  sl_token_get_name(token->type),
                  context->file_name,
@@ -76,41 +76,149 @@ void sl_scan_context_consume_token(_sl_unused sl_scan_context_ref context, _sl_u
                  token->mark.column);
       }
 
-      //  extract first token
-      sl_token_ref token0 = context->tokens->values[0];
+      //  extract variables
+      sl_array_ref tokens = context->tokens;
+      sl_token_ref token0 = tokens->values[0];
 
       //  check class definition
       {
         if (token0->type == sl_token_class) {
-          sl_error(context->tokens->count > 1 && ((sl_token_ref) context->tokens->values[1])->type == sl_token_id,
+          sl_token_ref token1;
+          sl_check((tokens->count == 2 || tokens->count == 4) && (token1 = tokens->values[1])->type == sl_token_id,
                    "invalid class definition in %s at %ld:%ld",
                    context->file_name,
                    token0->mark.line,
                    token0->mark.column);
-          sl_token_ref token1 = context->tokens->values[1];
           //  init class_schema
           context->class_schema = sl_class_schema_create();
           context->class_schema->name = sl_string_create(token1->value.as_string->string);
-          if (context->tokens->count > 2) {
-            sl_token_ref token2 = context->tokens->values[2];
-            sl_error(context->tokens->count == 4 && token2->type == sl_token_colon,
+          if (tokens->count == 4) {
+            sl_token_ref token2 = tokens->values[2];
+            sl_token_ref token3 = tokens->values[3];
+            sl_check(token2->type == sl_token_colon && token3->type == sl_token_id,
                      "invalid class definition with superclass in %s at %ld:%ld",
                      context->file_name,
                      token2->mark.line,
                      token2->mark.column);
-            sl_token_ref token3 = context->tokens->values[3];
-            sl_error(token3->type == sl_token_id,
-                     "invalid class definition with superclass in %s at %ld:%ld",
-                     context->file_name,
-                     token3->mark.line,
-                     token3->mark.column);
+            //  set superclass
             context->class_schema->super_class_name = sl_string_create(token3->value.as_string->string);
           }
         }
       }
 
+      //  check module definition
+      {
+        if (token0->type == sl_token_module) {
+          sl_token_ref token1;
+          sl_check(tokens->count == 2 && (token1 = tokens->values[1])->type == sl_token_id,
+                   "invalid module definition in %s at %ld:%ld",
+                   context->file_name,
+                   token0->mark.line,
+                   token0->mark.column);
+          //  init class_schema
+          context->module_schema = sl_module_schema_create();
+          context->module_schema->name = sl_string_create(token1->value.as_string->string);
+        }
+      }
+
+      //  check 'include'
+      {
+        if (token0->type == sl_token_include) {
+          sl_token_ref token1;
+          sl_check(tokens->count == 2 && (token1 = tokens->values[1])->type == sl_token_id,
+                   "invalid include statement in %s at %ld:%ld",
+                   context->file_name,
+                   token1->mark.line,
+                   token1->mark.column);
+          if (context->class_schema != NULL) {
+            sl_array_append(context->class_schema->included_module_names,
+                            sl_string_create(token1->value.as_string->string));
+          } else if (context->module_schema != NULL) {
+            sl_array_append(context->class_schema->included_module_names,
+                            sl_string_create(token1->value.as_string->string));
+          }
+        }
+      }
+
+      //  check variable/function declaration
+      {
+        sl_boolean found_var = sl_false;
+        sl_index var_idx = sl_index_not_found;
+
+        sl_boolean found_func = sl_false;
+        sl_index func_idx = sl_index_not_found;
+
+        sl_boolean static_flag = sl_false;
+        sl_boolean require_flag = sl_false;
+        sl_boolean weak_flag = sl_false;
+        sl_boolean native_flag = sl_false;
+
+        for (sl_index i = 0; i < tokens->count; i++) {
+          sl_token_ref token = tokens->values[i];
+
+          if (token->type == sl_token_var) {
+            found_var = sl_true;
+            var_idx = i;
+          }
+
+          if (token->type == sl_token_function) {
+            found_func = sl_true;
+            func_idx = i;
+          }
+
+          if (token->type == sl_token_static) {
+            static_flag = sl_true;
+          }
+
+          if (token->type == sl_token_native) {
+            native_flag = sl_true;
+          }
+
+          if (token->type == sl_token_weak) {
+            weak_flag = sl_true;
+          }
+
+          if (token->type == sl_token_require) {
+            require_flag = sl_true;
+          }
+        }
+
+        //  member variable declaration
+        if (found_var) {
+          sl_check((found_func || native_flag) == false && tokens->count == var_idx + 2,
+                   "invalid member variable declaration in %s at line %ld",
+                   context->file_name,
+                   token0->mark.line);
+          sl_token_ref var_id = tokens->values[var_idx + 1];
+          sl_check(var_id->type == sl_token_id, "invalid member variable declaration in %s at line %ld",
+                   context->file_name,
+                   token0->mark.line);
+          sl_member_schema_ref schema = sl_member_schema_create();
+          schema->name = sl_string_create(var_id->value.as_string->string);
+          schema->is_required = require_flag;
+          schema->is_weak = weak_flag;
+          schema->is_static = static_flag;
+          if (context->module_schema != NULL) {
+            sl_array_append(context->module_schema->members, schema);
+          }
+          if (context->class_schema != NULL) {
+            sl_array_append(context->class_schema->members, schema);
+          }
+        }
+
+        // function declaration
+        if (found_func) {
+          sl_check((found_var || weak_flag) == false && tokens->count > func_idx,
+                   "invalid function declaration in %s at line %ld",
+                   context->file_name,
+                   token0->mark.line);
+          sl_token_ref func_id = tokens->values[func_idx + 1];
+          sl_string_ref func_name = sl_string_create(func_id->value.as_string->string);
+        }
+      }
+
       //  clear tokens
-      sl_array_clear(context->tokens);
+      sl_array_clear(tokens);
     }
   } else {
     sl_array_append(context->tokens, income_token);

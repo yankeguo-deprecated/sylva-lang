@@ -63,7 +63,7 @@ typedef struct sl_member_schema_t {
   /**
    * member name
    */
-  char *name;
+  sl_string_ref name;
   /**
    * static member
    */
@@ -92,7 +92,7 @@ typedef struct sl_module_schema_t {
   /**
    * name of the module
    */
-  char *name;
+  sl_string_ref name;
   /**
    * included modules
    */

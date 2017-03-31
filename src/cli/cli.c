@@ -9,16 +9,16 @@
 #include <sylva/sylva.h>
 
 typedef enum {
-  SCLIExitCommon = 1,
-  SCLIExitBadCommand = 2,
-  SCLIExitBadArguments = 3,
-} SCLIExitCode;
+  cli_exit_common = 1,
+  cli_exit_bad_command = 2,
+  cli_exit_bad_arguments = 3,
+} cli_exit_code;
 
-static void print_usage_and_exit(char *binName, SCLIExitCode code) {
-  if (code == SCLIExitBadCommand) {
+static void print_usage_and_exit(char *binName, cli_exit_code code) {
+  if (code == cli_exit_bad_command) {
     fprintf(stderr, "Bad command\n");
   }
-  if (code == SCLIExitBadArguments) {
+  if (code == cli_exit_bad_arguments) {
     fprintf(stderr, "Bad arguments\n");
   }
   fprintf(stderr,
@@ -52,19 +52,19 @@ int main(int argc, char **argv) {
   if (argc >= 2) {
     if (strcmp(argv[1], "compile") == 0) {
       if (argc != 3) {
-        print_usage_and_exit(binName, SCLIExitBadArguments);
+        print_usage_and_exit(binName, cli_exit_bad_arguments);
       }
       compile_command(argv[2]);
     } else if (strcmp(argv[1], "scan") == 0) {
       if (argc != 3) {
-        print_usage_and_exit(binName, SCLIExitBadArguments);
+        print_usage_and_exit(binName, cli_exit_bad_arguments);
       }
       scan_command(argv[2]);
     } else {
-      print_usage_and_exit(binName, SCLIExitBadCommand);
+      print_usage_and_exit(binName, cli_exit_bad_command);
     }
   } else {
-    print_usage_and_exit(binName, SCLIExitBadCommand);
+    print_usage_and_exit(binName, cli_exit_bad_command);
   }
 
   return 0;
